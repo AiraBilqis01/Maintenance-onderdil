@@ -32,7 +32,6 @@
             z-index: 0;
         }
 
-        /* navbar dengan efek blur ungu */
         .navbar-blur {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
