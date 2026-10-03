@@ -79,7 +79,7 @@
     }
     
     .table-custom {
-        min-width: 1200px;
+        min-width: 1400px;
         margin-bottom: 0;
     }
     
@@ -176,6 +176,16 @@
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
+    .btn-detail-action {
+        background: #faf5ff;
+        color: #6b46c1;
+    }
+    
+    .btn-detail-action:hover {
+        background: #e9d8fd;
+        color: #6b46c1;
+    }
     
     .btn-edit-action {
         background: #ebf8ff;
@@ -213,6 +223,60 @@
         border-radius: 8px;
         font-weight: 500;
         font-size: 0.8rem;
+    }
+
+    .badge-pending {
+        background: #fefcbf;
+        color: #744210;
+        padding: 0.3rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+
+    .badge-selesai {
+        background: #c6f6d5;
+        color: #22543d;
+        padding: 0.3rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+
+    .badge-ditolak {
+        background: #fed7d7;
+        color: #822727;
+        padding: 0.3rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+
+    .detail-section-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #eef2f7;
+    }
+
+    .detail-section-title.green { color: #22543d; }
+    .detail-section-title.red { color: #822727; }
+    .detail-section-title.dark { color: #1a1a2e; }
+
+    .detail-label {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-bottom: 0.2rem;
+        font-weight: 500;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
+        color: #2d3748;
+        margin-bottom: 0.8rem;
     }
 
     .dataTables_wrapper .dataTables_length select {
@@ -275,20 +339,20 @@
                         <table id="example1" class="table table-custom">
                             <thead>
                                 <tr>
-                                    <th width="5%">No</th>
-                                    <th width="12%">Judul Pemeliharaan</th>
-                                    <th width="10%">Tanggal Selesai</th>
-                                    <th width="12%">Tenaga Kerja</th>
-                                    <th width="12%">Nama Peralatan</th>
-                                    <th width="8%">Lokasi</th>
-                                    <th width="5%">Qty</th>
-                                    <th width="10%">Serial Number</th>
-                                    <th width="8%">Kapasitas</th>
-                                    <th width="8%">Merek</th>
-                                    <th width="8%">Tipe</th>
-                                    <th width="8%">Tahun</th>
-                                    <th width="8%">Gambar</th>
-                                    <th width="10%">Keterangan</th>
+                                    <th width="4%">No</th>
+                                    <th width="10%">Judul Pemeliharaan</th>
+                                    <th width="8%">Tanggal Selesai</th>
+                                    <th width="10%">Tenaga Kerja</th>
+                                    <th width="10%">Nama Peralatan</th>
+                                    <th width="7%">Lokasi</th>
+                                    <th width="4%">Qty</th>
+                                    <th width="8%">Serial Number</th>
+                                    <th width="7%">Kapasitas</th>
+                                    <th width="7%">Merek</th>
+                                    <th width="7%">Tipe</th>
+                                    <th width="6%">Tahun</th>
+                                    <th width="6%">Gambar</th>
+                                    <th width="8%">Status</th>
                                     <th width="12%">Aksi</th>
                                 </tr>
                             </thead>
@@ -318,8 +382,17 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td>{{ $item->keterangan ?? '-' }}</td>
                                     <td>
+                                        @if($item->status == 'selesai')
+                                            <span class="badge-selesai"><i class="fas fa-check-circle"></i> Selesai</span>
+                                        @elseif($item->status == 'ditolak')
+                                            <span class="badge-ditolak"><i class="fas fa-times-circle"></i> Ditolak</span>
+                                        @else
+                                            <span class="badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @include('supervisor.jadwal-pemeliharaan.detail', ['jadwalPemeliharaan' => $item])
                                         @include('supervisor.jadwal-pemeliharaan.edit', ['jadwalPemeliharaan' => $item])
                                         @include('supervisor.jadwal-pemeliharaan.delete', ['jadwalPemeliharaan' => $item])
                                     </td>                                

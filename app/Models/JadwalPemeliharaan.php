@@ -25,6 +25,12 @@ class JadwalPemeliharaan extends Model
         'tahun_pembuatan',
         'gambar',
         'keterangan',
+        'status',
+        'nama_onderdil',
+        'detail_penyelesaian',
+        'gambar_bukti',
+        'keterangan_tolak',
+        'alasan_penolakan',
     ];
 
     protected $casts = [

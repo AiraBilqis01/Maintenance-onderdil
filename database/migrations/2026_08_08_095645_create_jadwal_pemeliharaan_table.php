@@ -23,6 +23,15 @@ return new class extends Migration
             $table->year('tahun_pembuatan')->nullable();
             $table->string('gambar')->nullable();
             $table->text('keterangan')->nullable();
+
+            // Kolom baru untuk penyelesaian
+            $table->string('status')->default('pending');
+            $table->string('nama_onderdil')->nullable();
+            $table->text('detail_penyelesaian')->nullable();
+            $table->string('gambar_bukti')->nullable();
+            $table->text('keterangan_tolak')->nullable();
+            $table->text('alasan_penolakan')->nullable();
+
             $table->timestamps();
         });
     }
