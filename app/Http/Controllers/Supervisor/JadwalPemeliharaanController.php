@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JadwalPemeliharaan;
 use App\Models\User;
+use App\Mail\JadwalPemeliharaanMail;
+use Illuminate\Support\Facades\Mail;
 
 class JadwalPemeliharaanController extends Controller
 {
@@ -41,8 +43,17 @@ class JadwalPemeliharaanController extends Controller
             $data['gambar'] = 'assets/img/' . $imageName;
         }
 
-        JadwalPemeliharaan::create($data);
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil ditambahkan.');
+        $data['status'] = 'pending';
+
+        $jadwal = JadwalPemeliharaan::create($data);
+
+        // Kirim email ke tenaga kerja
+        $tenagaKerja = User::find($data['nama_tenaga_kerja']);
+        if ($tenagaKerja && $tenagaKerja->email) {
+            Mail::to($tenagaKerja->email)->send(new JadwalPemeliharaanMail($jadwal->load('user')));
+        }
+
+        return back()->with('sukses', 'Jadwal pemeliharaan berhasil ditambahkan & email notifikasi terkirim.');
     }
 
     public function update(Request $request, JadwalPemeliharaan $jadwalPemeliharaan)

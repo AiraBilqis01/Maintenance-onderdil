@@ -16,7 +16,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::before {
             content: '';
             position: fixed;
@@ -34,7 +34,6 @@
         .navbar-blur {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 8px 30px rgba(102, 126, 234, 0.1);
             padding: 16px 0;
             border-bottom: 1px solid rgba(102, 126, 234, 0.2);
@@ -43,7 +42,6 @@
         }
         .navbar-brand {
             font-weight: 700;
-            letter-spacing: -0.02em;
             color: #2d3748 !important;
             display: flex;
             align-items: center;
@@ -56,14 +54,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 4px 6px rgba(102, 126, 234, 0.3));
         }
-        
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-            margin-left: 2rem;
-        }
+
+        .nav-menu { display: flex; gap: 2rem; margin-left: 2rem; }
         .nav-menu .nav-link {
             color: #4a5568;
             font-weight: 500;
@@ -72,27 +65,18 @@
             transition: all 0.3s;
             text-decoration: none;
         }
-        .nav-menu .nav-link:hover {
-            color: #667eea;
-        }
+        .nav-menu .nav-link:hover { color: #667eea; }
         .nav-menu .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             transition: width 0.3s;
         }
-        .nav-menu .nav-link:hover::after {
-            width: 100%;
-        }
-        .nav-menu .nav-link i {
-            margin-right: 5px;
-            font-size: 1.1rem;
-        }
-        
+        .nav-menu .nav-link:hover::after { width: 100%; }
+        .nav-menu .nav-link i { margin-right: 5px; font-size: 1.1rem; }
+
         .btn-login-modern {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -102,12 +86,9 @@
             border: none;
             transition: 0.25s ease;
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
-            letter-spacing: 0.3px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            position: relative;
-            z-index: 10;
             text-decoration: none;
         }
         .btn-login-modern:hover {
@@ -126,42 +107,35 @@
             border: none;
             transition: 0.25s ease;
             box-shadow: 0 6px 16px rgba(252, 92, 125, 0.3);
-            letter-spacing: 0.3px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            position: relative;
-            z-index: 10;
         }
         .btn-logout-modern:hover {
             background: linear-gradient(135deg, #e04a6a 0%, #5872e8 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(252, 92, 125, 0.4);
         }
 
         .hero-section {
-            min-height: 80vh;
+            min-height: 60vh;
             display: flex;
             align-items: center;
-            padding: 2rem 0 5rem 0;
+            padding: 2rem 0 3rem 0;
             position: relative;
             z-index: 2;
         }
-
         .hero-title {
             font-size: 3.5rem;
             font-weight: 700;
             line-height: 1.2;
             color: #2d3748;
-            text-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
         }
         .hero-title span {
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
         }
         .hero-description {
             font-size: 1.15rem;
@@ -173,11 +147,9 @@
         .floating-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-radius: 38px;
             padding: 2.3rem 2rem;
-            box-shadow: 0 40px 70px -20px rgba(102, 126, 234, 0.25),
-                       0 0 0 1px rgba(102, 126, 234, 0.1) inset;
+            box-shadow: 0 40px 70px -20px rgba(102, 126, 234, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.8);
             max-width: 400px;
             margin-left: auto;
@@ -193,80 +165,189 @@
         .card-logo {
             max-width: 180px;
             max-height: 180px;
-            width: auto;
-            height: auto;
             object-fit: contain;
-            filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.15));
         }
 
-        .feature-section {
+        .stats-section {
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(4px);
+            padding: 3rem 0;
             position: relative;
             z-index: 2;
             border-top: 1px solid rgba(102, 126, 234, 0.15);
             border-bottom: 1px solid rgba(102, 126, 234, 0.15);
         }
-        .feature-item {
-            background: rgba(255, 255, 255, 0.8);
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 1.4rem 1.2rem;
+            border-radius: 24px;
+            padding: 1.5rem 1.3rem;
             transition: all 0.25s;
             border: 1px solid rgba(102, 126, 234, 0.1);
             box-shadow: 0 10px 22px -12px rgba(102, 126, 234, 0.15);
             height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        .feature-item:hover {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(102, 126, 234, 0.3);
+        .stat-card:hover {
+            transform: translateY(-4px);
             box-shadow: 0 20px 30px -14px rgba(102, 126, 234, 0.25);
-            transform: scale(1.02);
         }
-        .feature-icon {
-            background: linear-gradient(145deg, #f0f3ff, #e6eaff);
-            width: 54px;
-            height: 54px;
-            border-radius: 22px;
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #667eea;
-            font-size: 2rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 10px 18px -8px rgba(102, 126, 234, 0.25);
+            font-size: 1.6rem;
+            flex-shrink: 0;
         }
-        .feature-item h5 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
+        .stat-icon.total { background: linear-gradient(145deg, #e6eaff, #d6dcff); color: #667eea; }
+        .stat-icon.pending { background: linear-gradient(145deg, #fff8dc, #fefcbf); color: #b7791f; }
+        .stat-icon.selesai { background: linear-gradient(145deg, #e6ffed, #c6f6d5); color: #2f855a; }
+        .stat-icon.ditolak { background: linear-gradient(145deg, #fff5f5, #fed7d7); color: #c53030; }
+
+        .stat-info h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
             color: #2d3748;
+            line-height: 1;
         }
-        .feature-item p {
-            font-size: 0.9rem;
-            color: #4a5568;
-            margin-bottom: 0;
+        .stat-info p {
+            margin: 0.2rem 0 0 0;
+            color: #718096;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
-        .cta-gradient {
-            background: linear-gradient(125deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%),
-                        radial-gradient(circle at 20% 40%, rgba(102, 126, 234, 0.05) 0%, transparent 40%);
+        .chart-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 10px 22px -12px rgba(102, 126, 234, 0.15);
+            height: 100%;
+        }
+        .chart-card h5 {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .chart-card h5 i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 6px;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 200px;
+        }
+
+        .table-section {
+            padding: 3rem 0;
             position: relative;
             z-index: 2;
-            border-top: 1px solid rgba(102, 126, 234, 0.15);
+        }
+        .table-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -12px rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        .table-card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .table-card-header h4 {
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        .table-card-header h4 i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 8px;
+        }
+        .table-card-header a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .table-card-header a:hover {
+            color: #764ba2;
+            transform: translateX(3px);
         }
 
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .table-modern {
+            margin: 0;
+            width: 100%;
+        }
+        .table-modern thead th {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: #4a5568;
+            border-bottom: 2px solid #eef2f7;
+        }
+        .table-modern tbody td {
+            padding: 1rem 1.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f4f8;
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+        .table-modern tbody tr:hover {
+            background: #f8fafc;
+        }
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+        .status-badge.pending { background: #fefcbf; color: #744210; }
+        .status-badge.selesai { background: #c6f6d5; color: #22543d; }
+        .status-badge.ditolak { background: #fed7d7; color: #822727; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #a0aec0;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e0;
+            display: block;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
         }
 
         .footer-modern {
@@ -278,24 +359,14 @@
             position: relative;
             z-index: 2;
         }
-        
         .footer-title {
             font-weight: 600;
             color: #2d3748;
             margin-bottom: 1.2rem;
             font-size: 1.1rem;
         }
-        
-        .footer-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .footer-menu li {
-            margin-bottom: 0.8rem;
-        }
-        
+        .footer-menu { list-style: none; padding: 0; margin: 0; }
+        .footer-menu li { margin-bottom: 0.8rem; }
         .footer-menu a {
             color: #4a5568;
             text-decoration: none;
@@ -304,17 +375,9 @@
             align-items: center;
             gap: 8px;
         }
-        
-        .footer-menu a:hover {
-            color: #667eea;
-            transform: translateX(5px);
-        }
-        
-        .footer-menu i {
-            color: #667eea;
-            font-size: 1rem;
-        }
-        
+        .footer-menu a:hover { color: #667eea; transform: translateX(5px); }
+        .footer-menu i { color: #667eea; font-size: 1rem; }
+
         .footer-bottom {
             border-top: 1px solid rgba(102, 126, 234, 0.2);
             padding-top: 1.5rem;
@@ -322,25 +385,15 @@
             text-align: center;
             color: #718096;
         }
-        
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-        
+        .social-icons { display: flex; gap: 1rem; justify-content: flex-end; }
         .social-icons a {
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             background: rgba(102, 126, 234, 0.1);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             color: #667eea;
             transition: all 0.3s;
         }
-        
         .social-icons a:hover {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -348,7 +401,7 @@
         }
 
         @media (max-width: 992px) {
-            .hero-title { font-size: 2.8rem; }
+            .hero-title { font-size: 2.5rem; }
             .floating-card { margin: 2rem auto 0 auto; }
             .nav-menu { display: none; }
             .social-icons { justify-content: center; margin-top: 1rem; }
@@ -359,17 +412,18 @@
 
 <nav class="navbar navbar-expand-lg navbar-blur fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">
-            <i class="bi bi-tools"></i> 
+        <a class="navbar-brand" href="{{ route('tenagakerja.dashboard') }}">
+            <i class="bi bi-tools"></i>
             <span>Manajemen<b>Onderdil</b></span>
         </a>
-        
-        <div class="nav-menu">
-            <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
-            <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
-        </div>
-        
+
+      <div class="nav-menu">
+    <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+    <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
+    <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
+    <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+</div>
+
         <div class="d-flex gap-2 align-items-center">
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -392,87 +446,131 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <h1 class="hero-title">
-                    Kelola onderdil <span>tanpa ribet</span>, <br>fokus bisnis makin lancar
+                    Selamat datang, <span>{{ Auth::user()->name ?? 'Tenaga Kerja' }}</span>
                 </h1>
                 <p class="hero-description">
-                    Satu platform untuk stok masuk, keluar, dan laporan akurat. 
-                    Digunakan lebih dari 340 bengkel & distributor di Indonesia.
+                    Berikut rekap tugas pemeliharaan Anda. Pantau status, lihat detail, dan kelola checklist dari sini.
                 </p>
+                <a href="{{ route('tenagakerja.checklist.index') }}" class="btn btn-login-modern btn-lg">
+                    <i class="bi bi-check2-square"></i> Buka Checklist
+                </a>
             </div>
 
             <div class="col-lg-5">
                 <div class="floating-card">
-                    <img src="assets/img/logopt.png" alt="Logo StokOnderdil" class="card-logo">
+                    <img src="assets/img/logopt.png" alt="Logo" class="card-logo">
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="feature-section py-5">
-    <div class="container py-4">
-        <div class="text-center mb-5">
-            <span class="hero-badge">FITUR UTAMA</span>
-            <h2 class="fw-bold display-6 mb-3">Kendalikan stok onderdil<br>dalam satu pintu.</h2>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-item p-4" style="border-radius: 32px;">
-                    <div class="feature-icon"><i class="bi bi-database-add"></i></div>
-                    <h4 class="h5 fw-semibold">Data barang terpusat</h4>
-                    <p class="text-secondary">Kategori, harga, stok minimal, semua tersaji rapi.</p>
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon total"><i class="bi bi-clipboard-data"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ $total ?? 0 }}</h3>
+                                <p>Total Tugas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon pending"><i class="bi bi-clock-history"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ $pending ?? 0 }}</h3>
+                                <p>Belum Selesai</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon selesai"><i class="bi bi-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ $selesai ?? 0 }}</h3>
+                                <p>Selesai</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon ditolak"><i class="bi bi-x-circle"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ $ditolak ?? 0 }}</h3>
+                                <p>Ditolak</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-           <div class="col-md-4">
-                <div class="feature-item p-4" style="border-radius: 32px;">
-                    <div class="feature-icon">
-                        <i class="bi bi-calendar-check"></i>
-                    </div>
-                    <h4 class="h5 fw-semibold">Manajemen Jadwal Pemeliharaan</h4>
-                    <p class="text-secondary">
-                        Sistem memungkinkan supervisor untuk membuat,
-                        melihat, memperbarui, dan menghapus jadwal
-                        pemeliharaan secara terstruktur dan terkontrol.
-                    </p>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="feature-item p-4" style="border-radius: 32px;">
-                    <div class="feature-icon">
-                        <i class="bi bi-file-earmark-text"></i>
+            <div class="col-lg-4">
+                <div class="chart-card">
+                    <h5><i class="bi bi-pie-chart-fill"></i> Ringkasan Status</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="statusChart"></canvas>
                     </div>
-                    <h4 class="h5 fw-semibold">Laporan Pemeliharaan</h4>
-                    <p class="text-secondary">
-                        Sistem menyediakan laporan pemeliharaan lengkap
-                        termasuk laporan stok, jadwal pemeliharaan,
-                        dan hasil checklist yang dapat dicetak.
-                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="cta-gradient py-5">
-    <div class="container text-center py-3">
-        @auth
-            <h3 class="fw-bold mb-4">Selamat datang, <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ Auth::user()->name }}</span></h3>
-            <p class="text-secondary col-lg-6 mx-auto mb-4">Anda telah login. Silakan akses fitur yang tersedia sesuai dengan peran Anda.</p>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="btn btn-login-modern btn-lg">
-                <i class="bi bi-check2-square"></i> Buka Checklist
-            </a>
-        @else
-            <h3 class="fw-bold mb-4">Sudah punya akun? Langsung <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">login</span></h3>
-            <p class="text-secondary col-lg-6 mx-auto mb-4">Tim bengkel dan manajer gudang dapat mengakses semua fitur setelah masuk.</p>
-            <a href="/login" class="btn btn-login-modern btn-lg">
-                <i class="bi bi-arrow-right-circle"></i> Login sekarang
-            </a>
-            <div class="mt-4 small text-secondary">
-                <i class="bi bi-info-circle" style="color: #667eea;"></i> Registrasi hanya untuk admin internal — hubungi IT
+<section class="table-section">
+    <div class="container">
+        <div class="table-card">
+            <div class="table-card-header">
+                <h4><i class="bi bi-list-check"></i> Daftar Tugas Pemeliharaan</h4>
+                <a href="{{ route('tenagakerja.checklist.index') }}">Lihat Kalender <i class="bi bi-arrow-right"></i></a>
             </div>
-        @endauth
+
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Pemeliharaan</th>
+                            <th>Nama Peralatan</th>
+                            <th>Tanggal Selesai</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($jadwal ?? [] as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
+                            <td>{{ $item->nama_peralatan }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                            <td>
+                                @if($item->status == 'selesai')
+                                    <span class="status-badge selesai"><i class="bi bi-check-circle-fill"></i> Selesai</span>
+                                @elseif($item->status == 'ditolak')
+                                    <span class="status-badge ditolak"><i class="bi bi-x-circle-fill"></i> Ditolak</span>
+                                @else
+                                    <span class="status-badge pending"><i class="bi bi-clock-fill"></i> Belum Selesai</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <p class="mb-0">Belum ada tugas pemeliharaan</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -492,16 +590,17 @@
                     <a href="#"><i class="bi bi-linkedin"></i></a>
                 </div>
             </div>
-            
+
             <div class="col-lg-2 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
+                    <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
                     <li><a href="#"><i class="bi bi-calendar-week"></i> Jadwal</a></li>
                     <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Checklist</a></li>
                     <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
                 </ul>
             </div>
-            
+
             <div class="col-lg-2">
                 <h5 class="footer-title">Lainnya</h5>
                 <ul class="footer-menu">
@@ -511,7 +610,7 @@
                     <li><a href="#"><i class="bi bi-shield-check"></i> Privasi</a></li>
                 </ul>
             </div>
-            
+
             <div class="col-lg-3">
                 <h5 class="footer-title">Kontak</h5>
                 <ul class="footer-menu">
@@ -522,7 +621,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
             <div class="row">
                 <div class="col-md-6 text-md-start">
@@ -538,5 +637,68 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('statusChart').getContext('2d');
+
+        var pending = {{ $pending ?? 0 }};
+        var selesai = {{ $selesai ?? 0 }};
+        var ditolak = {{ $ditolak ?? 0 }};
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Belum Selesai', 'Selesai', 'Ditolak'],
+                datasets: [{
+                    data: [pending, selesai, ditolak],
+                    backgroundColor: [
+                        '#f6e05e',
+                        '#48bb78',
+                        '#f56565'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Poppins',
+                                size: 11,
+                                weight: '500'
+                            },
+                            padding: 12,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#2d3748',
+                        titleFont: { family: 'Poppins', size: 12 },
+                        bodyFont: { family: 'Poppins', size: 12 },
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function (context) {
+                                var total = pending + selesai + ditolak;
+                                var val = context.parsed;
+                                var pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                return ' ' + context.label + ': ' + val + ' (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

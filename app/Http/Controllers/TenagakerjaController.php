@@ -4,47 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\JadwalPemeliharaan;
+use App\Models\StokOnderdil;
 use Illuminate\Support\Facades\Auth;
 
 class TenagakerjaController extends Controller
 {
     public function index()
     {
-        return view('tenagakerja.dashboard');
+        $userId = Auth::id();
+
+        $jadwal = JadwalPemeliharaan::where('nama_tenaga_kerja', $userId)
+                    ->orderBy('tanggal_selesai', 'desc')
+                    ->get();
+
+        $total   = $jadwal->count();
+        $pending = $jadwal->where('status', 'pending')->count();
+        $selesai = $jadwal->where('status', 'selesai')->count();
+        $ditolak = $jadwal->where('status', 'ditolak')->count();
+
+        return view('tenagakerja.dashboard', compact('jadwal', 'total', 'pending', 'selesai', 'ditolak'));
     }
 
     public function checklist()
-{
-    $jadwal = JadwalPemeliharaan::where('nama_tenaga_kerja', Auth::id())->get();
+    {
+        $jadwal = JadwalPemeliharaan::where('nama_tenaga_kerja', Auth::id())->get();
 
-    $events = $jadwal->map(function ($item) {
-        return [
-            'id' => $item->id,
-            'title' => $item->judul_pemeliharaan,
-            'start' => $item->tanggal_selesai,
-            'extendedProps' => [
-                'status' => $item->status ?? 'pending',
-                'nama_peralatan' => $item->nama_peralatan,
-                'lokasi' => $item->lokasi,
-                'quantity' => $item->quantity,
-                'serial_number' => $item->serial_number,
-                'kapasitas' => $item->kapasitas,
-                'merek' => $item->merek,
-                'tipe' => $item->tipe,
-                'tahun_pembuatan' => $item->tahun_pembuatan,
-                'keterangan' => $item->keterangan,
-                'gambar' => $item->gambar,
-                'nama_onderdil' => $item->nama_onderdil,
-                'detail_penyelesaian' => $item->detail_penyelesaian,
-                'gambar_bukti' => $item->gambar_bukti,
-                'keterangan_tolak' => $item->keterangan_tolak,
-                'alasan_penolakan' => $item->alasan_penolakan,
-            ],
-        ];
-    });
+        $events = $jadwal->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->judul_pemeliharaan,
+                'start' => $item->tanggal_selesai,
+                'extendedProps' => [
+                    'status' => $item->status ?? 'pending',
+                    'nama_peralatan' => $item->nama_peralatan,
+                    'lokasi' => $item->lokasi,
+                    'quantity' => $item->quantity,
+                    'serial_number' => $item->serial_number,
+                    'kapasitas' => $item->kapasitas,
+                    'merek' => $item->merek,
+                    'tipe' => $item->tipe,
+                    'tahun_pembuatan' => $item->tahun_pembuatan,
+                    'keterangan' => $item->keterangan,
+                    'gambar' => $item->gambar,
+                    'nama_onderdil' => $item->nama_onderdil,
+                    'detail_penyelesaian' => $item->detail_penyelesaian,
+                    'gambar_bukti' => $item->gambar_bukti,
+                    'keterangan_tolak' => $item->keterangan_tolak,
+                    'alasan_penolakan' => $item->alasan_penolakan,
+                ],
+            ];
+        });
 
-    return view('tenagakerja.checklist.index', compact('jadwal', 'events'));
-}
+        return view('tenagakerja.checklist.index', compact('jadwal', 'events'));
+    }
 
     public function selesai(Request $request, JadwalPemeliharaan $jadwal)
     {
@@ -79,5 +91,11 @@ class TenagakerjaController extends Controller
         $jadwal->update($data);
 
         return back()->with('sukses', 'Pemeliharaan berhasil ditolak.');
+    }
+
+    public function stokOnderdil()
+    {
+        $stokOnderdil = StokOnderdil::orderBy('nama_sparepart')->get();
+        return view('tenagakerja.stok-onderdil.index', compact('stokOnderdil'));
     }
 }

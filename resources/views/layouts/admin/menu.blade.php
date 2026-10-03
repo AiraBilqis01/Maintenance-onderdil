@@ -43,7 +43,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="#" class="nav-link text-white">
+           <a href="{{route('supervisor.laporan-pemeliharaan.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.laporan-pemeliharaan.index') ? 'active':'')}}">
                 <i class="nav-icon fas fa-file-alt"></i> 
                 <p>Laporan Pemeliharaan</p>
             </a>

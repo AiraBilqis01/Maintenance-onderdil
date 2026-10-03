@@ -11,11 +11,11 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
+     * Fallback redirect jika role user tidak dikenal.
      *
      * @var string
      */
-    protected $redirectTo = '/home'; 
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -28,7 +28,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Redirect users after login based on role.
+     * Redirect user setelah login berdasarkan role.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $user
@@ -38,10 +38,12 @@ class LoginController extends Controller
     {
         if ($user->role === 'supervisor') {
             return redirect()->route('supervisor.dashboard');
-        } elseif ($user->role === 'tenagakerja') {
+        }
+
+        if ($user->role === 'tenagakerja') {
             return redirect()->route('tenagakerja.dashboard');
         }
 
-        return redirect('/home');
+        return redirect('/');
     }
 }

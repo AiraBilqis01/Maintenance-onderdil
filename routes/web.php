@@ -6,12 +6,22 @@ use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TenagakerjaController;
 use App\Http\Controllers\Supervisor\StokOnderdilController;
 use App\Http\Controllers\Supervisor\JadwalPemeliharaanController;
+use App\Http\Controllers\Supervisor\LaporanPemeliharaanController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// ===== Route Custom Lupa & Reset Password =====
+Route::get('password/reset', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'submitForgotRequest'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// Auth routes bawaan (login, register, logout)
+Auth::routes(['reset' => false, 'verify' => true]);
 
 Route::middleware(['auth'])->group(function () {
 
@@ -37,6 +47,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/jadwal-pemeliharaan', [JadwalPemeliharaanController::class, 'store'])->name('supervisor.jadwal-pemeliharaan.store');
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}', [JadwalPemeliharaanController::class, 'update'])->name('supervisor.jadwal-pemeliharaan.update');
         Route::delete('/jadwal-pemeliharaan/{jadwalPemeliharaan}', [JadwalPemeliharaanController::class, 'destroy'])->name('supervisor.jadwal-pemeliharaan.destroy');
+
+        // Laporan Pemeliharaan
+        Route::get('/laporan-pemeliharaan', [LaporanPemeliharaanController::class, 'index'])->name('supervisor.laporan-pemeliharaan.index');
+        Route::get('/laporan-pemeliharaan/export-pdf', [LaporanPemeliharaanController::class, 'exportPdf'])->name('supervisor.laporan-pemeliharaan.pdf');
+        Route::get('/laporan-pemeliharaan/export-excel', [LaporanPemeliharaanController::class, 'exportExcel'])->name('supervisor.laporan-pemeliharaan.excel');
+        Route::get('/laporan-pemeliharaan/{jadwal}/export-pdf', [LaporanPemeliharaanController::class, 'exportSatuPdf'])->name('supervisor.laporan-pemeliharaan.pdf.satu');
     });
 
     Route::middleware(['tenagakerja'])->group(function () {
@@ -44,5 +60,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tenagakerja/checklist', [TenagakerjaController::class, 'checklist'])->name('tenagakerja.checklist.index');
         Route::put('/tenagakerja/checklist/{jadwal}/selesai', [TenagakerjaController::class, 'selesai'])->name('tenagakerja.checklist.selesai');
         Route::put('/tenagakerja/checklist/{jadwal}/tolak', [TenagakerjaController::class, 'tolak'])->name('tenagakerja.checklist.tolak');
+        Route::get('/tenagakerja/stok-onderdil', [TenagakerjaController::class, 'stokOnderdil'])->name('tenagakerja.stok-onderdil.index');
     });
 });

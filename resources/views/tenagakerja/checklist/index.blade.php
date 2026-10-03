@@ -544,11 +544,12 @@
             <span>Manajemen<b>Onderdil</b></span>
         </a>
 
-        <div class="nav-menu">
-            <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link active"><i class="bi bi-check2-square"></i> Checklist</a>
-            <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
-        </div>
+    <div class="nav-menu">
+    <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+    <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
+    <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
+    <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+</div>
 
         <div class="d-flex gap-2 align-items-center">
             @auth
@@ -700,6 +701,7 @@
             <div class="col-lg-2 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
+                    <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
                     <li><a href="#"><i class="bi bi-calendar-week"></i> Jadwal</a></li>
                     <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Checklist</a></li>
                     <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>

@@ -4,25 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIMO | Login Panel</title>
-  <!-- Bootstrap 4.5 -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-  <!-- Font Awesome 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
       background: #f0f4f8;
     }
 
-    /* Container utama dengan background soft */
     .container-custom {
       min-height: 100vh;
       display: flex;
@@ -32,7 +24,6 @@
       padding: 20px;
     }
 
-    /* Card utama - hanya login panel, tanpa panel info */
     .card-custom {
       background: white;
       border-radius: 30px;
@@ -44,7 +35,6 @@
       transition: all 0.3s;
     }
 
-    /* Logo area - di tengah */
     .logo-area {
       text-align: center;
       margin-bottom: 2rem;
@@ -56,7 +46,6 @@
       display: inline-block;
     }
 
-    /* Title */
     .welcome-title {
       font-size: 2rem;
       font-weight: 700;
@@ -74,7 +63,6 @@
       text-align: center;
     }
 
-    /* Form group */
     .form-group-custom {
       margin-bottom: 1.8rem;
     }
@@ -122,7 +110,6 @@
       font-weight: 300;
     }
 
-    /* Checkbox */
     .checkbox-custom {
       display: flex;
       align-items: center;
@@ -145,7 +132,6 @@
       margin: 0;
     }
 
-    /* Tombol login */
     .btn-custom {
       width: 100%;
       padding: 1rem;
@@ -166,9 +152,9 @@
     .btn-custom:hover {
       transform: translateY(-2px);
       box-shadow: 0 15px 25px rgba(52, 152, 219, 0.4);
+      color: white;
     }
 
-    /* Link register */
     .register-custom {
       text-align: center;
       margin-top: 2rem;
@@ -190,19 +176,43 @@
       text-decoration: underline;
     }
 
-    /* Responsive */
+    .forgot-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .forgot-link a {
+      color: #e74c3c;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .forgot-link a:hover {
+      color: #c0392b;
+      text-decoration: underline;
+    }
+
+    .forgot-link i {
+      margin-right: 5px;
+    }
+
+    .alert-danger-custom {
+      background: #f8d7da;
+      color: #721c24;
+      border: none;
+      border-left: 4px solid #e53e3e;
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
     @media (max-width: 480px) {
-      .card-custom {
-        padding: 2rem 1.5rem;
-      }
-      
-      .welcome-title {
-        font-size: 1.8rem;
-      }
-      
-      .logo-area img {
-        max-width: 140px;
-      }
+      .card-custom { padding: 2rem 1.5rem; }
+      .welcome-title { font-size: 1.8rem; }
+      .logo-area img { max-width: 140px; }
     }
   </style>
 </head>
@@ -210,11 +220,17 @@
   <div class="container-custom">
     <div class="card-custom">
       <div class="logo-area">
-        <img src="assets/img/logopt.png" alt="SIMO Logo" />
+        <img src="{{ asset('assets/img/logopt.png') }}" alt="SIMO Logo" />
       </div>
 
       <h1 class="welcome-title">Selamat Datang Kembali</h1>
       <p class="welcome-sub">Silakan login untuk mengakses sistem</p>
+
+      @if ($errors->any())
+        <div class="alert-danger-custom">
+          <i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}
+        </div>
+      @endif
 
       <form action="{{ route('login') }}" method="POST">
         @csrf
@@ -223,7 +239,7 @@
           <label for="email">Email</label>
           <div class="input-group-custom">
             <i class="far fa-envelope"></i>
-            <input type="email" class="form-control-custom" name="email" id="email" placeholder="Masukkan email" required />
+            <input type="email" class="form-control-custom" name="email" id="email" placeholder="Masukkan email" value="{{ old('email') }}" required />
           </div>
         </div>
 
@@ -241,14 +257,18 @@
             <i class="far fa-eye" style="margin-right: 5px;"></i> Tampilkan password
           </label>
         </div>
+
         <button type="submit" class="btn-custom">
           <i class="fas fa-sign-in-alt"></i> Masuk ke Sistem
         </button>
       </form>
 
-      {{-- <div class="register-custom">
-        <p>Belum punya akun? <a href="#">Daftar Sekarang</a></p>
-      </div> --}}
+      <div class="forgot-link">
+        <a href="{{ route('password.request') }}">
+          <i class="fas fa-key"></i> Lupa Password?
+        </a>
+      </div>
+
     </div>
   </div>
 
@@ -256,7 +276,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       const showPasswordCheck = document.getElementById('show-password');
       const passwordField = document.getElementById('password');
-      
+
       if (showPasswordCheck && passwordField) {
         showPasswordCheck.addEventListener('change', function() {
           passwordField.type = this.checked ? 'text' : 'password';
@@ -265,7 +285,6 @@
     });
   </script>
 
-  <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

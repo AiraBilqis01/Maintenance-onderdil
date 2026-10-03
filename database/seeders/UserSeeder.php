@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'dimas (Tenaga Kerja)',
-            'email' => 'tenagakerja@gmail.com',
+            'email' => 'fedev1305@gmail.com',
             'no_telepon' => '081234567891',
             'password' => bcrypt('password'),
             'role' => 'tenagakerja',
