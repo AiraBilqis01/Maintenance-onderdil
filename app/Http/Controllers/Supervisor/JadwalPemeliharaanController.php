@@ -19,6 +19,7 @@ class JadwalPemeliharaanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'judul_pemeliharaan' => 'required|string|max:255',
             'tanggal_selesai' => 'required|date',
             'nama_tenaga_kerja' => 'required|exists:users,id',
             'nama_peralatan' => 'required|string|max:255',
@@ -47,6 +48,7 @@ class JadwalPemeliharaanController extends Controller
     public function update(Request $request, JadwalPemeliharaan $jadwalPemeliharaan)
     {
         $data = $request->validate([
+            'judul_pemeliharaan' => 'required|string|max:255',
             'tanggal_selesai' => 'required|date',
             'nama_tenaga_kerja' => 'required|exists:users,id',
             'nama_peralatan' => 'required|string|max:255',

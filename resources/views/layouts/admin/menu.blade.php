@@ -28,12 +28,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="#" class="nav-link text-white">
                 <i class="nav-icon fas fa-tools"></i> 
                 <p>Pelaksanaan Pemeliharaan</p>
             </a>
-        </li>
+        </li> --}}
                         
         <li class="nav-item">
             <a href="{{route('supervisor.stok-onderdil.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.stok-onderdil.index') ? 'active':'')}}">

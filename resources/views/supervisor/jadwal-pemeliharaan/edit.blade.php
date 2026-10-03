@@ -20,6 +20,14 @@
                 </div>
                 <div class="modal-body" style="color: white;">
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="judul_pemeliharaan">Judul Pemeliharaan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="judul_pemeliharaan" value="{{ $jadwalPemeliharaan->judul_pemeliharaan }}" placeholder="Masukkan judul pemeliharaan" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="tanggal_selesai">Tanggal Selesai <span class="text-danger">*</span></label>

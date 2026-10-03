@@ -12,6 +12,7 @@ class JadwalPemeliharaan extends Model
     protected $table = 'jadwal_pemeliharaan';
 
     protected $fillable = [
+        'judul_pemeliharaan',
         'tanggal_selesai',
         'nama_tenaga_kerja',
         'nama_peralatan',

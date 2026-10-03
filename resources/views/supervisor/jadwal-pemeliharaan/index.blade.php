@@ -276,6 +276,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
+                                    <th width="12%">Judul Pemeliharaan</th>
                                     <th width="10%">Tanggal Selesai</th>
                                     <th width="12%">Tenaga Kerja</th>
                                     <th width="12%">Nama Peralatan</th>
@@ -295,6 +296,7 @@
                                 @forelse($jadwalPemeliharaan as $item)
                                 <tr>
                                     <td><span class="badge-custom">{{ $loop->iteration }}</span></td>
+                                    <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
                                     <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
                                     <td>
                                         <strong>{{ $item->user ? $item->user->name : '-' }}</strong>
@@ -324,7 +326,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="14" class="text-center py-4">
+                                    <td colspan="15" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data jadwal pemeliharaan</span>
                                     </td>

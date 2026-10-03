@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('jadwal_pemeliharaan', function (Blueprint $table) {
             $table->id();
+            $table->string('judul_pemeliharaan');
             $table->date('tanggal_selesai');
             $table->string('nama_tenaga_kerja');
             $table->string('nama_peralatan');
