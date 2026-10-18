@@ -348,7 +348,6 @@
         
         <!-- Menu navigasi baru -->
         <div class="nav-menu">
-            <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
             <a href="#" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
             <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
         </div>

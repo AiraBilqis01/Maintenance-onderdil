@@ -18,8 +18,8 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'dimas (Tenaga Kerja)',
-            'email' => 'fedev1305@gmail.com',
+            'name' => 'Rani (Tenaga Kerja)',
+            'email' => 'khairanibilqis2003@gmail.com',
             'no_telepon' => '081234567891',
             'password' => bcrypt('password'),
             'role' => 'tenagakerja',

@@ -306,7 +306,6 @@
 
        <div class="nav-menu">
     <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-    <a href="#" class="nav-link"><i class="bi bi-calendar-week"></i> Jadwal</a>
     <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
     <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
 </div>
