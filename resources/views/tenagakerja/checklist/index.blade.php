@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Checklist Pemeliharaan</title>
+    
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+    
+    <!-- FULLCALENDAR CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet" />
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -206,325 +211,132 @@
             padding: 2rem;
             box-shadow: 0 20px 40px -20px rgba(102, 126, 234, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
         }
 
         #calendar {
             font-family: 'Poppins', sans-serif;
         }
 
-        .fc .fc-toolbar-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2d3748;
+        /* ========================================================= */
+        /* CUSTOM TOOLBAR (HTML Biasa) */
+        /* ========================================================= */
+        .custom-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .fc .fc-button-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
+        .custom-toolbar-left, .custom-toolbar-right {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-custom-view {
+            background: white;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
             border-radius: 10px;
             padding: 0.5rem 1rem;
             font-weight: 500;
-            text-transform: capitalize;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
-        }
-
-        .fc .fc-button-primary:hover {
-            background: linear-gradient(135deg, #5a6fd8, #6845a0);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 14px rgba(102, 126, 234, 0.3);
-        }
-
-        .fc .fc-button-primary:disabled {
-            background: #cbd5e0;
-            box-shadow: none;
-        }
-
-        .fc .fc-button-primary:not(:disabled):active,
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background: linear-gradient(135deg, #4c5bb8, #5b3d8f);
-        }
-
-        .fc-daygrid-day-number,
-        .fc-col-header-cell-cushion {
-            color: #4a5568;
-            font-weight: 500;
-            text-decoration: none;
-        }
-
-        .fc-day-today {
-            background: rgba(102, 126, 234, 0.08) !important;
-        }
-
-        .fc-event {
-            border: none;
-            border-radius: 8px;
-            padding: 3px 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
             cursor: pointer;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
         }
 
-        .fc-event:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
-        }
-
-        .fc-event.status-selesai {
-            background: linear-gradient(135deg, #38b2ac, #48bb78) !important;
-            box-shadow: 0 2px 6px rgba(72, 187, 120, 0.4);
-        }
-
-        .fc-event.status-ditolak {
-            background: linear-gradient(135deg, #fc5c7d, #e53e3e) !important;
-            box-shadow: 0 2px 6px rgba(229, 62, 62, 0.4);
-        }
-
-        .fc-event.status-pending {
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-        }
-
-        .modal-content-modern {
-            border: none;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 40px 80px -20px rgba(102, 126, 234, 0.4);
-        }
-
-        .modal-header-modern {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 1.5rem 2rem;
-            border: none;
-        }
-
-        .modal-header-modern h5 {
-            font-weight: 600;
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .modal-header-modern .btn-close {
-            filter: brightness(0) invert(1);
-            opacity: 0.9;
-        }
-
-        .modal-body-modern {
-            padding: 2rem;
-            background: #fafbff;
-        }
-
-        .detail-row {
-            display: flex;
-            padding: 0.7rem 0;
-            border-bottom: 1px solid #eef2f7;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #4a5568;
-            min-width: 160px;
-            font-size: 0.9rem;
-        }
-
-        .detail-value {
+        .btn-custom-view:hover {
+            background: #f8f9fa;
             color: #2d3748;
-            font-size: 0.9rem;
-            flex: 1;
         }
 
-        .detail-value img {
-            max-width: 200px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .modal-footer-modern {
-            background: #fafbff;
-            border-top: 1px solid #eef2f7;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-
-        .btn-selesai-action {
-            background: linear-gradient(135deg, #38b2ac, #48bb78);
+        .btn-custom-view.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1.4rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.25s;
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+            border-color: transparent;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-selesai-action:hover {
-            background: linear-gradient(135deg, #2f9e99, #38a169);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4);
+        /* Sembunyikan toolbar bawaan FullCalendar karena kita pakai custom */
+        .fc-toolbar.fc-header-toolbar {
+            display: none !important;
         }
 
-        .btn-tolak-action {
-            background: linear-gradient(135deg, #fc5c7d, #e53e3e);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1.4rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.25s;
-            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        /* ========================================================= */
+        /* PAKSAAN WARNA FULLCALENDAR */
+        /* ========================================================= */
+        
+        .fc .fc-col-header-cell-cushion {
+            color: #000000 !important; 
+            font-weight: 600 !important;
+            text-decoration: none !important;
+            padding: 10px 0 !important;
         }
 
-        .btn-tolak-action:hover {
-            background: linear-gradient(135deg, #e04a6a, #c53030);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+        .fc .fc-daygrid-day-number,
+        .fc .fc-daygrid-day-top {
+            color: #2d3748 !important; 
+            font-weight: 500 !important;
+            text-decoration: none !important;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0.5rem 1.1rem;
-            border-radius: 30px;
-            font-weight: 500;
-            font-size: 0.85rem;
+        /* Styling Event/Bulatannya */
+        .fc-event {
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 3px 6px !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            cursor: pointer !important;
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
+            color: #ffffff !important;
         }
 
-        .status-badge.selesai {
-            background: #c6f6d5;
-            color: #22543d;
-        }
+        .fc-event.status-selesai { background: linear-gradient(135deg, #38b2ac, #48bb78) !important; }
+        .fc-event.status-ditolak { background: linear-gradient(135deg, #fc5c7d, #e53e3e) !important; }
+        .fc-day-today { background: rgba(102, 126, 234, 0.08) !important; }
 
-        .status-badge.ditolak {
-            background: #fed7d7;
-            color: #822727;
-        }
-
-        .status-badge.pending {
-            background: #fefcbf;
-            color: #744210;
-        }
-
-        .result-section {
-            margin-top: 1.5rem;
-            padding: 1.2rem;
-            border-radius: 14px;
-        }
-
-        .result-section.selesai {
-            background: #f0fff4;
-            border-left: 4px solid #48bb78;
-        }
-
-        .result-section.ditolak {
-            background: #fff5f5;
-            border-left: 4px solid #e53e3e;
-        }
-
-        .result-section h6 {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
+        /* Modal & Footer */
+        .modal-content-modern { border: none; border-radius: 24px; overflow: hidden; box-shadow: 0 40px 80px -20px rgba(102, 126, 234, 0.4); }
+        .modal-header-modern { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem 2rem; border: none; }
+        .modal-header-modern h5 { font-weight: 600; margin: 0; font-size: 1.2rem; }
+        .modal-header-modern .btn-close { filter: brightness(0) invert(1); opacity: 0.9; }
+        .modal-body-modern { padding: 2rem; background: #fafbff; }
+        .detail-row { display: flex; padding: 0.7rem 0; border-bottom: 1px solid #eef2f7; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-weight: 600; color: #4a5568; min-width: 160px; font-size: 0.9rem; }
+        .detail-value { color: #2d3748; font-size: 0.9rem; flex: 1; }
+        .detail-value img { max-width: 200px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .modal-footer-modern { background: #fafbff; border-top: 1px solid #eef2f7; padding: 1rem 2rem; display: flex; justify-content: flex-end; gap: 0.5rem; }
+        .btn-selesai-action { background: linear-gradient(135deg, #38b2ac, #48bb78); color: white; border: none; border-radius: 10px; padding: 0.6rem 1.4rem; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.25s; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3); }
+        .btn-selesai-action:hover { background: linear-gradient(135deg, #2f9e99, #38a169); color: white; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4); }
+        .btn-tolak-action { background: linear-gradient(135deg, #fc5c7d, #e53e3e); color: white; border: none; border-radius: 10px; padding: 0.6rem 1.4rem; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.25s; box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3); }
+        .btn-tolak-action:hover { background: linear-gradient(135deg, #e04a6a, #c53030); color: white; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4); }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 0.5rem 1.1rem; border-radius: 30px; font-weight: 500; font-size: 0.85rem; }
+        .status-badge.selesai { background: #c6f6d5; color: #22543d; }
+        .status-badge.ditolak { background: #fed7d7; color: #822727; }
+        .status-badge.pending { background: #fefcbf; color: #744210; }
+        .result-section { margin-top: 1.5rem; padding: 1.2rem; border-radius: 14px; }
+        .result-section.selesai { background: #f0fff4; border-left: 4px solid #48bb78; }
+        .result-section.ditolak { background: #fff5f5; border-left: 4px solid #e53e3e; }
+        .result-section h6 { font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem; }
         .result-section.selesai h6 { color: #22543d; }
         .result-section.ditolak h6 { color: #822727; }
-
-        .footer-modern {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            padding: 3rem 0 1.5rem;
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
-            color: #4a5568;
-            position: relative;
-            z-index: 2;
-            margin-top: 4rem;
-        }
-
-        .footer-title {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 1.2rem;
-            font-size: 1.1rem;
-        }
-
-        .footer-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-menu li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-menu a {
-            color: #4a5568;
-            text-decoration: none;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .footer-menu a:hover {
-            color: #667eea;
-            transform: translateX(5px);
-        }
-
-        .footer-menu i {
-            color: #667eea;
-            font-size: 1rem;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
-            padding-top: 1.5rem;
-            margin-top: 2rem;
-            text-align: center;
-            color: #718096;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .social-icons a {
-            width: 36px;
-            height: 36px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #667eea;
-            transition: all 0.3s;
-        }
-
-        .social-icons a:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            transform: translateY(-3px);
-        }
+        .footer-modern { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); padding: 3rem 0 1.5rem; border-top: 1px solid rgba(102, 126, 234, 0.2); color: #4a5568; position: relative; z-index: 2; margin-top: 4rem; }
+        .footer-title { font-weight: 600; color: #2d3748; margin-bottom: 1.2rem; font-size: 1.1rem; }
+        .footer-menu { list-style: none; padding: 0; margin: 0; }
+        .footer-menu li { margin-bottom: 0.8rem; }
+        .footer-menu a { color: #4a5568; text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .footer-menu a:hover { color: #667eea; transform: translateX(5px); }
+        .footer-menu i { color: #667eea; font-size: 1rem; }
+        .footer-bottom { border-top: 1px solid rgba(102, 126, 234, 0.2); padding-top: 1.5rem; margin-top: 2rem; text-align: center; color: #718096; }
+        .social-icons { display: flex; gap: 1rem; justify-content: flex-end; }
+        .social-icons a { width: 36px; height: 36px; background: rgba(102, 126, 234, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #667eea; transition: all 0.3s; }
+        .social-icons a:hover { background: linear-gradient(135deg, #667eea, #764ba2); color: white; transform: translateY(-3px); }
 
         @media (max-width: 992px) {
             .nav-menu { display: none; }
@@ -532,6 +344,8 @@
             .page-title-card { padding: 1.5rem; }
             .page-title-card h2 { font-size: 1.3rem; }
             .calendar-wrapper { padding: 1rem; }
+            .custom-toolbar { flex-direction: column; align-items: stretch; }
+            .custom-toolbar-left, .custom-toolbar-right { justify-content: center; }
         }
     </style>
 </head>
@@ -582,11 +396,27 @@
         </div>
 
         <div class="calendar-wrapper">
+            <!-- CUSTOM TOOLBAR (Hanya Bulan & Minggu) -->
+            <div class="custom-toolbar">
+                <div class="custom-toolbar-left">
+                    <button class="btn btn-custom-view" id="btnPrev"><i class="bi bi-chevron-left"></i></button>
+                    <button class="btn btn-custom-view" id="btnNext"><i class="bi bi-chevron-right"></i></button>
+                    <button class="btn btn-custom-view" id="btnToday">Hari Ini</button>
+                    <h4 id="calendarTitle" class="ms-3 mb-0 fw-bold" style="font-size: 1.2rem; color: #2d3748;"></h4>
+                </div>
+                <div class="custom-toolbar-right">
+                    <button class="btn btn-custom-view active" id="btnBulan">Bulan</button>
+                    <button class="btn btn-custom-view" id="btnMinggu">Minggu</button>
+                </div>
+            </div>
+            
+            <!-- WADAH KALENDER -->
             <div id="calendar"></div>
         </div>
     </div>
 </div>
 
+<!-- MODAL DETAIL -->
 <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -602,6 +432,7 @@
     </div>
 </div>
 
+<!-- MODAL SELESAI -->
 <div class="modal fade" id="modalSelesai" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -645,6 +476,7 @@
     </div>
 </div>
 
+<!-- MODAL TOLAK -->
 <div class="modal fade" id="modalTolak" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -749,20 +581,11 @@
         var calendarEl = document.getElementById('calendar');
         var events = @json($events);
 
+        // Inisialisasi Kalender TANPA headerToolbar bawaan
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
-            },
-            buttonText: {
-                today: 'Hari Ini',
-                month: 'Bulan',
-                week: 'Minggu',
-                list: 'Daftar'
-            },
+            headerToolbar: false, // Matikan toolbar bawaan
             events: events,
             eventClick: function (info) {
                 var props = info.event.extendedProps;
@@ -836,12 +659,49 @@
                 } else {
                     info.el.querySelector('.fc-event-title').innerHTML = '⏳ ' + info.event.title;
                 }
-
-                info.el.setAttribute('title', info.event.title + ' — ' + status);
+            },
+            // Update judul kalender di luar (HTML kita)
+            datesSet: function(info) {
+                var title = info.view.title;
+                // Kapitalisasi huruf pertama
+                title = title.charAt(0).toUpperCase() + title.slice(1);
+                document.getElementById('calendarTitle').innerText = title;
             }
         });
 
         calendar.render();
+
+        // --- FUNGSI UNTUK TOMBOL CUSTOM KITA ---
+        
+        // Tombol Navigasi
+        document.getElementById('btnPrev').addEventListener('click', function() {
+            calendar.prev();
+        });
+        document.getElementById('btnNext').addEventListener('click', function() {
+            calendar.next();
+        });
+        document.getElementById('btnToday').addEventListener('click', function() {
+            calendar.today();
+        });
+
+        // Tombol Ganti Tampilan (Hanya Bulan & Minggu)
+        var btnBulan = document.getElementById('btnBulan');
+        var btnMinggu = document.getElementById('btnMinggu');
+
+        function setActiveButton(activeBtn) {
+            [btnBulan, btnMinggu].forEach(btn => btn.classList.remove('active'));
+            activeBtn.classList.add('active');
+        }
+
+        btnBulan.addEventListener('click', function() {
+            calendar.changeView('dayGridMonth');
+            setActiveButton(btnBulan);
+        });
+
+        btnMinggu.addEventListener('click', function() {
+            calendar.changeView('timeGridWeek');
+            setActiveButton(btnMinggu);
+        });
     });
 
     function openSelesaiModal(id, judul) {
