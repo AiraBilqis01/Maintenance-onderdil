@@ -75,7 +75,7 @@
     <div class="wrapper">
 
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand fixed-top"  style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
+        <nav class="main-header navbar navbar-expand fixed-top"  style="background: linear-gradient(90deg, #38699a 0%, #337c8b 50%, #39868d 100%);">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -100,7 +100,7 @@
         </nav>
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar elevation-4"  style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
+        <aside class="main-sidebar elevation-4"  style="background: linear-gradient(90deg, #38699a 0%, #337c8b 50%, #39868d 100%);">
             <!-- Brand Logo -->
             <a href="#" class="brand-link text-center">
                 <img src="{{ asset('assets/img/logopt.png') }}" alt="Logo" style="width: 70%; height: auto; margin-right: 10px;">
