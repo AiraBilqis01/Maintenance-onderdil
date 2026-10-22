@@ -587,7 +587,7 @@
                 <ul class="footer-menu">
                     <li>
                         <a href="https://maps.app.goo.gl/FwQrd4ReV9ooRBoq9" target="_blank">
-                            <i class="bi bi-geo-alt"></i> Jl. Industri No. 123, Jakarta
+                            <i class="bi bi-geo-alt"></i> Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat
                         </a>
                     </li>
                     <li><i class="bi bi-envelope"></i> info@manajemenonderdil.id</li>
