@@ -272,24 +272,9 @@
             text-align: center;
             color: #718096;
         }
-        .social-icons { display: flex; gap: 1rem; justify-content: flex-end; }
-        .social-icons a {
-            width: 36px; height: 36px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: #667eea;
-            transition: all 0.3s;
-        }
-        .social-icons a:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            transform: translateY(-3px);
-        }
 
         @media (max-width: 992px) {
             .nav-menu { display: none; }
-            .social-icons { justify-content: center; margin-top: 1rem; }
             .page-title-card { padding: 1.5rem; }
             .page-title-card h2 { font-size: 1.3rem; }
         }
@@ -406,47 +391,32 @@
 <footer class="footer-modern">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Onderdil</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen onderdil terintegrasi untuk bengkel dan distributor di seluruh Indonesia.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                </div>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
             </div>
 
-            <div class="col-lg-2 offset-lg-1">
+            <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="#"><i class="bi bi-calendar-week"></i> Jadwal</a></li>
                     <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Checklist</a></li>
                     <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2">
-                <h5 class="footer-title">Lainnya</h5>
-                <ul class="footer-menu">
-                    <li><a href="#"><i class="bi bi-info-circle"></i> Tentang Kami</a></li>
-                    <li><a href="#"><i class="bi bi-envelope"></i> Kontak</a></li>
-                    <li><a href="#"><i class="bi bi-question-circle"></i> Bantuan</a></li>
-                    <li><a href="#"><i class="bi bi-shield-check"></i> Privasi</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-3">
                 <h5 class="footer-title">Kontak</h5>
                 <ul class="footer-menu">
-                    <li><i class="bi bi-geo-alt"></i> Jl. Industri No. 123, Jakarta</li>
-                    <li><i class="bi bi-telephone"></i> (021) 1234-5678</li>
+                    <li>
+                        <a href="https://maps.app.goo.gl/FwQrd4ReV9ooRBoq9" target="_blank">
+                            <i class="bi bi-geo-alt"></i> Jl. Industri No. 123, Jakarta
+                        </a>
+                    </li>
                     <li><i class="bi bi-envelope"></i> info@manajemenonderdil.id</li>
-                    <li><i class="bi bi-clock"></i> Senin - Jumat, 08:00 - 17:00</li>
                 </ul>
             </div>
         </div>

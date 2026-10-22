@@ -6,8 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JadwalPemeliharaan;
 use App\Models\User;
+use App\Models\StokOnderdil;
 use App\Mail\JadwalPemeliharaanMail;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\JadwalPemeliharaanExport;
 
 class JadwalPemeliharaanController extends Controller
 {
@@ -47,7 +51,6 @@ class JadwalPemeliharaanController extends Controller
 
         $jadwal = JadwalPemeliharaan::create($data);
 
-        // Kirim email ke tenaga kerja
         $tenagaKerja = User::find($data['nama_tenaga_kerja']);
         if ($tenagaKerja && $tenagaKerja->email) {
             Mail::to($tenagaKerja->email)->send(new JadwalPemeliharaanMail($jadwal->load('user')));
@@ -89,5 +92,77 @@ class JadwalPemeliharaanController extends Controller
     {
         $jadwalPemeliharaan->delete();
         return back()->with('sukses', 'Jadwal pemeliharaan berhasil dihapus.');
+    }
+
+    public function verifikasiSelesai(JadwalPemeliharaan $jadwalPemeliharaan)
+    {
+        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
+            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
+        }
+
+        if (!empty($jadwalPemeliharaan->nama_onderdil) && !empty($jadwalPemeliharaan->jumlah_pemakaian)) {
+            $stok = StokOnderdil::where('nama_sparepart', $jadwalPemeliharaan->nama_onderdil)->first();
+            
+            if ($stok) {
+                if ($stok->stok_terbaru >= $jadwalPemeliharaan->jumlah_pemakaian) {
+                    $stok->decrement('stok_terbaru', $jadwalPemeliharaan->jumlah_pemakaian);
+                    $stok->increment('pemakaian', $jadwalPemeliharaan->jumlah_pemakaian);
+                } else {
+                    return back()->withErrors(['error' => 'Gagal verifikasi: Stok fisik saat ini tidak mencukupi untuk dipotong.']);
+                }
+            }
+        }
+
+        $jadwalPemeliharaan->update(['status' => 'selesai']);
+
+        return back()->with('sukses', 'Laporan berhasil diverifikasi. Stok dan pemakaian onderdil telah diperbarui.');
+    }
+
+    public function verifikasiTolak(JadwalPemeliharaan $jadwalPemeliharaan)
+    {
+        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
+            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
+        }
+
+        $jadwalPemeliharaan->update(['status' => 'ditolak']); 
+
+        return back()->with('sukses', 'Laporan penolakan telah disetujui.');
+    }
+
+    public function tolakJadwal(Request $request, JadwalPemeliharaan $jadwalPemeliharaan)
+    {
+        $data = $request->validate([
+            'keterangan_tolak' => 'required|string',
+            'alasan_penolakan' => 'required|string',
+        ]);
+
+        if ($jadwalPemeliharaan->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya jadwal dengan status Pending yang bisa ditolak.']);
+        }
+
+        $data['status'] = 'ditolak';
+        $jadwalPemeliharaan->update($data);
+
+        return back()->with('sukses', 'Jadwal pemeliharaan berhasil dibatalkan/ditolak oleh Supervisor.');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $jadwal = JadwalPemeliharaan::with('user')->get();
+        $judul = 'Laporan Jadwal Pemeliharaan';
+        $periode = 'Semua Data';
+
+        $pdf = Pdf::loadView('supervisor.jadwal-pemeliharaan.pdf', compact('jadwal', 'judul', 'periode'))
+                    ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-jadwal-pemeliharaan-' . date('Ymd-His') . '.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(
+            new JadwalPemeliharaanExport($request),
+            'laporan-jadwal-pemeliharaan-' . date('Ymd-His') . '.xlsx'
+        );
     }
 }

@@ -4,13 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\JadwalPemeliharaan;
+use App\Models\StokOnderdil;
 use Illuminate\Support\Facades\Hash;
 
 class SupervisorController extends Controller
 {
-   public function index()
+    public function index()
     {
-        return view('supervisor.dashboard');
+        $totalTenagaKerja = User::where('role', 'TenagaKerja')->count();
+        $totalLaporan = JadwalPemeliharaan::count();
+        $totalSparepart = StokOnderdil::count();
+        
+        $stokMenipis = StokOnderdil::where('stok_terbaru', '<', 10)->orderBy('stok_terbaru', 'asc')->take(5)->get();
+        $totalStokMenipis = StokOnderdil::where('stok_terbaru', '<', 10)->count();
+
+        return view('supervisor.dashboard', compact(
+            'totalTenagaKerja', 
+            'totalLaporan', 
+            'totalSparepart', 
+            'stokMenipis',
+            'totalStokMenipis'
+        ));
     }
 
     public function kelolaSupervisor()
@@ -73,6 +88,8 @@ class SupervisorController extends Controller
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor', 
+            'keahlian' => 'required|string|max:255',                 
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -89,6 +106,8 @@ class SupervisorController extends Controller
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon,' . $tenagaKerja->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $tenagaKerja->id,
             'password' => 'nullable|string|min:6|confirmed',
+            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor', 
+            'keahlian' => 'required|string|max:255',                 
         ]);
 
         if (!empty($data['password'])) {

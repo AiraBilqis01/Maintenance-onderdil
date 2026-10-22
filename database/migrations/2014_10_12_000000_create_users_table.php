@@ -16,6 +16,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('tenagakerja'); 
+            
+            $table->string('jenis_pelaksana')->nullable(); 
+            $table->string('keahlian')->nullable();        
+
             $table->rememberToken();
             $table->timestamps();
         });

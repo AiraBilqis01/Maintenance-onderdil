@@ -23,6 +23,8 @@ class UserSeeder extends Seeder
             'no_telepon' => '081234567891',
             'password' => bcrypt('password'),
             'role' => 'tenagakerja',
+            'jenis_pelaksana' => 'Internal',
+            'keahlian' => 'Mekanik Mesin',
         ]);
     }
 }

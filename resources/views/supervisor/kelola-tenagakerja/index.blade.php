@@ -79,7 +79,7 @@
     }
     
     .table-custom {
-        min-width: 650px;
+        min-width: 900px; /* Diperlebar karena ada kolom tambahan */
         margin-bottom: 0;
     }
     
@@ -120,27 +120,14 @@
         color: #4a5568;
     }
     
-    .badge-stok {
-        display: inline-block;
-        padding: 0.3rem 0.8rem;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.8rem;
+    /* Styling tambahan untuk badge jenis pelaksana */
+    .badge-internal {
+        background: #e6fffa;
+        color: #234e52;
     }
-    
-    .badge-stok.bg-success {
-        background: #c6f6d5;
-        color: #22543d;
-    }
-    
-    .badge-stok.bg-warning {
-        background: #fefcbf;
-        color: #744210;
-    }
-    
-    .badge-stok.bg-danger {
-        background: #fed7d7;
-        color: #9b2c2c;
+    .badge-subkontraktor {
+        background: #fffaf0;
+        color: #7b341e;
     }
     
     .alert-custom {
@@ -274,10 +261,12 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th width="25%">Nama</th>
-                                    <th width="20%">No Telepon</th>
-                                    <th width="30%">Email</th>
-                                    <th width="20%">Aksi</th>
+                                    <th width="20%">Nama</th>
+                                    <th width="15%">No Telepon</th>
+                                    <th width="20%">Email</th>
+                                    <th width="15%">Jenis Pelaksana</th> <!-- KOLOM BARU -->
+                                    <th width="15%">Keahlian</th> <!-- KOLOM BARU -->
+                                    <th width="10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -287,6 +276,20 @@
                                     <td><strong>{{ $tk->name }}</strong></td>
                                     <td>{{ $tk->no_telepon }}</td>
                                     <td>{{ $tk->email }}</td>
+                                    
+                                    <!-- DATA BARU DITAMPILKAN DI SINI -->
+                                    <td>
+                                        @if($tk->jenis_pelaksana == 'Internal')
+                                            <span class="badge-custom badge-internal"><i class="fas fa-building mr-1"></i> Internal</span>
+                                        @elseif($tk->jenis_pelaksana == 'Subkontraktor')
+                                            <span class="badge-custom badge-subkontraktor"><i class="fas fa-handshake mr-1"></i> Subkontraktor</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $tk->keahlian ?? '-' }}</td>
+                                    <!-- END DATA BARU -->
+
                                     <td>
                                         @include('supervisor.kelola-tenagakerja.edit', ['tenagaKerja' => $tk])
                                         @include('supervisor.kelola-tenagakerja.delete', ['tenagaKerja' => $tk])
@@ -294,7 +297,8 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4">
+                                    <!-- Colspan diubah dari 5 menjadi 7 -->
+                                    <td colspan="7" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data tenaga kerja</span>
                                     </td>

@@ -16,6 +16,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="color: white;">
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -30,6 +31,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -39,19 +41,40 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="jenis_pelaksana">Jenis Pelaksana <span class="text-danger">*</span></label>
+                                <select name="jenis_pelaksana" class="form-control" required>
+                                    <option value="" disabled selected>-- Pilih Jenis Pelaksana --</option>
+                                    <option value="Internal">Internal</option>
+                                    <option value="Subkontraktor">Subkontraktor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="keahlian">Keahlian <span class="text-danger">*</span></label>
+                                <input type="text" name="keahlian" class="form-control" placeholder="Contoh: Mekanik Mesin, Las Listrik, dll" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="password">Password <span class="text-danger">*</span></label>
                                 <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password_confirmation">Konfirmasi Password <span class="text-danger">*</span></label>
                                 <input type="password" name="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">

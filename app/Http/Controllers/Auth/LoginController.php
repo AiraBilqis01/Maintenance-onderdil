@@ -5,35 +5,19 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Tambahan import
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    /**
-     * Fallback redirect jika role user tidak dikenal.
-     *
-     * @var string
-     */
     protected $redirectTo = '/';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
-    /**
-     * Redirect user setelah login berdasarkan role.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return \Illuminate\Http\RedirectResponse
-     */
     protected function authenticated(Request $request, $user)
     {
         if ($user->role === 'supervisor') {
@@ -45,5 +29,15 @@ class LoginController extends Controller
         }
 
         return redirect('/');
+    }
+
+    // TAMBAHKAN FUNGSI INI
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login')->with('status', 'Anda telah berhasil logout.');
     }
 }

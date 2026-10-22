@@ -353,14 +353,16 @@
     <thead>
         <tr>
             <th width="3%">No</th>
-            <th width="11%">Judul Pemeliharaan</th>
-            <th width="9%">Tenaga Kerja</th>
-            <th width="10%">Peralatan</th>
-            <th width="7%">Lokasi</th>
-            <th width="7%">Tgl Selesai</th>
-            <th width="7%">Status</th>
+            <th width="10%">Judul Pemeliharaan</th>
+            <th width="8%">Tenaga Kerja</th>
+            <th width="9%">Peralatan</th>
+            <th width="6%">Lokasi</th>
+            <th width="6%">Tgl Selesai</th>
+            <th width="6%">Status</th>
+            <th width="10%">Nama Onderdil</th>
+            <th width="6%">Jumlah Pakai</th>
             <th width="12%">Detail Penyelesaian</th>
-            <th width="12%">Alasan Penolakan</th>
+            <th width="10%">Alasan Penolakan</th>
             <th width="8%">Bukti</th>
         </tr>
     </thead>
@@ -382,6 +384,11 @@
                     <span class="badge badge-pending">⏳ Pending</span>
                 @endif
             </td>
+            
+            {{-- KOLOM BARU: NAMA ONDERDIL & JUMLAH PEMAKAIAN --}}
+            <td>{{ $item->nama_onderdil ?? '-' }}</td>
+            <td style="text-align: center; font-weight: bold;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
+
             <td>{{ $item->detail_penyelesaian ?? '-' }}</td>
             <td>{{ $item->alasan_penolakan ?? '-' }}</td>
             <td class="foto-cell">

@@ -12,10 +12,8 @@ class TenagakerjaController extends Controller
     public function index()
     {
         $userId = Auth::id();
-
         $jadwal = JadwalPemeliharaan::where('nama_tenaga_kerja', $userId)
-                    ->orderBy('tanggal_selesai', 'desc')
-                    ->get();
+                    ->orderBy('tanggal_selesai', 'desc')->get();
 
         $total   = $jadwal->count();
         $pending = $jadwal->where('status', 'pending')->count();
@@ -28,6 +26,7 @@ class TenagakerjaController extends Controller
     public function checklist()
     {
         $jadwal = JadwalPemeliharaan::where('nama_tenaga_kerja', Auth::id())->get();
+        $stokOnderdil = StokOnderdil::orderBy('nama_sparepart')->get();
 
         $events = $jadwal->map(function ($item) {
             return [
@@ -47,24 +46,28 @@ class TenagakerjaController extends Controller
                     'keterangan' => $item->keterangan,
                     'gambar' => $item->gambar,
                     'nama_onderdil' => $item->nama_onderdil,
+                    'jumlah_pemakaian' => $item->jumlah_pemakaian,
                     'detail_penyelesaian' => $item->detail_penyelesaian,
                     'gambar_bukti' => $item->gambar_bukti,
+                    'bukti_pemakaian_onderdil' => $item->bukti_pemakaian_onderdil,
                     'keterangan_tolak' => $item->keterangan_tolak,
                     'alasan_penolakan' => $item->alasan_penolakan,
                 ],
             ];
         });
 
-        return view('tenagakerja.checklist.index', compact('jadwal', 'events'));
+        return view('tenagakerja.checklist.index', compact('jadwal', 'events', 'stokOnderdil'));
     }
 
     public function selesai(Request $request, JadwalPemeliharaan $jadwal)
     {
         $data = $request->validate([
             'nama_onderdil' => 'nullable|string|max:255',
+            'jumlah_pemakaian' => 'nullable|integer|min:1',
             'tanggal_selesai' => 'required|date',
             'detail_penyelesaian' => 'required|string',
             'gambar_bukti' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'bukti_pemakaian_onderdil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('gambar_bukti')) {
@@ -74,10 +77,18 @@ class TenagakerjaController extends Controller
             $data['gambar_bukti'] = 'assets/img/' . $imageName;
         }
 
-        $data['status'] = 'selesai';
+        if ($request->hasFile('bukti_pemakaian_onderdil')) {
+            $imageOnderdil = $request->file('bukti_pemakaian_onderdil');
+            $imageNameOnderdil = time() . '_pemakaian.' . $imageOnderdil->getClientOriginalExtension();
+            $imageOnderdil->move(public_path('assets/img'), $imageNameOnderdil);
+            $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $imageNameOnderdil;
+        }
+        
+        // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
+        $data['status'] = 'menunggu_verifikasi';
         $jadwal->update($data);
 
-        return back()->with('sukses', 'Pemeliharaan berhasil diselesaikan.');
+        return back()->with('sukses', 'Laporan pemeliharaan berhasil dikirim. Menunggu verifikasi Supervisor.');
     }
 
     public function tolak(Request $request, JadwalPemeliharaan $jadwal)
@@ -87,10 +98,11 @@ class TenagakerjaController extends Controller
             'alasan_penolakan' => 'required|string',
         ]);
 
-        $data['status'] = 'ditolak';
+        // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
+        $data['status'] = 'menunggu_verifikasi';
         $jadwal->update($data);
 
-        return back()->with('sukses', 'Pemeliharaan berhasil ditolak.');
+        return back()->with('sukses', 'Pengajuan penolakan berhasil dikirim. Menunggu persetujuan Supervisor.');
     }
 
     public function stokOnderdil()

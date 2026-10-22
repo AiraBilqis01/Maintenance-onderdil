@@ -209,6 +209,18 @@
       font-size: 0.9rem;
     }
 
+    /* TAMBAHAN CSS UNTUK NOTIFIKASI SUKSES */
+    .alert-success-custom {
+      background: #d4edda;
+      color: #155724;
+      border: none;
+      border-left: 4px solid #28a745;
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
     @media (max-width: 480px) {
       .card-custom { padding: 2rem 1.5rem; }
       .welcome-title { font-size: 1.8rem; }
@@ -226,6 +238,14 @@
       <h1 class="welcome-title">Selamat Datang Kembali</h1>
       <p class="welcome-sub">Silakan login untuk mengakses sistem</p>
 
+      {{-- TAMBAHAN: Notifikasi Sukses Logout --}}
+      @if (session('status'))
+        <div class="alert-success-custom">
+          <i class="fas fa-check-circle"></i> {{ session('status') }}
+        </div>
+      @endif
+
+      {{-- Notifikasi Error Validasi / Login --}}
       @if ($errors->any())
         <div class="alert-danger-custom">
           <i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}

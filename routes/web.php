@@ -14,13 +14,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// ===== Route Custom Lupa & Reset Password =====
 Route::get('password/reset', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
 Route::post('password/email', [ForgotPasswordController::class, 'submitForgotRequest'])->name('password.email');
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-// Auth routes bawaan (login, register, logout)
 Auth::routes(['reset' => false, 'verify' => true]);
 
 Route::middleware(['auth'])->group(function () {
@@ -39,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/kelola-tenagakerja/{tenagaKerja}', [SupervisorController::class, 'destroyTenagaKerja'])->name('supervisor.kelola-tenagakerja.destroy');
 
         Route::get('/stok-onderdil', [StokOnderdilController::class, 'index'])->name('supervisor.stok-onderdil.index');
+        Route::get('/stok-onderdil/export-pdf', [StokOnderdilController::class, 'exportPdf'])->name('supervisor.stok-onderdil.pdf');
+        Route::get('/stok-onderdil/export-excel', [StokOnderdilController::class, 'exportExcel'])->name('supervisor.stok-onderdil.excel');
         Route::post('/stok-onderdil', [StokOnderdilController::class, 'store'])->name('supervisor.stok-onderdil.store');
         Route::put('/stok-onderdil/{stokOnderdil}', [StokOnderdilController::class, 'update'])->name('supervisor.stok-onderdil.update');
         Route::delete('/stok-onderdil/{stokOnderdil}', [StokOnderdilController::class, 'destroy'])->name('supervisor.stok-onderdil.destroy');
@@ -48,7 +48,13 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}', [JadwalPemeliharaanController::class, 'update'])->name('supervisor.jadwal-pemeliharaan.update');
         Route::delete('/jadwal-pemeliharaan/{jadwalPemeliharaan}', [JadwalPemeliharaanController::class, 'destroy'])->name('supervisor.jadwal-pemeliharaan.destroy');
 
-        // Laporan Pemeliharaan
+        Route::get('/jadwal-pemeliharaan/export-pdf', [JadwalPemeliharaanController::class, 'exportPdf'])->name('supervisor.jadwal-pemeliharaan.pdf');
+        Route::get('/jadwal-pemeliharaan/export-excel', [JadwalPemeliharaanController::class, 'exportExcel'])->name('supervisor.jadwal-pemeliharaan.excel');
+
+        Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/verifikasi-selesai', [JadwalPemeliharaanController::class, 'verifikasiSelesai'])->name('supervisor.jadwal-pemeliharaan.verifikasi-selesai');
+        Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/verifikasi-tolak', [JadwalPemeliharaanController::class, 'verifikasiTolak'])->name('supervisor.jadwal-pemeliharaan.verifikasi-tolak');
+        Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/tolak-jadwal', [JadwalPemeliharaanController::class, 'tolakJadwal'])->name('supervisor.jadwal-pemeliharaan.tolak-jadwal');
+
         Route::get('/laporan-pemeliharaan', [LaporanPemeliharaanController::class, 'index'])->name('supervisor.laporan-pemeliharaan.index');
         Route::get('/laporan-pemeliharaan/export-pdf', [LaporanPemeliharaanController::class, 'exportPdf'])->name('supervisor.laporan-pemeliharaan.pdf');
         Route::get('/laporan-pemeliharaan/export-excel', [LaporanPemeliharaanController::class, 'exportExcel'])->name('supervisor.laporan-pemeliharaan.excel');

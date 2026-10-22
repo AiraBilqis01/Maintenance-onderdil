@@ -6,15 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Checklist Pemeliharaan</title>
     
-    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FULLCALENDAR CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet" />
     
     <style>
+        /* =========================================
+           1. GLOBAL & BODY
+           ========================================= */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
@@ -23,25 +23,23 @@
             min-height: 100vh;
             position: relative;
         }
-
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 30%),
-                        radial-gradient(circle at 90% 70%, rgba(118, 75, 162, 0.06) 0%, transparent 35%),
-                        radial-gradient(circle at 30% 80%, rgba(102, 126, 234, 0.04) 0%, transparent 40%);
+                        radial-gradient(circle at 90% 70%, rgba(118, 75, 162, 0.06) 0%, transparent 35%);
             pointer-events: none;
             z-index: 0;
         }
 
+        /* =========================================
+           2. NAVBAR
+           ========================================= */
         .navbar-blur {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 8px 30px rgba(102, 126, 234, 0.1);
             padding: 16px 0;
             border-bottom: 1px solid rgba(102, 126, 234, 0.2);
@@ -50,7 +48,6 @@
         }
         .navbar-brand {
             font-weight: 700;
-            letter-spacing: -0.02em;
             color: #2d3748 !important;
             display: flex;
             align-items: center;
@@ -62,15 +59,8 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 4px 6px rgba(102, 126, 234, 0.3));
         }
-
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-            margin-left: 2rem;
-        }
+        .nav-menu { display: flex; gap: 2rem; margin-left: 2rem; }
         .nav-menu .nav-link {
             color: #4a5568;
             font-weight: 500;
@@ -79,29 +69,21 @@
             transition: all 0.3s;
             text-decoration: none;
         }
-        .nav-menu .nav-link:hover,
-        .nav-menu .nav-link.active {
-            color: #667eea;
-        }
+        .nav-menu .nav-link:hover, .nav-menu .nav-link.active { color: #667eea; }
         .nav-menu .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             transition: width 0.3s;
         }
-        .nav-menu .nav-link:hover::after,
-        .nav-menu .nav-link.active::after {
-            width: 100%;
-        }
-        .nav-menu .nav-link i {
-            margin-right: 5px;
-            font-size: 1.1rem;
-        }
+        .nav-menu .nav-link:hover::after, .nav-menu .nav-link.active::after { width: 100%; }
+        .nav-menu .nav-link i { margin-right: 5px; font-size: 1.1rem; }
 
+        /* =========================================
+           3. TOMBOL LOGIN/LOGOUT
+           ========================================= */
         .btn-login-modern {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -111,12 +93,9 @@
             border: none;
             transition: 0.25s ease;
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
-            letter-spacing: 0.3px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            position: relative;
-            z-index: 10;
             text-decoration: none;
         }
         .btn-login-modern:hover {
@@ -125,7 +104,6 @@
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
         }
-
         .btn-logout-modern {
             background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
             color: white;
@@ -135,12 +113,9 @@
             border: none;
             transition: 0.25s ease;
             box-shadow: 0 6px 16px rgba(252, 92, 125, 0.3);
-            letter-spacing: 0.3px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            position: relative;
-            z-index: 10;
         }
         .btn-logout-modern:hover {
             background: linear-gradient(135deg, #e04a6a 0%, #5872e8 100%);
@@ -149,12 +124,10 @@
             box-shadow: 0 12px 24px rgba(252, 92, 125, 0.4);
         }
 
-        .page-content {
-            padding: 7rem 0 4rem 0;
-            position: relative;
-            z-index: 2;
-        }
-
+        /* =========================================
+           4. PAGE CONTENT & TITLE CARD
+           ========================================= */
+        .page-content { padding: 7rem 0 4rem 0; position: relative; z-index: 2; }
         .page-title-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
@@ -169,28 +142,14 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-
-        .page-title-card h2 {
-            font-weight: 700;
-            color: #2d3748;
-            margin: 0;
-            font-size: 1.7rem;
-        }
-
+        .page-title-card h2 { font-weight: 700; color: #2d3748; margin: 0; font-size: 1.7rem; }
         .page-title-card h2 i {
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-right: 10px;
         }
-
-        .page-title-card p {
-            color: #718096;
-            margin: 0.3rem 0 0 0;
-            font-size: 0.95rem;
-        }
-
+        .page-title-card p { color: #718096; margin: 0.3rem 0 0 0; font-size: 0.95rem; }
         .user-badge {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -204,6 +163,9 @@
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
         }
 
+        /* =========================================
+           5. CALENDAR WRAPPER & CUSTOM TOOLBAR
+           ========================================= */
         .calendar-wrapper {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
@@ -213,14 +175,7 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             position: relative;
         }
-
-        #calendar {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* ========================================================= */
-        /* CUSTOM TOOLBAR (HTML Biasa) */
-        /* ========================================================= */
+        #calendar { font-family: 'Poppins', sans-serif; }
         .custom-toolbar {
             display: flex;
             justify-content: space-between;
@@ -229,13 +184,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-
-        .custom-toolbar-left, .custom-toolbar-right {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
+        .custom-toolbar-left, .custom-toolbar-right { display: flex; gap: 0.5rem; align-items: center; }
         .btn-custom-view {
             background: white;
             color: #4a5568;
@@ -247,12 +196,7 @@
             transition: all 0.2s;
             cursor: pointer;
         }
-
-        .btn-custom-view:hover {
-            background: #f8f9fa;
-            color: #2d3748;
-        }
-
+        .btn-custom-view:hover { background: #f8f9fa; color: #2d3748; }
         .btn-custom-view.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -260,49 +204,59 @@
             box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
 
-        /* Sembunyikan toolbar bawaan FullCalendar karena kita pakai custom */
-        .fc-toolbar.fc-header-toolbar {
-            display: none !important;
-        }
-
-        /* ========================================================= */
-        /* PAKSAAN WARNA FULLCALENDAR */
-        /* ========================================================= */
-        
+        /* =========================================
+           6. OVERRIDE FULLCALENDAR (WARNA & EVENT)
+           ========================================= */
+        .fc-toolbar.fc-header-toolbar { display: none !important; }
         .fc .fc-col-header-cell-cushion {
-            color: #000000 !important; 
+            color: #000000 !important;
             font-weight: 600 !important;
             text-decoration: none !important;
             padding: 10px 0 !important;
         }
-
-        .fc .fc-daygrid-day-number,
-        .fc .fc-daygrid-day-top {
-            color: #2d3748 !important; 
+        .fc .fc-daygrid-day-number, .fc .fc-daygrid-day-top {
+            color: #2d3748 !important;
             font-weight: 500 !important;
             text-decoration: none !important;
         }
-
-        /* Styling Event/Bulatannya */
-        .fc-event {
+        
+        /* --- PERBAIKAN WARNA EVENT DISINI --- */
+        .fc-event, .fc-event-dot {
             border: none !important;
             border-radius: 8px !important;
             padding: 3px 6px !important;
             font-size: 0.8rem !important;
             font-weight: 500 !important;
             cursor: pointer !important;
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
             color: #ffffff !important;
         }
-
         .fc-event.status-selesai { background: linear-gradient(135deg, #38b2ac, #48bb78) !important; }
         .fc-event.status-ditolak { background: linear-gradient(135deg, #fc5c7d, #e53e3e) !important; }
+        .fc-event.status-menunggu_verifikasi { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; }
         .fc-day-today { background: rgba(102, 126, 234, 0.08) !important; }
 
-        /* Modal & Footer */
-        .modal-content-modern { border: none; border-radius: 24px; overflow: hidden; box-shadow: 0 40px 80px -20px rgba(102, 126, 234, 0.4); }
-        .modal-header-modern { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem 2rem; border: none; }
+        /* PAKSA WARNA TEKS EVENT JADI HITAM */
+        .fc-event-title, .fc-event-time, .fc-event-title-container {
+            color: #000000 !important;
+            font-weight: 600 !important;
+        }
+
+        /* =========================================
+           7. MODAL DETAIL & FORM
+           ========================================= */
+        .modal-content-modern {
+            border: none;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px -20px rgba(102, 126, 234, 0.4);
+        }
+        .modal-header-modern {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem 2rem;
+            border: none;
+        }
         .modal-header-modern h5 { font-weight: 600; margin: 0; font-size: 1.2rem; }
         .modal-header-modern .btn-close { filter: brightness(0) invert(1); opacity: 0.9; }
         .modal-body-modern { padding: 2rem; background: #fafbff; }
@@ -311,36 +265,125 @@
         .detail-label { font-weight: 600; color: #4a5568; min-width: 160px; font-size: 0.9rem; }
         .detail-value { color: #2d3748; font-size: 0.9rem; flex: 1; }
         .detail-value img { max-width: 200px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .modal-footer-modern { background: #fafbff; border-top: 1px solid #eef2f7; padding: 1rem 2rem; display: flex; justify-content: flex-end; gap: 0.5rem; }
-        .btn-selesai-action { background: linear-gradient(135deg, #38b2ac, #48bb78); color: white; border: none; border-radius: 10px; padding: 0.6rem 1.4rem; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.25s; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3); }
-        .btn-selesai-action:hover { background: linear-gradient(135deg, #2f9e99, #38a169); color: white; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4); }
-        .btn-tolak-action { background: linear-gradient(135deg, #fc5c7d, #e53e3e); color: white; border: none; border-radius: 10px; padding: 0.6rem 1.4rem; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.25s; box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3); }
-        .btn-tolak-action:hover { background: linear-gradient(135deg, #e04a6a, #c53030); color: white; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4); }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 0.5rem 1.1rem; border-radius: 30px; font-weight: 500; font-size: 0.85rem; }
+        .modal-footer-modern {
+            background: #fafbff;
+            border-top: 1px solid #eef2f7;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* =========================================
+           8. TOMBOL AKSI MODAL (SELESAI/TOLAK)
+           ========================================= */
+        .btn-selesai-action {
+            background: linear-gradient(135deg, #38b2ac, #48bb78);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.4rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+        .btn-selesai-action:hover {
+            background: linear-gradient(135deg, #2f9e99, #38a169);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4);
+        }
+        .btn-tolak-action {
+            background: linear-gradient(135deg, #fc5c7d, #e53e3e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.4rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s;
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        }
+        .btn-tolak-action:hover {
+            background: linear-gradient(135deg, #e04a6a, #c53030);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+        }
+
+        /* =========================================
+           9. BADGE STATUS
+           ========================================= */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.5rem 1.1rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
         .status-badge.selesai { background: #c6f6d5; color: #22543d; }
         .status-badge.ditolak { background: #fed7d7; color: #822727; }
         .status-badge.pending { background: #fefcbf; color: #744210; }
+        .status-badge.menunggu { background: #dbeafe; color: #1e40af; }
+
+        /* =========================================
+           10. SECTION HASIL DETAIL
+           ========================================= */
         .result-section { margin-top: 1.5rem; padding: 1.2rem; border-radius: 14px; }
         .result-section.selesai { background: #f0fff4; border-left: 4px solid #48bb78; }
         .result-section.ditolak { background: #fff5f5; border-left: 4px solid #e53e3e; }
         .result-section h6 { font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem; }
         .result-section.selesai h6 { color: #22543d; }
         .result-section.ditolak h6 { color: #822727; }
-        .footer-modern { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); padding: 3rem 0 1.5rem; border-top: 1px solid rgba(102, 126, 234, 0.2); color: #4a5568; position: relative; z-index: 2; margin-top: 4rem; }
+
+        /* =========================================
+           11. FOOTER
+           ========================================= */
+        .footer-modern {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 3rem 0 1.5rem;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            color: #4a5568;
+            position: relative;
+            z-index: 2;
+            margin-top: 4rem;
+        }
         .footer-title { font-weight: 600; color: #2d3748; margin-bottom: 1.2rem; font-size: 1.1rem; }
         .footer-menu { list-style: none; padding: 0; margin: 0; }
         .footer-menu li { margin-bottom: 0.8rem; }
-        .footer-menu a { color: #4a5568; text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .footer-menu a {
+            color: #4a5568;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
         .footer-menu a:hover { color: #667eea; transform: translateX(5px); }
         .footer-menu i { color: #667eea; font-size: 1rem; }
-        .footer-bottom { border-top: 1px solid rgba(102, 126, 234, 0.2); padding-top: 1.5rem; margin-top: 2rem; text-align: center; color: #718096; }
-        .social-icons { display: flex; gap: 1rem; justify-content: flex-end; }
-        .social-icons a { width: 36px; height: 36px; background: rgba(102, 126, 234, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #667eea; transition: all 0.3s; }
-        .social-icons a:hover { background: linear-gradient(135deg, #667eea, #764ba2); color: white; transform: translateY(-3px); }
+        .footer-bottom {
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: #718096;
+        }
 
+        /* =========================================
+           12. RESPONSIVE (MOBILE)
+           ========================================= */
         @media (max-width: 992px) {
             .nav-menu { display: none; }
-            .social-icons { justify-content: center; margin-top: 1rem; }
             .page-title-card { padding: 1.5rem; }
             .page-title-card h2 { font-size: 1.3rem; }
             .calendar-wrapper { padding: 1rem; }
@@ -357,13 +400,11 @@
             <i class="bi bi-tools"></i>
             <span>Manajemen<b>Onderdil</b></span>
         </a>
-
-    <div class="nav-menu">
-    <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-    <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
-    <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
-</div>
-
+        <div class="nav-menu">
+            <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
+            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+        </div>
         <div class="d-flex gap-2 align-items-center">
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -396,7 +437,6 @@
         </div>
 
         <div class="calendar-wrapper">
-            <!-- CUSTOM TOOLBAR (Hanya Bulan & Minggu) -->
             <div class="custom-toolbar">
                 <div class="custom-toolbar-left">
                     <button class="btn btn-custom-view" id="btnPrev"><i class="bi bi-chevron-left"></i></button>
@@ -409,14 +449,11 @@
                     <button class="btn btn-custom-view" id="btnMinggu">Minggu</button>
                 </div>
             </div>
-            
-            <!-- WADAH KALENDER -->
             <div id="calendar"></div>
         </div>
     </div>
 </div>
 
-<!-- MODAL DETAIL -->
 <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -424,15 +461,12 @@
                 <h5><i class="bi bi-calendar-check me-2"></i> Detail Pemeliharaan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body modal-body-modern" id="eventDetailBody">
-            </div>
-            <div class="modal-footer modal-footer-modern" id="eventDetailFooter">
-            </div>
+            <div class="modal-body modal-body-modern" id="eventDetailBody"></div>
+            <div class="modal-footer modal-footer-modern" id="eventDetailFooter"></div>
         </div>
     </div>
 </div>
 
-<!-- MODAL SELESAI -->
 <div class="modal fade" id="modalSelesai" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -450,7 +484,26 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Onderdil <small class="text-muted">(opsional)</small></label>
-                        <input type="text" class="form-control" name="nama_onderdil" placeholder="Tergantung kerusakan">
+                        <select class="form-control" name="nama_onderdil" id="select_nama_onderdil">
+                            <option value="">-- Tidak menggunakan onderdil --</option>
+                            @foreach($stokOnderdil as $stok)
+                                <option value="{{ $stok->nama_sparepart }}">{{ $stok->nama_sparepart }} (Stok: {{ $stok->stok_terbaru }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="d-none" id="wrapper_bukti_onderdil">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold text-danger">Jumlah Pemakaian <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="jumlah_pemakaian" id="input_jumlah_pemakaian" min="1" value="1">
+                                <small class="text-muted">Berapa unit yang dipakai?</small>
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label fw-semibold text-danger">Upload Bukti Pemakaian <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" name="bukti_pemakaian_onderdil" accept="image/*">
+                                <small class="text-muted">Wajib diisi karena Anda memilih onderdil.</small>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Tanggal Selesai <span class="text-danger">*</span></label>
@@ -461,7 +514,7 @@
                         <textarea class="form-control" name="detail_penyelesaian" rows="4" placeholder="Jelaskan detail penyelesaian..." required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Gambar <small class="text-muted">(Bukti Penyelesaian)</small></label>
+                        <label class="form-label fw-semibold">Gambar <small class="text-muted">(Bukti Penyelesaian Alat)</small></label>
                         <input type="file" class="form-control" name="gambar_bukti" accept="image/*">
                     </div>
                 </div>
@@ -476,7 +529,6 @@
     </div>
 </div>
 
-<!-- MODAL TOLAK -->
 <div class="modal fade" id="modalTolak" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-content-modern">
@@ -515,51 +567,33 @@
 <footer class="footer-modern">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Onderdil</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen onderdil terintegrasi untuk bengkel dan distributor di seluruh Indonesia.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                </div>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
             </div>
-
-            <div class="col-lg-2 offset-lg-1">
+            <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="#"><i class="bi bi-calendar-week"></i> Jadwal</a></li>
                     <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Checklist</a></li>
                     <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
                 </ul>
             </div>
-
-            <div class="col-lg-2">
-                <h5 class="footer-title">Lainnya</h5>
-                <ul class="footer-menu">
-                    <li><a href="#"><i class="bi bi-info-circle"></i> Tentang Kami</a></li>
-                    <li><a href="#"><i class="bi bi-envelope"></i> Kontak</a></li>
-                    <li><a href="#"><i class="bi bi-question-circle"></i> Bantuan</a></li>
-                    <li><a href="#"><i class="bi bi-shield-check"></i> Privasi</a></li>
-                </ul>
-            </div>
-
             <div class="col-lg-3">
                 <h5 class="footer-title">Kontak</h5>
                 <ul class="footer-menu">
-                    <li><i class="bi bi-geo-alt"></i> Jl. Industri No. 123, Jakarta</li>
-                    <li><i class="bi bi-telephone"></i> (021) 1234-5678</li>
+                    <li>
+                        <a href="https://maps.app.goo.gl/FwQrd4ReV9ooRBoq9" target="_blank">
+                            <i class="bi bi-geo-alt"></i> Jl. Industri No. 123, Jakarta
+                        </a>
+                    </li>
                     <li><i class="bi bi-envelope"></i> info@manajemenonderdil.id</li>
-                    <li><i class="bi bi-clock"></i> Senin - Jumat, 08:00 - 17:00</li>
                 </ul>
             </div>
         </div>
-
         <div class="footer-bottom">
             <div class="row">
                 <div class="col-md-6 text-md-start">
@@ -581,11 +615,10 @@
         var calendarEl = document.getElementById('calendar');
         var events = @json($events);
 
-        // Inisialisasi Kalender TANPA headerToolbar bawaan
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
-            headerToolbar: false, // Matikan toolbar bawaan
+            headerToolbar: false,
             events: events,
             eventClick: function (info) {
                 var props = info.event.extendedProps;
@@ -608,23 +641,29 @@
                     html += '<div class="detail-row"><div class="detail-label">Gambar</div><div class="detail-value"><img src="/' + props.gambar + '" alt="Gambar"></div></div>';
                 }
 
-                if (status === 'selesai') {
-                    html += '<div class="result-section selesai">';
+                if (status === 'selesai' || status === 'menunggu_verifikasi') {
+                    html += '<div class="result-section ' + (status === 'selesai' ? 'selesai' : '') + '">';
                     html += '<h6><i class="bi bi-check-circle me-2"></i> Detail Penyelesaian</h6>';
                     html += '<div class="detail-row"><div class="detail-label">Nama Onderdil</div><div class="detail-value">' + (props.nama_onderdil || '-') + '</div></div>';
+                    html += '<div class="detail-row"><div class="detail-label">Jumlah Pemakaian</div><div class="detail-value">' + (props.jumlah_pemakaian ? props.jumlah_pemakaian + ' unit' : '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Detail Penyelesaian</div><div class="detail-value">' + (props.detail_penyelesaian || '-') + '</div></div>';
                     if (props.gambar_bukti) {
-                        html += '<div class="detail-row"><div class="detail-label">Bukti</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Bukti Alat</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
+                    }
+                    if (props.bukti_pemakaian_onderdil) {
+                        html += '<div class="detail-row"><div class="detail-label">Bukti Pemakaian Onderdil</div><div class="detail-value"><img src="/' + props.bukti_pemakaian_onderdil + '" alt="Bukti Onderdil"></div></div>';
                     }
                     html += '</div>';
                 }
 
-                if (status === 'ditolak') {
-                    html += '<div class="result-section ditolak">';
-                    html += '<h6><i class="bi bi-x-circle me-2"></i> Detail Penolakan</h6>';
-                    html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan_tolak || '-') + '</div></div>';
-                    html += '<div class="detail-row"><div class="detail-label">Alasan Penolakan</div><div class="detail-value">' + (props.alasan_penolakan || '-') + '</div></div>';
-                    html += '</div>';
+                if (status === 'ditolak' || status === 'menunggu_verifikasi') {
+                    if (props.alasan_penolakan) {
+                        html += '<div class="result-section ditolak">';
+                        html += '<h6><i class="bi bi-x-circle me-2"></i> Detail Penolakan</h6>';
+                        html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan_tolak || '-') + '</div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Alasan Penolakan</div><div class="detail-value">' + (props.alasan_penolakan || '-') + '</div></div>';
+                        html += '</div>';
+                    }
                 }
 
                 document.getElementById('eventDetailBody').innerHTML = html;
@@ -639,6 +678,8 @@
                     footer += '</button>';
                 } else if (status === 'selesai') {
                     footer += '<span class="status-badge selesai"><i class="bi bi-check-circle-fill"></i> Sudah diselesaikan</span>';
+                } else if (status === 'menunggu_verifikasi') {
+                    footer += '<span class="status-badge menunggu"><i class="bi bi-hourglass-split"></i> Menunggu Verifikasi SPV</span>';
                 } else {
                     footer += '<span class="status-badge ditolak"><i class="bi bi-x-circle-fill"></i> Sudah ditolak</span>';
                 }
@@ -656,14 +697,14 @@
                     info.el.querySelector('.fc-event-title').innerHTML = '✔ ' + info.event.title;
                 } else if (status === 'ditolak') {
                     info.el.querySelector('.fc-event-title').innerHTML = '✘ ' + info.event.title;
+                } else if (status === 'menunggu_verifikasi') {
+                    info.el.querySelector('.fc-event-title').innerHTML = '⏳ ' + info.event.title;
                 } else {
                     info.el.querySelector('.fc-event-title').innerHTML = '⏳ ' + info.event.title;
                 }
             },
-            // Update judul kalender di luar (HTML kita)
             datesSet: function(info) {
                 var title = info.view.title;
-                // Kapitalisasi huruf pertama
                 title = title.charAt(0).toUpperCase() + title.slice(1);
                 document.getElementById('calendarTitle').innerText = title;
             }
@@ -671,20 +712,10 @@
 
         calendar.render();
 
-        // --- FUNGSI UNTUK TOMBOL CUSTOM KITA ---
-        
-        // Tombol Navigasi
-        document.getElementById('btnPrev').addEventListener('click', function() {
-            calendar.prev();
-        });
-        document.getElementById('btnNext').addEventListener('click', function() {
-            calendar.next();
-        });
-        document.getElementById('btnToday').addEventListener('click', function() {
-            calendar.today();
-        });
+        document.getElementById('btnPrev').addEventListener('click', function() { calendar.prev(); });
+        document.getElementById('btnNext').addEventListener('click', function() { calendar.next(); });
+        document.getElementById('btnToday').addEventListener('click', function() { calendar.today(); });
 
-        // Tombol Ganti Tampilan (Hanya Bulan & Minggu)
         var btnBulan = document.getElementById('btnBulan');
         var btnMinggu = document.getElementById('btnMinggu');
 
@@ -702,6 +733,25 @@
             calendar.changeView('timeGridWeek');
             setActiveButton(btnMinggu);
         });
+
+        var selectOnderdil = document.getElementById('select_nama_onderdil');
+        var wrapperBukti = document.getElementById('wrapper_bukti_onderdil');
+        var inputBukti = wrapperBukti.querySelector('input[type="file"]');
+        var inputJumlah = document.getElementById('input_jumlah_pemakaian');
+
+        selectOnderdil.addEventListener('change', function() {
+            if (this.value !== "") {
+                wrapperBukti.classList.remove('d-none');
+                inputBukti.setAttribute('required', 'required');
+                inputJumlah.setAttribute('required', 'required');
+            } else {
+                wrapperBukti.classList.add('d-none');
+                inputBukti.removeAttribute('required');
+                inputJumlah.removeAttribute('required');
+                inputBukti.value = '';
+                inputJumlah.value = 1;
+            }
+        });
     });
 
     function openSelesaiModal(id, judul) {
@@ -710,6 +760,13 @@
         form.action = '/tenagakerja/checklist/' + id + '/selesai';
         var detailModal = bootstrap.Modal.getInstance(document.getElementById('eventDetailModal'));
         if (detailModal) detailModal.hide();
+        
+        document.getElementById('select_nama_onderdil').value = "";
+        document.getElementById('wrapper_bukti_onderdil').classList.add('d-none');
+        document.getElementById('wrapper_bukti_onderdil').querySelector('input[type="file"]').removeAttribute('required');
+        document.getElementById('input_jumlah_pemakaian').removeAttribute('required');
+        document.getElementById('input_jumlah_pemakaian').value = 1;
+        
         var modal = new bootstrap.Modal(document.getElementById('modalSelesai'));
         modal.show();
     }

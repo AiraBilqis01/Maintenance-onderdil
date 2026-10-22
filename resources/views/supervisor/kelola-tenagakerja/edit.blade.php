@@ -1,9 +1,7 @@
-<!-- Tombol Edit -->
 <button type="button" class="btn btn-edit-action" data-toggle="modal" data-target="#modalEditTenagaKerja{{ $tenagaKerja->id }}">
     <i class="fas fa-edit"></i> Edit
 </button>
 
-<!-- Modal Edit Tenaga Kerja -->
 <div class="modal fade" id="modalEditTenagaKerja{{ $tenagaKerja->id }}" tabindex="-1" role="dialog" aria-labelledby="modalEditTenagaKerjaLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form action="{{ route('supervisor.kelola-tenagakerja.update', $tenagaKerja->id) }}" method="POST">
@@ -19,6 +17,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="color: white;">
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -33,6 +32,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -42,12 +42,40 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="password">Ubah Password</label>
-                                <input type="password" class="form-control" name="password" placeholder="Kosongkan jika tidak ingin mengubah" />
-                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah password</small>
+                                <label for="jenis_pelaksana">Jenis Pelaksana <span class="text-danger">*</span></label>
+                                <select name="jenis_pelaksana" class="form-control" required>
+                                    <option value="Internal" {{ $tenagaKerja->jenis_pelaksana == 'Internal' ? 'selected' : '' }}>Internal</option>
+                                    <option value="Subkontraktor" {{ $tenagaKerja->jenis_pelaksana == 'Subkontraktor' ? 'selected' : '' }}>Subkontraktor</option>
+                                </select>
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="keahlian">Keahlian <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="keahlian" value="{{ $tenagaKerja->keahlian }}" placeholder="Contoh: Mekanik Mesin, Las Listrik, dll" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password">Ubah Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Kosongkan jika tidak ingin mengubah" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password_confirmation">Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control" name="password_confirmation" placeholder="Ulangi password baru" />
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted d-block" style="color: #ccc !important;">*Kosongkan field password jika tidak ingin mengubah password</small>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">

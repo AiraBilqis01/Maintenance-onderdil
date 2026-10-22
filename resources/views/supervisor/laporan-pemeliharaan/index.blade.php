@@ -493,7 +493,12 @@
                                     </td>
                                     <td>
                                         @if($item->status == 'selesai')
-                                            {{ Str::limit($item->detail_penyelesaian, 60) ?? '-' }}
+                                            <strong>{{ $item->nama_onderdil ?? '-' }}</strong>
+                                            @if($item->jumlah_pemakaian)
+                                                <span class="text-primary">({{ $item->jumlah_pemakaian }} Unit)</span>
+                                            @endif
+                                            <br>
+                                            <small class="text-muted">{{ Str::limit($item->detail_penyelesaian, 50) ?? '-' }}</small>
                                         @elseif($item->status == 'ditolak')
                                             <span class="text-danger">{{ Str::limit($item->alasan_penolakan, 60) ?? '-' }}</span>
                                         @else

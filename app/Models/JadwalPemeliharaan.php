@@ -27,8 +27,10 @@ class JadwalPemeliharaan extends Model
         'keterangan',
         'status',
         'nama_onderdil',
+        'jumlah_pemakaian',
         'detail_penyelesaian',
         'gambar_bukti',
+        'bukti_pemakaian_onderdil', 
         'keterangan_tolak',
         'alasan_penolakan',
     ];
@@ -37,6 +39,7 @@ class JadwalPemeliharaan extends Model
         'tanggal_selesai' => 'date',
         'tahun_pembuatan' => 'integer',
         'quantity' => 'integer',
+        'jumlah_pemakaian' => 'integer',
     ];
 
     public function user()
