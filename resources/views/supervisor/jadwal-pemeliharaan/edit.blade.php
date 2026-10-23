@@ -1,9 +1,7 @@
-<!-- Tombol Edit -->
 <button type="button" class="btn btn-edit-action" data-toggle="modal" data-target="#modalEditJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}">
     <i class="fas fa-edit"></i> Edit
 </button>
 
-<!-- Modal Edit Jadwal Pemeliharaan -->
 <div class="modal fade" id="modalEditJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}" tabindex="-1" role="dialog" aria-labelledby="modalEditJadwalPemeliharaanLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form action="{{ route('supervisor.jadwal-pemeliharaan.update', $jadwalPemeliharaan->id) }}" method="POST" enctype="multipart/form-data">
@@ -51,8 +49,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nama_peralatan">Nama Peralatan <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="nama_peralatan" value="{{ $jadwalPemeliharaan->nama_peralatan }}" required />
+                                <label for="nama_peralatan">Nama Peralatan</label>
+                                <input type="text" class="form-control" name="nama_peralatan" value="{{ $jadwalPemeliharaan->nama_peralatan }}" placeholder="Masukkan nama peralatan" />
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -65,8 +63,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="quantity">Quantity <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="quantity" value="{{ $jadwalPemeliharaan->quantity }}" min="1" required />
+                                <label for="quantity">Quantity</label>
+                                <input type="number" class="form-control" name="quantity" value="{{ $jadwalPemeliharaan->quantity }}" min="1" />
                             </div>
                         </div>
                         <div class="col-md-6">

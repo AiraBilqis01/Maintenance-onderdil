@@ -4,36 +4,96 @@ namespace App\Http\Controllers\Supervisor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\JadwalPemeliharaan;
-use App\Models\User;
 use App\Models\StokOnderdil;
-use App\Mail\JadwalPemeliharaanMail;
-use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\StokOnderdilExport;
 
-class JadwalPemeliharaanController extends Controller
+class StokOnderdilController extends Controller
 {
-    public function index()
+    private function buildQuery(Request $request)
     {
-        $jadwalPemeliharaan = JadwalPemeliharaan::with('user')->get();
-        $tenagaKerja = User::where('role', 'tenagakerja')->get();
-        return view('supervisor.jadwal-pemeliharaan.index', compact('jadwalPemeliharaan', 'tenagaKerja'));
+        $query = StokOnderdil::query();
+
+        if ($request->filled('search')) {
+            $query->where('nama_sparepart', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('kondisi_stok')) {
+            if ($request->kondisi_stok == 'menipis') {
+                $query->where('stok_terbaru', '<', 10);
+            } elseif ($request->kondisi_stok == 'aman') {
+                $query->where('stok_terbaru', '>=', 10);
+            }
+        }
+
+        return $query;
+    }
+
+    public function index(Request $request)
+    {
+        $stokOnderdil = $this->buildQuery($request)->get();
+        return view('supervisor.stok-onderdil.index', compact('stokOnderdil'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $stokOnderdil = $this->buildQuery($request)->get();
+        $judul = 'Laporan Stok Onderdil';
+        $periode = 'Semua Data';
+        
+        if ($request->filled('search')) {
+            $periode = 'Pencarian: "' . $request->search . '"';
+        }
+
+        $pdf = Pdf::loadView('supervisor.stok-onderdil.pdf', compact('stokOnderdil', 'judul', 'periode'))
+                    ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-stok-onderdil-' . date('Ymd-His') . '.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(
+            new StokOnderdilExport($request),
+            'laporan-stok-onderdil-' . date('Ymd-His') . '.xlsx'
+        );
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'judul_pemeliharaan' => 'required|string|max:255',
-            'tanggal_selesai' => 'required|date',
-            'nama_tenaga_kerja' => 'required|exists:users,id',
-            'nama_peralatan' => 'required|string|max:255',
-            'lokasi' => 'nullable|string|max:255',
-            'quantity' => 'required|integer|min:1',
-            'serial_number' => 'nullable|string|max:255',
-            'kapasitas' => 'nullable|string|max:255',
-            'merek' => 'nullable|string|max:255',
-            'tipe' => 'nullable|string|max:255',
-            'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'nama_sparepart' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stok_periode_sebelum' => 'required|integer|min:0',
+            'periode' => 'required|date',
+            'kondisi_sekarang' => 'required|string|max:255',
+            'pemakaian' => 'required|integer|min:0',
+            'stok_terbaru' => 'required|integer|min:0',
+            'keterangan' => 'nullable|string',
+        ]); 
+
+        if ($request->hasFile('gambar')) {
+            $image = $request->file('gambar');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('assets/img'), $imageName);
+            $data['gambar'] = 'assets/img/' . $imageName;
+        }
+
+        StokOnderdil::create($data);
+        return back()->with('sukses', 'Stok onderdil berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, StokOnderdil $stokOnderdil)
+    {
+        $data = $request->validate([
+            'nama_sparepart' => 'required|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stok_periode_sebelum' => 'required|integer|min:0',
+            'periode' => 'required|date',
+            'kondisi_sekarang' => 'required|string|max:255',
+            'pemakaian' => 'required|integer|min:0',
+            'stok_terbaru' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -44,105 +104,13 @@ class JadwalPemeliharaanController extends Controller
             $data['gambar'] = 'assets/img/' . $imageName;
         }
 
-        $data['status'] = 'pending';
-
-        $jadwal = JadwalPemeliharaan::create($data);
-
-        $tenagaKerja = User::find($data['nama_tenaga_kerja']);
-        if ($tenagaKerja && $tenagaKerja->email) {
-            Mail::to($tenagaKerja->email)->send(new JadwalPemeliharaanMail($jadwal->load('user')));
-        }
-
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil ditambahkan & email notifikasi terkirim.');
+        $stokOnderdil->update($data);
+        return back()->with('sukses', 'Stok onderdil berhasil diperbarui.');
     }
 
-    public function update(Request $request, JadwalPemeliharaan $jadwalPemeliharaan)
+    public function destroy(StokOnderdil $stokOnderdil)
     {
-        $data = $request->validate([
-            'judul_pemeliharaan' => 'required|string|max:255',
-            'tanggal_selesai' => 'required|date',
-            'nama_tenaga_kerja' => 'required|exists:users,id',
-            'nama_peralatan' => 'required|string|max:255',
-            'lokasi' => 'nullable|string|max:255',
-            'quantity' => 'required|integer|min:1',
-            'serial_number' => 'nullable|string|max:255',
-            'kapasitas' => 'nullable|string|max:255',
-            'merek' => 'nullable|string|max:255',
-            'tipe' => 'nullable|string|max:255',
-            'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'keterangan' => 'nullable|string',
-        ]);
-
-        if ($request->hasFile('gambar')) {
-            $image = $request->file('gambar');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('assets/img'), $imageName);
-            $data['gambar'] = 'assets/img/' . $imageName;
-        }
-
-        $jadwalPemeliharaan->update($data);
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil diperbarui.');
-    }
-
-    public function destroy(JadwalPemeliharaan $jadwalPemeliharaan)
-    {
-        $jadwalPemeliharaan->delete();
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil dihapus.');
-    }
-
-    public function verifikasiSelesai(JadwalPemeliharaan $jadwalPemeliharaan)
-    {
-        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
-            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
-        }
-
-        if (!empty($jadwalPemeliharaan->nama_onderdil) && !empty($jadwalPemeliharaan->jumlah_pemakaian)) {
-            $stok = StokOnderdil::where('nama_sparepart', $jadwalPemeliharaan->nama_onderdil)->first();
-            
-            if ($stok) {
-                if ($stok->stok_terbaru >= $jadwalPemeliharaan->jumlah_pemakaian) {
-                    // Kurangi stok terbaru
-                    $stok->decrement('stok_terbaru', $jadwalPemeliharaan->jumlah_pemakaian);
-                    
-                    // TAMBAHKAN PEMAKAIAN
-                    $stok->increment('pemakaian', $jadwalPemeliharaan->jumlah_pemakaian);
-                } else {
-                    return back()->withErrors(['error' => 'Gagal verifikasi: Stok fisik saat ini tidak mencukupi untuk dipotong.']);
-                }
-            }
-        }
-
-        $jadwalPemeliharaan->update(['status' => 'selesai']);
-
-        return back()->with('sukses', 'Laporan berhasil diverifikasi. Stok dan pemakaian onderdil telah diperbarui.');
-    }
-
-    public function verifikasiTolak(JadwalPemeliharaan $jadwalPemeliharaan)
-    {
-        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
-            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
-        }
-
-        $jadwalPemeliharaan->update(['status' => 'ditolak']); 
-
-        return back()->with('sukses', 'Laporan penolakan telah disetujui.');
-    }
-
-    public function tolakJadwal(Request $request, JadwalPemeliharaan $jadwalPemeliharaan)
-    {
-        $data = $request->validate([
-            'keterangan_tolak' => 'required|string',
-            'alasan_penolakan' => 'required|string',
-        ]);
-
-        if ($jadwalPemeliharaan->status !== 'pending') {
-            return back()->withErrors(['error' => 'Hanya jadwal dengan status Pending yang bisa ditolak.']);
-        }
-
-        $data['status'] = 'ditolak';
-        $jadwalPemeliharaan->update($data);
-
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil dibatalkan/ditolak oleh Supervisor.');
+        $stokOnderdil->delete();
+        return back()->with('sukses', 'Stok onderdil berhasil dihapus.');
     }
 }

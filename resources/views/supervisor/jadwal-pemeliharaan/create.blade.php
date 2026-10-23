@@ -46,8 +46,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nama_peralatan">Nama Peralatan <span class="text-danger">*</span></label>
-                                <input type="text" name="nama_peralatan" class="form-control" placeholder="Masukkan nama peralatan" required>
+                                <label for="nama_peralatan">Nama Peralatan</label>
+                                <input type="text" name="nama_peralatan" class="form-control" placeholder="Masukkan nama peralatan">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -60,8 +60,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="quantity">Quantity <span class="text-danger">*</span></label>
-                                <input type="number" name="quantity" class="form-control" placeholder="1" min="1" required>
+                                <label for="quantity">Quantity</label>
+                                <input type="number" name="quantity" class="form-control" placeholder="1" min="1">
                             </div>
                         </div>
                         <div class="col-md-6">
