@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Checklist Pemeliharaan</title>
+    <title>Jadwal Pemeliharaan</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -398,11 +398,11 @@
     <div class="container">
         <a class="navbar-brand" href="{{ route('tenagakerja.dashboard') }}">
             <i class="bi bi-tools"></i>
-            <span>Manajemen<b>Onderdil</b></span>
+            <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
         <div class="nav-menu">
             <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
+            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
             <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
         </div>
         <div class="d-flex gap-2 align-items-center">
@@ -426,7 +426,7 @@
     <div class="container">
         <div class="page-title-card">
             <div>
-                <h2><i class="bi bi-check2-square"></i> Checklist Pemeliharaan</h2>
+                <h2><i class="bi bi-check2-square"></i> Checklist Jadwal Pemeliharaan</h2>
                 <p>Jadwal pemeliharaan yang ditugaskan kepada Anda</p>
             </div>
             <div>
@@ -570,7 +570,7 @@
             <div class="col-lg-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                    <span class="fw-bold fs-4">Manajemen Onderdil</span>
+                    <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
                 <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
             </div>
@@ -578,8 +578,8 @@
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Checklist</a></li>
-                    <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
+                    <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
+                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
                 </ul>
             </div>
             <div class="col-lg-3">
@@ -590,14 +590,14 @@
                             <i class="bi bi-geo-alt"></i> Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat
                         </a>
                     </li>
-                    <li><i class="bi bi-envelope"></i> info@manajemenonderdil.id</li>
+                    <li><i class="bi bi-envelope"></i> info@manajemenpemeliharaan.id</li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
             <div class="row">
                 <div class="col-md-6 text-md-start">
-                    <i class="bi bi-c-circle me-1" style="color: #667eea;"></i> 2026 Manajemen Onderdil. All rights reserved.
+                    <i class="bi bi-c-circle me-1" style="color: #667eea;"></i> 2026 Manajemen Pemeliharaan. All rights reserved.
                 </div>
                 <div class="col-md-6 text-md-end">
                     <span class="me-3"><i class="bi bi-shield-lock" style="color: #667eea;"></i> Secure System</span>

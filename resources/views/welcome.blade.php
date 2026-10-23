@@ -313,11 +313,11 @@
     <div class="container">
         <a class="navbar-brand" href="#">
             <i class="bi bi-tools"></i> 
-            <span>Manajemen<b>Onderdil</b></span>
+            <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
         
         <div class="nav-menu">
-            <a href="#" class="nav-link"><i class="bi bi-check2-square"></i> Checklist</a>
+            <a href="#" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
             <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
         </div>
         
@@ -334,11 +334,11 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <h1 class="hero-title">
-                    Kelola onderdil <span>tanpa ribet</span>, <br>fokus bisnis makin lancar
+                    Pemeliharaan <span>Terjadwal</span>, <br>Stok Onderdil <span>Terkendali</span>
                 </h1>
                 <p class="hero-description">
-                    Satu platform untuk stok masuk, keluar, dan laporan akurat. 
-                    Digunakan lebih dari 340 bengkel & distributor di Indonesia.
+                    Sistem terintegrasi untuk membantu pengelolaan jadwal pemeliharaan,
+                    pelaksanaan pekerjaan, serta ketersediaan persediaan onderdil pada PLTMH Sangir Hulu.
                 </p>
             </div>
 
@@ -355,15 +355,18 @@
     <div class="container py-4">
         <div class="text-center mb-5">
             <span class="hero-badge">FITUR UTAMA</span>
-            <h2 class="fw-bold display-6 mb-3">Kendalikan stok onderdil<br>dalam satu pintu.</h2>
+            <h2 class="fw-bold display-6 mb-3">Kelola pemeliharaan dan stok onderdil <br>dalam satu sistem.</h2>
         </div>
 
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="feature-item p-4" style="border-radius: 32px;">
                     <div class="feature-icon"><i class="bi bi-database-add"></i></div>
-                    <h4 class="h5 fw-semibold">Data barang terpusat</h4>
-                    <p class="text-secondary">Kategori, harga, stok minimal, semua tersaji rapi.</p>
+                    <h4 class="h5 fw-semibold">Data Onderdil terpusat</h4>
+                    <p class="text-secondary">
+                        Data onderdil, jumlah stok tersedia, stok 
+                        yang terpakai, dan kondisi stok tersimpan 
+                        secara terpusat sehingga lebih mudah dipantau dan dikelola.</p>
                 </div>
             </div>
            <div class="col-md-4">
@@ -373,8 +376,8 @@
                     </div>
                     <h4 class="h5 fw-semibold">Manajemen Jadwal Pemeliharaan</h4>
                     <p class="text-secondary">
-                        Sistem memungkinkan supervisor untuk membuat,
-                        melihat, memperbarui, dan menghapus jadwal
+                        Sistem membantu supervisor untuk membuat,
+                        melihat, memperbarui, dan mengelola jadwal
                         pemeliharaan secara terstruktur dan terkontrol.
                     </p>
                 </div>
@@ -389,7 +392,7 @@
                     <p class="text-secondary">
                         Sistem menyediakan laporan pemeliharaan lengkap
                         termasuk laporan stok, jadwal pemeliharaan,
-                        dan hasil checklist yang dapat dicetak.
+                        dan hasil checklist pemeliharaanyang dapat dicetak.
                     </p>
                 </div>
             </div>
@@ -400,7 +403,7 @@
 <section class="cta-gradient py-5">
     <div class="container text-center py-3">
         <h3 class="fw-bold mb-4">Sudah punya akun? Langsung <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">login</span></h3>
-        <p class="text-secondary col-lg-6 mx-auto mb-4">Tim bengkel dan manajer gudang dapat mengakses semua fitur setelah masuk.</p>
+        <p class="text-secondary col-lg-6 mx-auto mb-4">Supervisor dan tenaga kerja dapat mengakses fitur sistem sesuai dengan hak akses masing-masing setelah masuk.</p>
         <a href="/login" class="btn btn-login-modern btn-lg">
             <i class="bi bi-arrow-right-circle"></i> Login sekarang
         </a>
@@ -416,7 +419,7 @@
             <div class="col-lg-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                    <span class="fw-bold fs-4">Manajemen Onderdil</span>
+                    <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
                 <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
             </div>
@@ -424,7 +427,7 @@
             <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
-                    <li><a href="#"><i class="bi bi-check2-square"></i> Checklist</a></li>
+                    <li><a href="#"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
                     <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
                 </ul>
             </div>
@@ -437,7 +440,7 @@
                             <i class="bi bi-geo-alt"></i> Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat
                         </a>
                     </li>
-                    <li><i class="bi bi-envelope"></i> info@manajemenonderdil.id</li>
+                    <li><i class="bi bi-envelope"></i> info@manajemenpemeliharaan.id</li>
                 </ul>
             </div>
         </div>
@@ -445,7 +448,7 @@
         <div class="footer-bottom">
             <div class="row">
                 <div class="col-md-6 text-md-start">
-                    <i class="bi bi-c-circle me-1" style="color: #667eea;"></i> 2026 Manajemen Onderdil. All rights reserved.
+                    <i class="bi bi-c-circle me-1" style="color: #667eea;"></i> 2026 Manajemen Pemeliharaan. All rights reserved.
                 </div>
                 <div class="col-md-6 text-md-end">
                     <span class="me-3"><i class="bi bi-shield-lock" style="color: #667eea;"></i> Secure System</span>
