@@ -296,9 +296,9 @@
         @endif
     </div>
     <div class="kop-teks">
-        <h1>PT Waskita Energi</h1>
-        <h2>Sistem Manajemen Onderdil & Pemeliharaan</h2>
-        <p>Jl. Industri No. 123, Jakarta &nbsp;|&nbsp; Telp: (021) 1234-5678 &nbsp;|&nbsp; info@manajemenonderdil.id</p>
+        <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
+        <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
+        <p>Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a> </p>
     </div>
 </div>
 
@@ -422,7 +422,7 @@
 
 {{-- ============ FOOTER ============ --}}
 <div class="footer-info">
-    Laporan Pemeliharaan — PT Waskita Energi &nbsp;|&nbsp; Halaman <span class="page"></span>
+    Laporan Pemeliharaan — PLTM Sangir Hulu (PT Waskita Energi) &nbsp;|&nbsp; Halaman <span class="page"></span>
 </div>
 
 </body>

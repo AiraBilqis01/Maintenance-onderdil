@@ -16,7 +16,7 @@
                                 🔧 Jadwal Pemeliharaan Baru
                             </h1>
                             <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0 0; font-size: 13px;">
-                                PT Waskita Energi - Sistem Manajemen Onderdil
+                                PLTM Sangir Hulu (PT Waskita Energi) - Sistem Manajemen Pemeliharaan
                             </p>
                         </td>
                     </tr>
@@ -121,13 +121,13 @@
                     <tr>
                         <td style="background: #1a1a2e; padding: 20px 40px; text-align: center;">
                             <p style="color: #ffffff; font-size: 12px; margin: 0 0 4px 0; font-weight: bold;">
-                                PT Waskita Energi
+                                PLTM Sangir Hulu - PT Waskita Energi
                             </p>
                             <p style="color: #a0aec0; font-size: 11px; margin: 0;">
-                                Jl. Industri No. 123, Jakarta | (021) 1234-5678
+                                Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat
                             </p>
                             <p style="color: #718096; font-size: 10px; margin: 10px 0 0 0;">
-                                © {{ date('Y') }} Sistem Manajemen Onderdil. All rights reserved.
+                                © {{ date('Y') }} Sistem Manajemen Pemeliharaan. All rights reserved.
                             </p>
                         </td>
                     </tr>

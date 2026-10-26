@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manajemen Onderdil | @yield('title')</title>
+    <title>Manajemen Pemeliharaan | @yield('title')</title>
 
     <link
       rel="stylesheet"
@@ -84,7 +84,7 @@
                 </li>
                 <li style="margin-bottom: -20px; margin-left:20px">
                     <h4 class="text-white fw-bold">
-                        Sistem Informasi Manajemen Onderdil
+                        Sistem Informasi Manajemen Pemeliharaan
                     </h4>
                 </li>                
             </ul>
@@ -146,7 +146,7 @@
         <!-- /.content-wrapper -->
         <footer class="main-footer fixed-bottom">
             <strong>Copyright &copy; 2026.</strong>
-            SISTEM INFORMASI MANAJEMEN ONDERDIL
+            SISTEM INFORMASI MANAJEMEN PEMELIHARAAN
         </footer>
     </div>
     <!-- ./wrapper -->

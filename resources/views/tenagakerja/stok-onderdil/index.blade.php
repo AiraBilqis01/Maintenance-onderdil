@@ -416,7 +416,7 @@
                             <i class="bi bi-geo-alt"></i> Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat
                         </a>
                     </li>
-                    <li><i class="bi bi-envelope"></i> info@manajemenpemeliharaan.id</li>
+                    <li><i class="bi bi-envelope"></i> <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a></li>
                 </ul>
             </div>
         </div>

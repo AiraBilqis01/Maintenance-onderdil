@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIMO | Reset Password</title>
+  <title>SIMP | Reset Password</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -187,7 +187,7 @@
   <div class="container-custom">
     <div class="card-custom">
       <div class="logo-area">
-        <img src="{{ asset('assets/img/logopt.png') }}" alt="SIMO Logo" />
+        <img src="{{ asset('assets/img/logopt.png') }}" alt="SIMP Logo" />
       </div>
 
       <h1 class="welcome-title">Reset Password</h1>
