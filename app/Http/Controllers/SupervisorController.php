@@ -12,7 +12,7 @@ class SupervisorController extends Controller
 {
     public function index()
     {
-        $totalTenagaKerja = User::where('role', 'TenagaKerja')->count();
+        $totalTenagaKerja = User::where('role', 'tenagakerja')->count();
         $totalLaporan = JadwalPemeliharaan::count();
         $totalSparepart = StokOnderdil::count();
         
@@ -30,7 +30,7 @@ class SupervisorController extends Controller
 
     public function kelolaSupervisor()
     {
-        $supervisors = User::where('role', 'Supervisor')->get();
+        $supervisors = User::where('role', 'supervisor')->get();
         return view('supervisor.kelola-supervisor.index', compact('supervisors'));
     }
 
@@ -44,7 +44,7 @@ class SupervisorController extends Controller
         ]);
 
         $data['password'] = Hash::make($data['password']);
-        $data['role'] = 'Supervisor';
+        $data['role'] = 'supervisor';
 
         User::create($data);
         return back()->with('sukses', 'Supervisor berhasil ditambahkan.');
@@ -77,7 +77,7 @@ class SupervisorController extends Controller
 
     public function kelolaTenagaKerja()
     {
-        $tenagaKerja = User::where('role', 'TenagaKerja')->get();
+        $tenagaKerja = User::where('role', 'tenagakerja')->get();
         return view('supervisor.kelola-tenagakerja.index', compact('tenagaKerja'));
     }
 
@@ -93,7 +93,7 @@ class SupervisorController extends Controller
         ]);
 
         $data['password'] = Hash::make($data['password']);
-        $data['role'] = 'TenagaKerja';
+        $data['role'] = 'tenagakerja';
 
         User::create($data);
         return back()->with('sukses', 'Tenaga Kerja berhasil ditambahkan.');

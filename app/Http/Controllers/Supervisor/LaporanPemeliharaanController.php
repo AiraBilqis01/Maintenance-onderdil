@@ -51,7 +51,7 @@ class LaporanPemeliharaanController extends Controller
         $selesai = JadwalPemeliharaan::where('status', 'selesai')->count();
         $ditolak = JadwalPemeliharaan::where('status', 'ditolak')->count();
 
-        $tenagaKerja = User::where('role', 'tenagakerja')->get();
+        $tenagaKerja = User::withTrashed()->where('role', 'tenagakerja')->get();
 
         return view('supervisor.laporan-pemeliharaan.index', compact(
             'laporan',
@@ -123,7 +123,7 @@ class LaporanPemeliharaanController extends Controller
         }
 
         if ($request->filled('tenaga_kerja')) {
-            $tk = User::find($request->tenaga_kerja);
+            $tk = User::withTrashed()->find($request->tenaga_kerja);
             if ($tk) $parts[] = 'Tenaga Kerja: ' . $tk->name;
         }
 

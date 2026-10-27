@@ -66,8 +66,17 @@ class TenagakerjaController extends Controller
             'jumlah_pemakaian' => 'nullable|integer|min:1',
             'tanggal_selesai' => 'required|date',
             'detail_penyelesaian' => 'required|string',
-            'gambar_bukti' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bukti_pemakaian_onderdil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar_bukti' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'bukti_pemakaian_onderdil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+        ], [
+            'gambar_bukti.image' => 'File bukti penyelesaian harus berupa gambar.',
+            'gambar_bukti.mimes' => 'Format file bukti penyelesaian hanya boleh JPG, JPEG, PNG, atau GIF.',
+            'gambar_bukti.max' => 'Ukuran file bukti penyelesaian maksimal 5 MB.',
+            'gambar_bukti.uploaded' => 'File bukti penyelesaian gagal diunggah. Pastikan ukuran file maksimal 5 MB.',
+            'bukti_pemakaian_onderdil.image' => 'File bukti pemakaian onderdil harus berupa gambar.',
+            'bukti_pemakaian_onderdil.mimes' => 'Format file bukti pemakaian onderdil hanya boleh JPG, JPEG, PNG, atau GIF.',
+            'bukti_pemakaian_onderdil.max' => 'Ukuran file bukti pemakaian onderdil maksimal 5 MB.',
+            'bukti_pemakaian_onderdil.uploaded' => 'File bukti pemakaian onderdil gagal diunggah. Pastikan ukuran file maksimal 5 MB.',
         ]);
 
         if ($request->hasFile('gambar_bukti')) {
@@ -84,6 +93,10 @@ class TenagakerjaController extends Controller
             $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $imageNameOnderdil;
         }
         
+        // Pengajuan terbaru menggantikan catatan penolakan sebelumnya 
+        $data['keterangan_tolak'] = null;
+        $data['alasan_penolakan'] = null;
+
         // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
         $data['status'] = 'menunggu_verifikasi';
         $jadwal->update($data);
@@ -100,6 +113,15 @@ class TenagakerjaController extends Controller
 
         // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
         $data['status'] = 'menunggu_verifikasi';
+
+        // Karena tenaga kerja memilih Tolak,
+        // data penyelesaian tidak boleh ikut terbawa.
+        $data['nama_onderdil'] = null;
+        $data['jumlah_pemakaian'] = null;
+        $data['detail_penyelesaian'] = null;
+        $data['gambar_bukti'] = null;
+        $data['bukti_pemakaian_onderdil'] = null;
+
         $jadwal->update($data);
 
         return back()->with('sukses', 'Pengajuan penolakan berhasil dikirim. Menunggu persetujuan Supervisor.');

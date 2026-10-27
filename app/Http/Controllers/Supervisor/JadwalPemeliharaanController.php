@@ -96,8 +96,8 @@ class JadwalPemeliharaanController extends Controller
 
     public function verifikasiSelesai(JadwalPemeliharaan $jadwalPemeliharaan)
     {
-        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
-            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
+        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi' || empty($jadwalPemeliharaan->detail_penyelesaian)) {
+            return back()->withErrors(['error' => 'Tidak ada laporan penyelesaian yang dapat diverifikasi.']);
         }
 
         if (!empty($jadwalPemeliharaan->nama_onderdil) && !empty($jadwalPemeliharaan->jumlah_pemakaian)) {
@@ -113,15 +113,15 @@ class JadwalPemeliharaanController extends Controller
             }
         }
 
-        $jadwalPemeliharaan->update(['status' => 'selesai']);
+        $jadwalPemeliharaan->update(['status' => 'selesai', 'keterangan_tolak' => null, 'alasan_penolakan' => null,]);
 
         return back()->with('sukses', 'Laporan berhasil diverifikasi. Stok dan pemakaian onderdil telah diperbarui.');
     }
 
     public function verifikasiTolak(JadwalPemeliharaan $jadwalPemeliharaan)
     {
-        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi') {
-            return back()->withErrors(['error' => 'Status tidak valid untuk diverifikasi.']);
+        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi' || empty($jadwalPemeliharaan->alasan_penolakan) || !empty($jadwalPemeliharaan->detail_penyelesaian)) {
+            return back()->withErrors(['error' => 'Tidak ada pengajuan penolakan tenaga kerja yang dapat diverifikasi.']);
         }
 
         $jadwalPemeliharaan->update(['status' => 'ditolak']); 
@@ -136,14 +136,32 @@ class JadwalPemeliharaanController extends Controller
             'alasan_penolakan' => 'required|string',
         ]);
 
-        if ($jadwalPemeliharaan->status !== 'pending') {
-            return back()->withErrors(['error' => 'Hanya jadwal dengan status Pending yang bisa ditolak.']);
+        // Hanya laporan pekerjaan yang sedang menunggu verifikasi
+        // dan mempunyai detail penyelesaian yang boleh ditolak.
+        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi' || empty($jadwalPemeliharaan->detail_penyelesaian)) {
+            return back()->withErrors(['error' => 'Hanya hasil pemeliharaan yang menunggu verifikasi yang dapat ditolak.']);
         }
 
-        $data['status'] = 'ditolak';
-        $jadwalPemeliharaan->update($data);
+        /*
+        * Kembalikan pekerjaan menjadi Pending.
+        * Artinya pekerjaan belum dianggap selesai
+        * dan tenaga kerja harus mengisi checklist kembali.
+        */
+        $jadwalPemeliharaan->update(['status' => 'pending',
+            // Simpan alasan dari Supervisor
+            'keterangan_tolak' => $data['keterangan_tolak'],
+            'alasan_penolakan' => $data['alasan_penolakan'],
 
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil dibatalkan/ditolak oleh Supervisor.');
+            // Hapus hasil penyelesaian sebelumnya
+            // supaya tenaga kerja mengisi ulang data terbaru.
+            'nama_onderdil' => null,
+            'jumlah_pemakaian' => null,
+            'detail_penyelesaian' => null,
+            'gambar_bukti' => null,
+            'bukti_pemakaian_onderdil' => null,
+        ]);
+
+        return back()->with('sukses', 'Hasil pemeliharaan berhasil ditolak oleh Supervisor. Tenaga kerja harus melakukan perbaikan dan mengirim ulang checklist.');
     }
 
     public function exportPdf(Request $request)

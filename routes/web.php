@@ -21,7 +21,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 Auth::routes(['reset' => false, 'verify' => true]);
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'prevent-back-history'])->group(function () {
 
     Route::middleware(['supervisor'])->group(function () {
         Route::get('/supervisor', [SupervisorController::class, 'index'])->name('supervisor.dashboard');

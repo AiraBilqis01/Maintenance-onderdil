@@ -34,6 +34,8 @@
                             <td>
                                 @if($jadwalPemeliharaan->status == 'selesai')
                                     <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle"></i> Selesai</span>
+                                @elseif($jadwalPemeliharaan->status == 'menunggu_verifikasi')
+                                    <span class="badge badge-info px-2 py-1"><i class="fas fa-hourglass-half"></i> Menunggu Verifikasi</span>
                                 @elseif($jadwalPemeliharaan->status == 'ditolak')
                                     <span class="badge badge-danger px-2 py-1"><i class="fas fa-times-circle"></i> Ditolak</span>
                                 @else
@@ -102,7 +104,7 @@
                 </div>
 
                 <!-- SECTION 3: SELESAI -->
-                @if($jadwalPemeliharaan->status == 'selesai')
+                @if(!empty($jadwalPemeliharaan->detail_penyelesaian))
                 <hr style="margin: 1.5rem 0; border-top: 1px dashed #e2e8f0;">
                 <div class="detail-section mb-4">
                     <h6 class="detail-title text-success"><i class="fas fa-check-circle mr-2"></i> Detail Penyelesaian</h6>
@@ -156,23 +158,33 @@
                 @endif
 
                 <!-- SECTION 4: DITOLAK -->
-                @if($jadwalPemeliharaan->status == 'ditolak')
+                @if(!empty($jadwalPemeliharaan->alasan_penolakan))
                 <hr style="margin: 1.5rem 0; border-top: 1px dashed #e2e8f0;">
                 <div class="detail-section mb-4">
-                    <h6 class="detail-title text-danger"><i class="fas fa-times-circle mr-2"></i> Detail Penolakan</h6>
+                    @if($jadwalPemeliharaan->status == 'menunggu_verifikasi' && empty($jadwalPemeliharaan->detail_penyelesaian))
+                        <h6 class="detail-title text-danger"><i class="fas fa-exclamation-triangle mr-2"></i>Pengajuan Penolakan Tenaga Kerja</h6>
+                    @elseif($jadwalPemeliharaan->status == 'pending')
+                        <h6 class="detail-title text-danger"><i class="fas fa-exclamation-circle mr-2"></i>Catatan Penolakan Supervisor</h6>
+                    @else
+                        <h6 class="detail-title text-danger"><i class="fas fa-times-circle mr-2"></i>Detail Penolakan</h6>
+                    @endif
+
                     <table class="table table-sm table-borderless detail-table">
                         <tr>
                             <td width="35%" class="text-muted">Keterangan</td>
-                            <td width="65%">{{ $jadwalPemeliharaan->keterangan_tolak ?? '-' }}</td>
+                            <td width="65%">
+                                {{ $jadwalPemeliharaan->keterangan_tolak ?? '-' }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="text-muted">Alasan Penolakan</td>
-                            <td>{{ $jadwalPemeliharaan->alasan_penolakan ?? '-' }}</td>
+                            <td>
+                                {{ $jadwalPemeliharaan->alasan_penolakan ?? '-' }}
+                            </td>
                         </tr>
                     </table>
                 </div>
                 @endif
-
             </div>
 
             <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem;">

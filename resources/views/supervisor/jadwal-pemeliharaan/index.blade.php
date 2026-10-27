@@ -339,33 +339,29 @@
                                             @include('supervisor.jadwal-pemeliharaan.detail', ['jadwalPemeliharaan' => $item])
                                             @include('supervisor.jadwal-pemeliharaan.edit', ['jadwalPemeliharaan' => $item])
                                             
-                                            @if($item->status == 'pending')
-                                                <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalTolakSPV{{ $item->id }}" title="Batalkan Jadwal">
-                                                    <i class="fas fa-times-circle"></i> Tolak
-                                                </button>
-                                            @endif
-
                                             @if($item->status == 'menunggu_verifikasi')
-                                                
-                                                @if($item->detail_penyelesaian)
-                                                    <form action="{{ route('supervisor.jadwal-pemeliharaan.verifikasi-selesai', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin memverifikasi? Stok akan otomatis dipotong.');">
+                                                {{-- KASUS 1:TENAGA KERJA MENYELESAIKAN PEKERJAAN --}}
+                                                @if(!empty($item->detail_penyelesaian))
+                                                    <form action="{{ route('supervisor.jadwal-pemeliharaan.verifikasi-selesai', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin hasil pemeliharaan sudah sesuai? Stok onderdil yang digunakan akan otomatis dipotong.');">
                                                         @csrf
                                                         @method('PUT')
+
                                                         <button type="submit" class="btn btn-action btn-verifikasi-action" title="Verifikasi & Potong Stok">
-                                                            <i class="fas fa-check-double"></i> ACC
+                                                            <i class="fas fa-check-double"></i>ACC
                                                         </button>
                                                     </form>
+
                                                     <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalTolakSPV{{ $item->id }}" title="Tolak Laporan">
                                                         <i class="fas fa-times-circle"></i> Tolak
                                                     </button>
                                                 @endif
 
-                                                @if($item->alasan_penolakan)
+                                                {{-- KASUS 2:TENAGA KERJA MENGAJUKAN PENOLAKAN --}}
+                                                @if(!empty($item->alasan_penolakan) && empty($item->detail_penyelesaian))
                                                     <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalKonfirmasiTolak{{ $item->id }}" title="Lihat Alasan & ACC Tolak">
-                                                        <i class="fas fa-check"></i> ACC Tolak
+                                                        <i class="fas fa-check"></i>ACC Tolak
                                                     </button>
                                                 @endif
-
                                             @endif
 
                                             @include('supervisor.jadwal-pemeliharaan.delete', ['jadwalPemeliharaan' => $item])
@@ -373,7 +369,7 @@
                                     </td>                                
                                 </tr>
 
-                                @if($item->status == 'pending' || ($item->status == 'menunggu_verifikasi' && $item->detail_penyelesaian))
+                                @if($item->status == 'menunggu_verifikasi' && !empty($item->detail_penyelesaian))
                                 <div class="modal fade" id="modalTolakSPV{{ $item->id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
@@ -381,11 +377,11 @@
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-header modal-tolak-header">
-                                                    <h5><i class="fas fa-times-circle me-2"></i> Batalkan Jadwal</h5>
+                                                    <h5><i class="fas fa-times-circle me-2"></i> Tolak Hasil Pemeliharaan</h5>
                                                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body modal-tolak-body">
-                                                    <p class="mb-3">Anda akan membatalkan jadwal <strong>{{ $item->judul_pemeliharaan }}</strong> untuk tenaga kerja <strong>{{ $item->user ? $item->user->name : '-' }}</strong>.</p>
+                                                    <p class="mb-3">Hasil pemeliharaan <strong>{{ $item->judul_pemeliharaan }}</strong> yang dikirim oleh <strong>{{ $item->user ? $item->user->name : '-' }}</strong> belum sesuai. Silakan masukkan keterangan dan alasan penolakan.</p>
                                                     
                                                     <div class="mb-3">
                                                         <label class="form-label fw-semibold">Keterangan <span class="text-danger">*</span></label>
@@ -399,7 +395,7 @@
                                                 <div class="modal-footer modal-tolak-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                                     <button type="submit" class="btn btn-tolak-action">
-                                                        <i class="fas fa-times-circle"></i> Ya, Tolak Jadwal
+                                                        <i class="fas fa-times-circle"></i> Tolak Hasil Pemeliharaan
                                                     </button>
                                                 </div>
                                             </form>

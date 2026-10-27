@@ -44,6 +44,6 @@ class JadwalPemeliharaan extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'nama_tenaga_kerja', 'id');
+        return $this->belongsTo(User::class, 'nama_tenaga_kerja', 'id')->withTrashed();
     }
 }

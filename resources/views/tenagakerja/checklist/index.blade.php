@@ -424,6 +424,26 @@
 
 <div class="page-content">
     <div class="container">
+        @if (session('sukses'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                
+                {{ session('sukses') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong><i class="bi bi-exclamation-triangle-fill me-2"></i> File atau data tidak dapat disimpan. </strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
         <div class="page-title-card">
             <div>
                 <h2><i class="bi bi-check2-square"></i> Checklist Jadwal Pemeliharaan</h2>
@@ -500,8 +520,12 @@
                             </div>
                             <div class="col-md-8 mb-3">
                                 <label class="form-label fw-semibold text-danger">Upload Bukti Pemakaian <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control" name="bukti_pemakaian_onderdil" accept="image/*">
-                                <small class="text-muted">Wajib diisi karena Anda memilih onderdil.</small>
+                                <input type="file" class="form-control validasi-gambar" id="bukti_pemakaian_onderdil" name="bukti_pemakaian_onderdil" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                <small class="text-muted d-block mt-1"> Wajib diisi karena Anda memilih onderdil.</small>
+                                <small class="text-muted d-block"> Format file: JPG, JPEG, PNG, atau GIF. Maksimal 5 MB. </small>
+                                <div id="error_bukti_pemakaian_onderdil"
+                                    class="text-danger small mt-1">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -515,7 +539,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Gambar <small class="text-muted">(Bukti Penyelesaian Alat)</small></label>
-                        <input type="file" class="form-control" name="gambar_bukti" accept="image/*">
+                        <input type="file" class="form-control validasi-gambar" id="gambar_bukti" name="gambar_bukti" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                        <small class="text-muted d-block mt-1"> Format file: JPG, JPEG, PNG, atau GIF. Maksimal 5 MB. </small>
+                        <div id="error_gambar_bukti"
+                            class="text-danger small mt-1">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -656,14 +684,24 @@
                     html += '</div>';
                 }
 
-                if (status === 'ditolak' || status === 'menunggu_verifikasi') {
-                    if (props.alasan_penolakan) {
-                        html += '<div class="result-section ditolak">';
+                // ============================================
+                // DETAIL PENOLAKAN / CATATAN DARI SUPERVISOR
+                // ============================================
+
+                if (props.alasan_penolakan) {
+                    html += '<div class="result-section ditolak">';
+                    // Jika status kembali Pending karena hasil pekerjaan ditolak Supervisor
+                    if (status === 'pending') {
+                        html += '<h6><i class="bi bi-exclamation-triangle me-2"></i> Catatan Perbaikan dari Supervisor</h6>';
+                    } else {
+                        // Jika tenaga kerja sendiri mengajukan penolakan
                         html += '<h6><i class="bi bi-x-circle me-2"></i> Detail Penolakan</h6>';
-                        html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan_tolak || '-') + '</div></div>';
-                        html += '<div class="detail-row"><div class="detail-label">Alasan Penolakan</div><div class="detail-value">' + (props.alasan_penolakan || '-') + '</div></div>';
-                        html += '</div>';
                     }
+
+                    html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan_tolak || '-') + '</div></div>';
+                    html += '<div class="detail-row"><div class="detail-label">Alasan Penolakan</div><div class="detail-value">' + (props.alasan_penolakan || '-') + '</div></div>';
+
+                    html += '</div>';
                 }
 
                 document.getElementById('eventDetailBody').innerHTML = html;
@@ -752,6 +790,56 @@
                 inputJumlah.value = 1;
             }
         });
+        
+        document.querySelectorAll('.validasi-gambar').forEach(function(input) {
+            input.addEventListener('change', function() {
+                const file = this.files[0];
+                const errorElement =
+                    document.getElementById('error_' + this.id);
+                errorElement.innerHTML = '';
+                if (!file) {
+                    return;
+                }
+                // Maksimal 5 MB
+                const maxSize = 5 * 1024 * 1024;
+                // Format yang diperbolehkan
+                const allowedExtensions = [
+                    'jpg',
+                    'jpeg',
+                    'png',
+                    'gif'
+                ];
+                const fileName = file.name.toLowerCase();
+                const extension =
+                    fileName.split('.').pop();
+                // CEK FORMAT FILE
+                if (!allowedExtensions.includes(extension)) {
+                    errorElement.innerHTML =
+                        '<i class="bi bi-exclamation-circle"></i> ' +
+                        'Format file tidak diperbolehkan. ' +
+                        'Gunakan JPG, JPEG, PNG, atau GIF.';
+                    // Hapus file dari input
+                    this.value = '';
+                    return;
+                }
+                // CEK UKURAN FILE
+                if (file.size > maxSize) {
+                    errorElement.innerHTML =
+                        '<i class="bi bi-exclamation-circle"></i> ' +
+                        'Ukuran file terlalu besar. ' +
+                        'Ukuran maksimal file adalah 5 MB.';
+                    // Hapus file dari input
+                    this.value = '';
+                    return;
+                }
+                // Jika file valid
+                errorElement.innerHTML =
+                    '<span class="text-success">' +
+                    '<i class="bi bi-check-circle"></i> ' +
+                    'File sesuai. Siap diunggah.' +
+                    '</span>';
+            });
+        });
     });
 
     function openSelesaiModal(id, judul) {
@@ -767,6 +855,10 @@
         document.getElementById('input_jumlah_pemakaian').removeAttribute('required');
         document.getElementById('input_jumlah_pemakaian').value = 1;
         
+        // Bersihkan notifikasi validasi file sebelumnya
+        document.getElementById('error_gambar_bukti').innerHTML = '';
+        document.getElementById('error_bukti_pemakaian_onderdil').innerHTML = '';
+
         var modal = new bootstrap.Modal(document.getElementById('modalSelesai'));
         modal.show();
     }

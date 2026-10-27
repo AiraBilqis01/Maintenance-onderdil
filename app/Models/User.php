@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -32,11 +33,11 @@ class User extends Authenticatable
 
     public function isSupervisor()
     {
-        return $this->role === 'Supervisor'; 
+        return $this->role === 'supervisor'; 
     }
     
     public function isTenagaKerja()
     {
-        return $this->role === 'TenagaKerja'; 
+        return $this->role === 'tenagakerja'; 
     }
 }
