@@ -16,7 +16,7 @@ class TenagakerjaController extends Controller
                     ->orderBy('tanggal_selesai', 'desc')->get();
 
         $total   = $jadwal->count();
-        $pending = $jadwal->where('status', 'pending')->count();
+        $pending = $jadwal->whereIn('status', ['pending', 'menunggu_verifikasi'])->count();
         $selesai = $jadwal->where('status', 'selesai')->count();
         $ditolak = $jadwal->where('status', 'ditolak')->count();
 
