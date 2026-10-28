@@ -8,6 +8,7 @@ use App\Models\JadwalPemeliharaan;
 use App\Models\User;
 use App\Models\StokOnderdil;
 use App\Mail\JadwalPemeliharaanMail;
+use App\Mail\HasilPemeliharaanDitolakMail;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
@@ -168,6 +169,14 @@ class JadwalPemeliharaanController extends Controller
             'gambar_bukti' => null,
             'bukti_pemakaian_onderdil' => null,
         ]);
+
+        // Kirim email pemberitahuan kepada tenaga kerja
+        $jadwalPemeliharaan->load('user');
+
+        if ($jadwalPemeliharaan->user && $jadwalPemeliharaan->user->email) {
+            Mail::to($jadwalPemeliharaan->user->email)->send(
+                    new HasilPemeliharaanDitolakMail($jadwalPemeliharaan));
+        }
 
         return back()->with('sukses', 'Hasil pemeliharaan berhasil ditolak oleh Supervisor. Tenaga kerja harus melakukan perbaikan dan mengirim ulang checklist.');
     }

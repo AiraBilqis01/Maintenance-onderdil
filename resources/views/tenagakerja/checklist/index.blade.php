@@ -127,7 +127,7 @@
         /* =========================================
            4. PAGE CONTENT & TITLE CARD
            ========================================= */
-        .page-content { padding: 7rem 0 4rem 0; position: relative; z-index: 2; }
+        .page-content { padding: 4rem 0 4rem 0; position: relative; z-index: 2; }
         .page-title-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
@@ -382,8 +382,116 @@
         /* =========================================
            12. RESPONSIVE (MOBILE)
            ========================================= */
+        
+        /* =========================================
+                    MENU HAMBURGER MOBILE
+        ========================================= */
+        .btn-menu-mobile {
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-menu-mobile i {
+            font-size: 1.7rem;
+        }
+
+        .btn-menu-mobile:hover,
+        .btn-menu-mobile:focus {
+            color: white;
+            background: linear-gradient(135deg, #5a6fd8, #6845a0);
+        }
+
+        /* =========================================
+                    DROPDOWN MENU MOBILE
+        ========================================= */
+        .mobile-dropdown-menu {
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 12px;
+            padding-bottom: 8px;
+            border-top: 1px solid rgba(102, 126, 234, 0.15);
+        }
+
+        .mobile-menu-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 10px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-link i {
+            width: 24px;
+            font-size: 1.15rem;
+            color: #667eea;
+        }
+
+        .mobile-menu-link:hover,
+        .mobile-menu-link.active {
+            background: #f2efff;
+            color: #667eea;
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: #eef2f7;
+            margin: 8px 0;
+        }
+
+        /* LOGOUT MOBILE */
+        .mobile-auth-button {
+            padding: 12px 10px 6px 10px;
+        }
+
+        .mobile-auth-button form {
+            margin: 0;
+        }
+
+        .mobile-auth-button .btn-logout-modern,
+        .mobile-auth-button .btn-login-modern {
+            padding: 12px 36px;
+        }
+
+        .mobile-logout {
+            color: #c53030;
+        }
+
+        .mobile-logout i {
+            color: #e53e3e;
+        }
+
+        .mobile-logout:hover {
+            background: #fff5f5;
+            color: #c53030;
+        }
+
+        /* LOGIN MOBILE */
+        .mobile-login {
+            color: #667eea;
+        }
+
+        .mobile-login i {
+            color: #667eea;
+        }
+
         @media (max-width: 992px) {
-            .nav-menu { display: none; }
             .page-title-card { padding: 1.5rem; }
             .page-title-card h2 { font-size: 1.3rem; }
             .calendar-wrapper { padding: 1rem; }
@@ -394,18 +502,18 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-blur fixed-top">
+<nav class="navbar navbar-blur sticky-top">
     <div class="container">
         <a class="navbar-brand" href="{{ route('tenagakerja.dashboard') }}">
             <i class="bi bi-tools"></i>
             <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
-        <div class="nav-menu">
+        <div class="nav-menu d-none d-lg-flex">
             <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
+            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link active"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
             <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
         </div>
-        <div class="d-flex gap-2 align-items-center">
+        <div class="d-none d-lg-flex">
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
@@ -418,6 +526,47 @@
                     <i class="bi bi-box-arrow-in-right"></i> Login
                 </a>
             @endauth
+        </div>
+
+        {{-- TOMBOL HAMBURGER MOBILE --}}
+        <button class="btn btn-menu-mobile d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuTenagaKerja" aria-expanded="false" aria-controls="mobileMenuTenagaKerja">
+            <i class="bi bi-list"></i>
+        </button>
+
+        {{-- MENU MOBILE --}}
+        <div class="collapse d-lg-none w-100" id="mobileMenuTenagaKerja">
+            <div class="mobile-dropdown-menu">
+                <a href="{{ route('tenagakerja.dashboard') }}" class="mobile-menu-link">
+                    <i class="bi bi-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link active">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Jadwal Pemeliharaan</span>
+                </a>
+                <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="mobile-menu-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Stok Onderdil</span>
+                </a>
+
+                <div class="mobile-menu-divider"></div>
+                <div class="mobile-auth-button">
+                    @auth
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-logout-modern">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    @else
+                        <a href="/login" class="btn btn-login-modern">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login</span>
+                        </a>
+                    @endauth
+                </div>
+            </div>
         </div>
     </div>
 </nav>
