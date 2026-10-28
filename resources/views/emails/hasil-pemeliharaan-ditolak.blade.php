@@ -8,7 +8,6 @@
 <body style="margin:0; padding:0; background:#f5f0ff; font-family:Arial,sans-serif;">
 
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0ff; padding:30px 0;">
-
     <tr>
         <td align="center">
             <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:16px; overflow:hidden;">
@@ -38,18 +37,68 @@
                         </p>
 
                         {{-- DETAIL PEKERJAAN --}}
-                        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7fafc; border-left:4px solid #667eea; margin:20px 0;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background: #f7fafc; border-left: 4px solid #667eea; border-radius: 8px; padding: 0; margin-bottom: 25px;">
                             <tr>
-                                <td style="padding:20px;">
-                                    <h2 style="font-size:17px; color:#1a1a2e; margin-top:0;">
-                                    {{ $jadwal->judul_pemeliharaan }}
+                                <td style="padding: 20px 25px;">
+                                    <h2 style="font-size: 17px; color: #1a1a2e; margin: 0 0 15px 0;">
+                                        {{ $jadwal->judul_pemeliharaan }}
                                     </h2>
-                                    <p>
-                                        <strong>Nama Peralatan:</strong>{{ $jadwal->nama_peralatan ?? '-' }}
-                                    </p>
-                                    <p>
-                                        <strong>Lokasi:</strong>{{ $jadwal->lokasi ?? '-' }}
-                                    </p>
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px;">
+                                        <tr>
+                                            <td style="padding: 5px 0; color: #718096; width: 140px;">Nama Peralatan</td>
+                                            <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->nama_peralatan }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 5px 0; color: #718096;">Lokasi</td>
+                                            <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->lokasi ?? '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 5px 0; color: #718096;">Quantity</td>
+                                            <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->quantity }}</td>
+                                        </tr>
+                                        @if($jadwal->serial_number)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Serial Number</td>
+                                                <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->serial_number }}</td>
+                                            </tr>
+                                        @endif
+                                        @if($jadwal->kapasitas)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Kapasitas</td>
+                                                <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->kapasitas }}</td>
+                                            </tr>
+                                        @endif
+                                        @if($jadwal->merek)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Merek</td>
+                                                <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->merek }}</td>
+                                            </tr>
+                                        @endif
+                                        @if($jadwal->tipe)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Tipe</td>
+                                                <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->tipe }}</td>
+                                            </tr>
+                                        @endif
+                                        @if($jadwal->tahun_pembuatan)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Tahun Pembuatan</td>
+                                                <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->tahun_pembuatan }}</td>
+                                            </tr>
+                                        @endif
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Tanggal Selesai</td>
+                                                <td style="padding: 5px 0; color: #c53030; font-weight: bold;">
+                                                    : {{ \Carbon\Carbon::parse($jadwal->tanggal_selesai)->format('d F Y') }}
+                                                </td>
+                                            </tr>
+                                        @if($jadwal->keterangan)
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096; vertical-align: top;">Keterangan</td>
+                                                <td style="padding: 5px 0; color: #2d3748;">: {{ $jadwal->keterangan }}</td>
+                                            </tr>
+                                        @endif
+                                    </table>
                                 </td>
                             </tr>
                         </table>
