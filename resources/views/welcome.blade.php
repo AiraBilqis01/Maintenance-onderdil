@@ -300,31 +300,138 @@
             color: #718096;
         }
 
+        /* =========================================
+                    TOMBOL HAMBURGER MOBILE
+        ========================================= */
+        .btn-menu-mobile {
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-menu-mobile i {
+            font-size: 1.7rem;
+        }
+
+        .btn-menu-mobile:hover,
+        .btn-menu-mobile:focus {
+            color: white;
+            background: linear-gradient(135deg, #5a6fd8, #6845a0);
+        }
+
+        /* =========================================
+                    DROPDOWN MOBILE
+        ========================================= */
+        .mobile-dropdown-menu {
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 12px;
+            padding-bottom: 8px;
+            border-top: 1px solid rgba(102, 126, 234, 0.15);
+        }
+
+        /* MENU */
+        .mobile-menu-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 10px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-link i {
+            width: 24px;
+            font-size: 1.15rem;
+            color: #667eea;
+        }
+
+        .mobile-menu-link:hover {
+            background: #f2efff;
+            color: #667eea;
+        }
+
+        /* GARIS PEMBATAS */
+        .mobile-menu-divider {
+            height: 1px;
+            background: #eef2f7;
+            margin: 8px 0;
+        }
+
+        /* LOGIN MOBILE */
+        .mobile-auth-button {
+            padding: 12px 10px 6px 10px;
+        }
+
+        .mobile-auth-button .btn-login-modern {
+            padding: 12px 36px;
+        }
+
         @media (max-width: 992px) {
             .hero-title { font-size: 2.8rem; }
-            .floating-card { margin: 2rem auto 0 auto; }
-            .nav-menu { display: none; }
-        }
+            .floating-card { margin: 2rem auto 0 auto; }        }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-blur fixed-top">
+<nav class="navbar navbar-blur sticky-top">
     <div class="container">
         <a class="navbar-brand" href="#">
             <i class="bi bi-tools"></i> 
             <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
         
-        <div class="nav-menu">
+        <div class="nav-menu d-none d-lg-flex">
             <a href="#" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
             <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
         </div>
         
-        <div class="d-flex gap-2 align-items-center">
+        <div class="d-none d-lg-flex">
             <a href="/login" class="btn btn-login-modern">
                 <i class="bi bi-box-arrow-in-right"></i> Login
             </a>
+        </div>
+
+        {{-- TOMBOL HAMBURGER MOBILE --}}
+        <button class="btn btn-menu-mobile d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuWelcome" aria-expanded="false" aria-controls="mobileMenuWelcome">
+            <i class="bi bi-list"></i>
+        </button>
+
+        {{-- MENU MOBILE --}}
+        <div class="collapse d-lg-none w-100" id="mobileMenuWelcome">
+            <div class="mobile-dropdown-menu">
+                <a href="#" class="mobile-menu-link">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Jadwal Pemeliharaan</span>
+                </a>
+                <a href="#" class="mobile-menu-link">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Stok Onderdil</span>
+                </a>
+
+                <div class="mobile-menu-divider"></div>
+
+                {{-- LOGIN MOBILE --}}
+                <div class="mobile-auth-button">
+                    <a href="/login" class="btn btn-login-modern">
+                        <i class="bi bi-box-arrow-in-right"></i>Login
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
