@@ -25,44 +25,46 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="gambar">Gambar</label>
-                                <input type="file" name="gambar" class="form-control" accept="image/*">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
                                 <label for="stok_periode_sebelum">Stok Periode Sebelum <span class="text-danger">*</span></label>
                                 <input type="number" name="stok_periode_sebelum" class="form-control" placeholder="0" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="periode">Periode <span class="text-danger">*</span></label>
                                 <input type="date" name="periode" class="form-control" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="kondisi_sekarang">Kondisi Sekarang <span class="text-danger">*</span></label>
                                 <input type="text" name="kondisi_sekarang" class="form-control" placeholder="Masukkan kondisi" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="pemakaian">Pemakaian <span class="text-danger">*</span></label>
                                 <input type="number" name="pemakaian" class="form-control" placeholder="0" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="stok_terbaru">Stok Terbaru <span class="text-danger">*</span></label>
                                 <input type="number" name="stok_terbaru" class="form-control" placeholder="0" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gambar">Gambar</label>
+                                <input type="file" name="gambar" id="gambar_tambah" class="form-control validasi-gambar-stok" accept=".jpg,.jpeg,.png,.gif">
+                                <div id="error_gambar_tambah" class="text-warning mt-1" style="font-size: 12px;"></div>
+                                <small style="color: #ccc;">Format: JPG, JPEG, PNG, GIF. Maksimal 5 MB. </small>
                             </div>
                         </div>
                         <div class="col-md-6">

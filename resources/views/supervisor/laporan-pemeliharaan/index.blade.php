@@ -175,6 +175,22 @@
     }
     .btn-reset:hover { background: #e2e8f0; color: #2d3748; }
 
+    /* Tombol Filter dan Reset */
+    .filter-actions {
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .filter-actions .btn-filter,
+    .filter-actions .btn-reset {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0.55rem 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
     .card-custom {
         border-radius: 16px;
         overflow: hidden;
@@ -433,8 +449,8 @@
                             <label for="tanggal_sampai">Sampai</label>
                             <input type="date" name="tanggal_sampai" id="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
                         </div>
-                        <div class="col-md-1 d-flex gap-1">
-                            <button type="submit" class="btn-filter w-100" title="Filter">
+                        <div class="col-md-1 d-flex gap-1 filter-actions">
+                            <button type="submit" class="btn-filter" title="Filter">
                                 <i class="fas fa-search"></i>
                             </button>
                             <a href="{{ route('supervisor.laporan-pemeliharaan.index') }}" class="btn-reset" title="Reset">

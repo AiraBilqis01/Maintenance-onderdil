@@ -36,8 +36,12 @@ class JadwalPemeliharaanController extends Controller
             'merek' => 'nullable|string|max:255',
             'tipe' => 'nullable|string|max:255',
             'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'keterangan' => 'nullable|string',
+        ], [
+            'gambar.image' => 'File yang dipilih harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
+            'gambar.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
         if ($request->hasFile('gambar')) {
@@ -73,8 +77,12 @@ class JadwalPemeliharaanController extends Controller
             'merek' => 'nullable|string|max:255',
             'tipe' => 'nullable|string|max:255',
             'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'keterangan' => 'nullable|string',
+        ], [
+            'gambar.image' => 'File yang dipilih harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
+            'gambar.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
         if ($request->hasFile('gambar')) {

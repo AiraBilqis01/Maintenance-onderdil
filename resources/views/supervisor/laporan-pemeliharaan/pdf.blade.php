@@ -16,6 +16,12 @@
             color: #2d3748;
         }
 
+        .page-container {
+            margin-top: 25px;
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+
         /* ===== KOP SURAT ===== */
         .kop-surat {
             display: table;
@@ -27,6 +33,7 @@
         .kop-logo {
             display: table-cell;
             width: 70px;
+            padding-right: 10px;
             vertical-align: middle;
             text-align: center;
         }
@@ -168,27 +175,17 @@
             text-align: center;
         }
         .foto-bukti {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             object-fit: cover;
             border-radius: 6px;
             border: 2px solid #e2e8f0;
-        }
-        .foto-kosong {
-            width: 60px;
-            height: 60px;
-            background: #edf2f7;
-            border-radius: 6px;
-            border: 1px dashed #cbd5e0;
-            display: inline-block;
-            line-height: 60px;
-            color: #a0aec0;
-            font-size: 8px;
         }
 
         /* ===== RINGKASAN ===== */
         .ringkasan {
             margin-top: 10px;
+            margin-bottom: 12px;
             background: #f7fafc;
             border-radius: 6px;
             padding: 10px 14px;
@@ -273,6 +270,7 @@
         }
     </style>
 </head>
+
 <body>
 
 @php
@@ -288,136 +286,138 @@
         : null;
 @endphp
 
-{{-- ============ KOP SURAT ============ --}}
-<div class="kop-surat">
-    <div class="kop-logo">
-        @if($logoSrc)
-            <img src="{{ $logoSrc }}" alt="Logo">
-        @endif
+<div class="page-container">
+    {{-- ============ KOP SURAT ============ --}}
+    <div class="kop-surat">
+        <div class="kop-logo">
+            @if($logoSrc)
+                <img src="{{ $logoSrc }}" alt="Logo">
+            @endif
+        </div>
+        <div class="kop-teks">
+            <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
+            <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
+            <p>Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a> </p>
+        </div>
     </div>
-    <div class="kop-teks">
-        <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
-        <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
-        <p>Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a> </p>
+
+    {{-- ============ JUDUL LAPORAN ============ --}}
+    <div class="judul-laporan">
+        <h3>{{ $judul }}</h3>
     </div>
-</div>
 
-{{-- ============ JUDUL LAPORAN ============ --}}
-<div class="judul-laporan">
-    <h3>{{ $judul }}</h3>
-</div>
+    {{-- ============ INFO PERIODE ============ --}}
+    <div class="info-bar">
+        <table>
+            <tr>
+                <td class="label">Periode</td>
+                <td class="value">: {{ $periode }}</td>
+                <td class="label">Tanggal Cetak</td>
+                <td class="value">: {{ date('d F Y, H:i') }} WIB</td>
+            </tr>
+            <tr>
+                <td class="label">Total Data</td>
+                <td class="value">: {{ $total }} data</td>
+                <td class="label">Dicetak Oleh</td>
+                <td class="value">: {{ Auth::user()->name ?? 'Supervisor' }}</td>
+            </tr>
+        </table>
+    </div>
 
-{{-- ============ INFO PERIODE ============ --}}
-<div class="info-bar">
-    <table>
-        <tr>
-            <td class="label">Periode</td>
-            <td class="value">: {{ $periode }}</td>
-            <td class="label">Tanggal Cetak</td>
-            <td class="value">: {{ date('d F Y, H:i') }} WIB</td>
-        </tr>
-        <tr>
-            <td class="label">Total Data</td>
-            <td class="value">: {{ $total }} data</td>
-            <td class="label">Dicetak Oleh</td>
-            <td class="value">: {{ Auth::user()->name ?? 'Supervisor' }}</td>
-        </tr>
+    {{-- ============ RINGKASAN ============ --}}
+    <div class="ringkasan">
+        <h4>Ringkasan Status</h4>
+        <div class="ringkasan-grid">
+            <div class="ringkasan-item total">
+                <span class="angka">{{ $total }}</span>
+                <span class="keterangan">Total</span>
+            </div>
+            <div class="ringkasan-item pending">
+                <span class="angka">{{ $jmlPending }}</span>
+                <span class="keterangan">Pending</span>
+            </div>
+            <div class="ringkasan-item selesai">
+                <span class="angka">{{ $jmlSelesai }}</span>
+                <span class="keterangan">Selesai</span>
+            </div>
+            <div class="ringkasan-item ditolak">
+                <span class="angka">{{ $jmlDitolak }}</span>
+                <span class="keterangan">Ditolak</span>
+            </div>
+        </div>
+    </div>
+
+    {{-- ============ TABEL DATA ============ --}}
+    <table class="data">
+        <thead>
+            <tr>
+                <th width="3%">No</th>
+                <th width="10%">Judul Pemeliharaan</th>
+                <th width="8%">Tenaga Kerja</th>
+                <th width="9%">Peralatan</th>
+                <th width="6%">Lokasi</th>
+                <th width="6%">Tgl Selesai</th>
+                <th width="6%">Status</th>
+                <th width="10%">Nama Onderdil</th>
+                <th width="6%">Jumlah Pakai</th>
+                <th width="12%">Detail Penyelesaian</th>
+                <th width="10%">Alasan Penolakan</th>
+                <th width="8%">Bukti</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($laporan as $i => $item)
+            <tr>
+                <td style="text-align: center; font-weight: bold;">{{ $i + 1 }}</td>
+                <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
+                <td>{{ $item->user ? $item->user->name : '-' }}</td>
+                <td>{{ $item->nama_peralatan }}</td>
+                <td>{{ $item->lokasi ?? '-' }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                <td style="text-align: center;">
+                    @if($item->status == 'selesai')
+                        <span class="badge badge-selesai">✓ Selesai</span>
+                    @elseif($item->status == 'ditolak')
+                        <span class="badge badge-ditolak">✗ Ditolak</span>
+                    @else
+                        <span class="badge badge-pending">⏳ Pending</span>
+                    @endif
+                </td>
+                
+                {{-- KOLOM BARU: NAMA ONDERDIL & JUMLAH PEMAKAIAN --}}
+                <td>{{ $item->nama_onderdil ?? '-' }}</td>
+                <td style="text-align: center; font-weight: bold;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
+
+                <td>{{ $item->detail_penyelesaian ?? '-' }}</td>
+                <td>{{ $item->alasan_penolakan ?? '-' }}</td>
+                <td class="foto-cell">
+                    @php
+                        $fotoPath = null;
+                        if ($item->status == 'selesai' && $item->gambar_bukti) {
+                            $fotoPath = public_path($item->gambar_bukti);
+                        } elseif ($item->gambar) {
+                            $fotoPath = public_path($item->gambar);
+                        }
+                    @endphp
+
+                    @if($fotoPath && file_exists($fotoPath))
+                        <img src="data:image/{{ pathinfo($fotoPath, PATHINFO_EXTENSION) }};base64,{{ base64_encode(file_get_contents($fotoPath)) }}"
+                            alt="Bukti"
+                            class="foto-bukti">
+                    @else
+                        <span style="color: #1a1a2e; font-size: 10px;"> - </span>
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
     </table>
-</div>
 
-{{-- ============ RINGKASAN ============ --}}
-<div class="ringkasan">
-    <h4>Ringkasan Status</h4>
-    <div class="ringkasan-grid">
-        <div class="ringkasan-item total">
-            <span class="angka">{{ $total }}</span>
-            <span class="keterangan">Total</span>
-        </div>
-        <div class="ringkasan-item pending">
-            <span class="angka">{{ $jmlPending }}</span>
-            <span class="keterangan">Pending</span>
-        </div>
-        <div class="ringkasan-item selesai">
-            <span class="angka">{{ $jmlSelesai }}</span>
-            <span class="keterangan">Selesai</span>
-        </div>
-        <div class="ringkasan-item ditolak">
-            <span class="angka">{{ $jmlDitolak }}</span>
-            <span class="keterangan">Ditolak</span>
-        </div>
+    {{-- ============ DICETAK OLEH ============ --}}
+    <div class="dicetak-oleh">
+        <p>Dicetak oleh: <strong>{{ Auth::user()->name ?? 'Supervisor' }}</strong></p>
+        <p class="tanggal">{{ date('d F Y, H:i') }} WIB</p>
     </div>
-</div>
-
-{{-- ============ TABEL DATA ============ --}}
-<table class="data">
-    <thead>
-        <tr>
-            <th width="3%">No</th>
-            <th width="10%">Judul Pemeliharaan</th>
-            <th width="8%">Tenaga Kerja</th>
-            <th width="9%">Peralatan</th>
-            <th width="6%">Lokasi</th>
-            <th width="6%">Tgl Selesai</th>
-            <th width="6%">Status</th>
-            <th width="10%">Nama Onderdil</th>
-            <th width="6%">Jumlah Pakai</th>
-            <th width="12%">Detail Penyelesaian</th>
-            <th width="10%">Alasan Penolakan</th>
-            <th width="8%">Bukti</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($laporan as $i => $item)
-        <tr>
-            <td style="text-align: center; font-weight: bold;">{{ $i + 1 }}</td>
-            <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
-            <td>{{ $item->user ? $item->user->name : '-' }}</td>
-            <td>{{ $item->nama_peralatan }}</td>
-            <td>{{ $item->lokasi ?? '-' }}</td>
-            <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
-            <td style="text-align: center;">
-                @if($item->status == 'selesai')
-                    <span class="badge badge-selesai">✓ Selesai</span>
-                @elseif($item->status == 'ditolak')
-                    <span class="badge badge-ditolak">✗ Ditolak</span>
-                @else
-                    <span class="badge badge-pending">⏳ Pending</span>
-                @endif
-            </td>
-            
-            {{-- KOLOM BARU: NAMA ONDERDIL & JUMLAH PEMAKAIAN --}}
-            <td>{{ $item->nama_onderdil ?? '-' }}</td>
-            <td style="text-align: center; font-weight: bold;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
-
-            <td>{{ $item->detail_penyelesaian ?? '-' }}</td>
-            <td>{{ $item->alasan_penolakan ?? '-' }}</td>
-            <td class="foto-cell">
-                @php
-                    $fotoPath = null;
-                    if ($item->status == 'selesai' && $item->gambar_bukti) {
-                        $fotoPath = public_path($item->gambar_bukti);
-                    } elseif ($item->gambar) {
-                        $fotoPath = public_path($item->gambar);
-                    }
-                @endphp
-
-                @if($fotoPath && file_exists($fotoPath))
-                    <img src="data:image/{{ pathinfo($fotoPath, PATHINFO_EXTENSION) }};base64,{{ base64_encode(file_get_contents($fotoPath)) }}"
-                         alt="Bukti"
-                         class="foto-bukti">
-                @else
-                    <span class="foto-kosong">No Image</span>
-                @endif
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-{{-- ============ DICETAK OLEH ============ --}}
-<div class="dicetak-oleh">
-    <p>Dicetak oleh: <strong>{{ Auth::user()->name ?? 'Supervisor' }}</strong></p>
-    <p class="tanggal">{{ date('d F Y, H:i') }} WIB</p>
 </div>
 
 {{-- ============ FOOTER ============ --}}

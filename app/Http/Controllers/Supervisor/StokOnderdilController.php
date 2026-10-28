@@ -64,14 +64,18 @@ class StokOnderdilController extends Controller
     {
         $data = $request->validate([
             'nama_sparepart' => 'required|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'stok_periode_sebelum' => 'required|integer|min:0',
             'periode' => 'required|date',
             'kondisi_sekarang' => 'required|string|max:255',
             'pemakaian' => 'required|integer|min:0',
             'stok_terbaru' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
-        ]); 
+        ], [
+            'gambar.image' => 'File yang dipilih harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
+            'gambar.max' => 'Ukuran gambar maksimal adalah 5 MB.',
+        ]);
 
         if ($request->hasFile('gambar')) {
             $image = $request->file('gambar');
@@ -88,13 +92,17 @@ class StokOnderdilController extends Controller
     {
         $data = $request->validate([
             'nama_sparepart' => 'required|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'stok_periode_sebelum' => 'required|integer|min:0',
             'periode' => 'required|date',
             'kondisi_sekarang' => 'required|string|max:255',
             'pemakaian' => 'required|integer|min:0',
             'stok_terbaru' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
+        ], [
+            'gambar.image' => 'File yang dipilih harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
+            'gambar.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
         if ($request->hasFile('gambar')) {

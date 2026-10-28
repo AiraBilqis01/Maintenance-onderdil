@@ -102,8 +102,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="gambar">Gambar</label>
-                                <input type="file" name="gambar" class="form-control" accept="image/*">
+                                <label for="gambar_jadwal_tambah">Gambar</label>
+                                <input type="file" name="gambar" id="gambar_jadwal_tambah" class="form-control validasi-gambar-jadwal" accept=".jpg,.jpeg,.png,.gif">
+                                <div id="error_gambar_jadwal_tambah" class="text-warning mt-1" style="font-size: 12px;"></div>
+                                <small style="color: #ccc;"> Format: JPG, JPEG, PNG, GIF. Maksimal 5 MB. </small>
                             </div>
                         </div>
                         <div class="col-md-6">

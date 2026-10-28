@@ -28,50 +28,51 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="gambar">Gambar</label>
-                                @if($stokOnderdil->gambar)
-                                    <div class="mb-2">
-                                        <img src="{{ asset($stokOnderdil->gambar) }}" alt="{{ $stokOnderdil->nama_sparepart }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-                                    </div>
-                                @endif
-                                <input type="file" class="form-control" name="gambar" accept="image/*" />
-                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah gambar</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
                                 <label for="stok_periode_sebelum">Stok Periode Sebelum <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="stok_periode_sebelum" value="{{ $stokOnderdil->stok_periode_sebelum }}" required />
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="periode">Periode <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="periode" value="{{ $stokOnderdil->periode }}" required />
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="kondisi_sekarang">Kondisi Sekarang <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="kondisi_sekarang" value="{{ $stokOnderdil->kondisi_sekarang }}" required />
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="pemakaian">Pemakaian <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="pemakaian" value="{{ $stokOnderdil->pemakaian }}" required />
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="stok_terbaru">Stok Terbaru <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="stok_terbaru" value="{{ $stokOnderdil->stok_terbaru }}" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gambar">Gambar</label>
+                                @if($stokOnderdil->gambar)
+                                    <div class="mb-2">
+                                        <img src="{{ asset($stokOnderdil->gambar) }}" alt="{{ $stokOnderdil->nama_sparepart }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                    </div>
+                                @endif
+                                <input type="file" class="form-control validasi-gambar-stok" name="gambar" id="gambar_edit_{{ $stokOnderdil->id }}" accept=".jpg,.jpeg,.png,.gif" />
+                                <div id="error_gambar_edit_{{ $stokOnderdil->id }}" class="text-warning mt-1" style="font-size: 12px;"></div>
+                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah gambar. Format: JPG, JPEG, PNG, GIF. Maksimal 5 MB.</small>
                             </div>
                         </div>
                         <div class="col-md-6">

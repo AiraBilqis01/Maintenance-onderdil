@@ -111,8 +111,9 @@
                                         <img src="{{ asset($jadwalPemeliharaan->gambar) }}" alt="{{ $jadwalPemeliharaan->nama_peralatan }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                                     </div>
                                 @endif
-                                <input type="file" class="form-control" name="gambar" accept="image/*" />
-                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah gambar</small>
+                                <input type="file" class="form-control validasi-gambar-jadwal" name="gambar" id="gambar_jadwal_edit_{{ $jadwalPemeliharaan->id }}" accept=".jpg,.jpeg,.png,.gif" />
+                                <div id="error_gambar_jadwal_edit_{{ $jadwalPemeliharaan->id }}" class="text-warning mt-1" style="font-size: 12px;"></div>
+                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah gambar. Format: JPG, JPEG, PNG, GIF. Maksimal 5 MB.</small>
                             </div>
                         </div>
                         <div class="col-md-6">

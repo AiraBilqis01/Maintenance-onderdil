@@ -8,7 +8,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 9px; color: #2d3748; }
         
+        .page-container {
+            margin-top: 25px;
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+        
         .kop-surat { display: table; width: 100%; border-bottom: 3px double #1a1a2e; padding-bottom: 8px; margin-bottom: 12px; }
+        .kop-logo { display: table-cell; width: 70px; padding-right: 10px; vertical-align: middle; text-align: center; }
+        .kop-logo img { width: 60px; height: auto; }
         .kop-teks { display: table-cell; vertical-align: middle; }
         .kop-teks h1 { font-size: 15px; font-weight: bold; color: #1a1a2e; text-transform: uppercase; margin-bottom: 1px; }
         .kop-teks h2 { font-size: 10px; font-weight: normal; color: #4a5568; margin-bottom: 1px; }
@@ -34,7 +42,7 @@
         .badge-ditolak { background: #fed7d7; color: #822727; border: 1px solid #f56565; }
         .badge-menunggu { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
 
-        .img-pdf { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0; }
+        .img-pdf { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0; }
 
         .dicetak-oleh { margin-top: 25px; text-align: right; padding-right: 20px; }
         .dicetak-oleh p { font-size: 9px; color: #4a5568; margin: 2px 0; }
@@ -45,105 +53,120 @@
         .footer-info .page:after { content: counter(page); }
     </style>
 </head>
+
 <body>
 
 @php
-    $total   = $jadwal->count();
+    $total = $jadwal->count();
     $jmlPending = $jadwal->where('status', 'pending')->count();
     $jmlMenunggu = $jadwal->where('status', 'menunggu_verifikasi')->count();
     $jmlSelesai = $jadwal->where('status', 'selesai')->count();
     $jmlDitolak = $jadwal->where('status', 'ditolak')->count();
+
+    // Logo perusahaan
+    $logoPath = public_path('assets/img/logopt.png');
+
+    $logoSrc = file_exists($logoPath)
+        ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+        : null;
 @endphp
 
-<div class="kop-surat">
-    <div class="kop-teks">
-        <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
-        <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
-        <p>Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a> </p>
+<div class="page-container">
+    <div class="kop-surat">
+        <div class="kop-logo">
+            @if($logoSrc)
+                <img src="{{ $logoSrc }}" alt="Logo">
+            @endif
+        </div>
+        <div class="kop-teks">
+            <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
+            <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
+            <p>Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com">adminpemeliharaan.pltmsh@gmail.com</a> </p>
+        </div>
     </div>
-</div>
 
-<div class="judul-laporan">
-    <h3>{{ $judul }}</h3>
-</div>
+    <div class="judul-laporan">
+        <h3>{{ $judul }}</h3>
+    </div>
 
-<div class="info-bar">
-    <table>
-        <tr>
-            <td class="label">Periode</td>
-            <td class="value">: {{ $periode }}</td>
-            <td class="label">Tanggal Cetak</td>
-            <td class="value">: {{ date('d F Y, H:i') }} WIB</td>
-        </tr>
-        <tr>
-            <td class="label">Total Data</td>
-            <td class="value">: {{ $total }} data</td>
-            <td class="label">Dicetak Oleh</td>
-            <td class="value">: {{ Auth::user()->name ?? 'Supervisor' }}</td>
-        </tr>
+    <div class="info-bar">
+        <table>
+            <tr>
+                <td class="label">Periode</td>
+                <td class="value">: {{ $periode }}</td>
+                <td class="label">Tanggal Cetak</td>
+                <td class="value">: {{ date('d F Y, H:i') }} WIB</td>
+            </tr>
+            <tr>
+                <td class="label">Total Data</td>
+                <td class="value">: {{ $total }} data</td>
+                <td class="label">Dicetak Oleh</td>
+                <td class="value">: {{ Auth::user()->name ?? 'Supervisor' }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="data">
+        <thead>
+            <tr>
+                <th width="3%">No</th>
+                <th width="6%">Gambar</th>
+                <th width="10%">Judul Pemeliharaan</th>
+                <th width="7%">Tgl Selesai</th>
+                <th width="8%">Tenaga Kerja</th>
+                <th width="8%">Peralatan</th>
+                <th width="6%">Lokasi</th>
+                <th width="7%">Status</th>
+                <th width="8%">Nama Onderdil</th>
+                <th width="5%">Jumlah Pakai</th>
+                <th width="10%">Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($jadwal as $i => $item)
+            <tr>
+                <td style="text-align: center;">{{ $i + 1 }}</td>
+                <td style="text-align: center;">
+                    @if($item->gambar && file_exists(public_path($item->gambar)))
+                        @php
+                            $path = public_path($item->gambar);
+                            $type = pathinfo($path, PATHINFO_EXTENSION);
+                            $data = file_get_contents($path);
+                            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        @endphp
+                        <img src="{{ $base64 }}" class="img-pdf" alt="Gambar">
+                    @else
+                        <span style="color: #999; font-size: 10px;"> - </span>
+                    @endif
+                </td>
+                <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                <td>{{ $item->user ? $item->user->name : '-' }}</td>
+                <td>{{ $item->nama_peralatan }}</td>
+                <td>{{ $item->lokasi ?? '-' }}</td>
+                <td style="text-align: center;">
+                    @if($item->status == 'selesai')
+                        <span class="badge badge-selesai">✓ Selesai</span>
+                    @elseif($item->status == 'ditolak')
+                        <span class="badge badge-ditolak">✗ Ditolak</span>
+                    @elseif($item->status == 'menunggu_verifikasi')
+                        <span class="badge badge-menunggu">⏳ Menunggu</span>
+                    @else
+                        <span class="badge badge-pending">⌛ Pending</span>
+                    @endif
+                </td>
+                <td>{{ $item->nama_onderdil ?? '-' }}</td>
+                <td style="text-align: center;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
+                <td>{{ Str::limit($item->keterangan, 40) ?? '-' }}</td>
+            </tr>
+            @endforeach
+        </tbody>
     </table>
-</div>
 
-<table class="data">
-    <thead>
-        <tr>
-            <th width="3%">No</th>
-            <th width="6%">Gambar</th>
-            <th width="10%">Judul Pemeliharaan</th>
-            <th width="7%">Tgl Selesai</th>
-            <th width="8%">Tenaga Kerja</th>
-            <th width="8%">Peralatan</th>
-            <th width="6%">Lokasi</th>
-            <th width="7%">Status</th>
-            <th width="8%">Nama Onderdil</th>
-            <th width="5%">Jumlah Pakai</th>
-            <th width="10%">Keterangan</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($jadwal as $i => $item)
-        <tr>
-            <td style="text-align: center;">{{ $i + 1 }}</td>
-            <td style="text-align: center;">
-                @if($item->gambar && file_exists(public_path($item->gambar)))
-                    @php
-                        $path = public_path($item->gambar);
-                        $type = pathinfo($path, PATHINFO_EXTENSION);
-                        $data = file_get_contents($path);
-                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                    @endphp
-                    <img src="{{ $base64 }}" class="img-pdf" alt="Gambar">
-                @else
-                    <span style="color: #999; font-size: 7px;">No Image</span>
-                @endif
-            </td>
-            <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
-            <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
-            <td>{{ $item->user ? $item->user->name : '-' }}</td>
-            <td>{{ $item->nama_peralatan }}</td>
-            <td>{{ $item->lokasi ?? '-' }}</td>
-            <td style="text-align: center;">
-                @if($item->status == 'selesai')
-                    <span class="badge badge-selesai">✓ Selesai</span>
-                @elseif($item->status == 'ditolak')
-                    <span class="badge badge-ditolak">✗ Ditolak</span>
-                @elseif($item->status == 'menunggu_verifikasi')
-                    <span class="badge badge-menunggu">⏳ Menunggu</span>
-                @else
-                    <span class="badge badge-pending">⌛ Pending</span>
-                @endif
-            </td>
-            <td>{{ $item->nama_onderdil ?? '-' }}</td>
-            <td style="text-align: center;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
-            <td>{{ Str::limit($item->keterangan, 40) ?? '-' }}</td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-<div class="dicetak-oleh">
-    <p>Dicetak oleh: <strong>{{ Auth::user()->name ?? 'Supervisor' }}</strong></p>
-    <p class="tanggal">{{ date('d F Y, H:i') }} WIB</p>
+    <div class="dicetak-oleh">
+        <p>Dicetak oleh: <strong>{{ Auth::user()->name ?? 'Supervisor' }}</strong></p>
+        <p class="tanggal">{{ date('d F Y, H:i') }} WIB</p>
+    </div>
 </div>
 
 <div class="footer-info">

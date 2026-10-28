@@ -485,28 +485,86 @@
 
 @section('script')
 <script>
-  $(function() {
-      $("#example1").DataTable({
-          "responsive": false,
-          "scrollX": true,
-          "lengthChange": true,
-          "autoWidth": false,
-          "pageLength": 10,
-          "language": {
-              "search": "Cari:",
-              "lengthMenu": "Tampilkan _MENU_ data",
-              "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-              "infoEmpty": "Tidak ada data",
-              "infoFiltered": "(difilter dari _MAX_ total data)",
-              "zeroRecords": "Data tidak ditemukan",
-              "paginate": {
-                  "first": "Pertama",
-                  "last": "Terakhir",
-                  "next": "→",
-                  "previous": "←"
-              }
-          }
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-  });
+    $(function() {
+        $("#example1").DataTable({
+            "responsive": false,
+            "scrollX": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "pageLength": 10,
+            "language": {
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ data",
+                "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                "infoEmpty": "Tidak ada data",
+                "infoFiltered": "(difilter dari _MAX_ total data)",
+                "zeroRecords": "Data tidak ditemukan",
+                "paginate": {
+                    "first": "Pertama",
+                    "last": "Terakhir",
+                    "next": "→",
+                    "previous": "←"
+                }
+            }
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+
+    document.querySelectorAll('.validasi-gambar-stok').forEach(function(input) {
+        input.addEventListener('change', function() {
+
+            const file = this.files[0];
+            const errorElement = document.getElementById(
+                'error_' + this.id
+            );
+
+            errorElement.innerHTML = '';
+
+            if (!file) {
+                return;
+            }
+
+            // Maksimal 5 MB
+            const maxSize = 5 * 1024 * 1024;
+
+            // Format yang diperbolehkan
+            const allowedExtensions = ['jpg','jpeg','png','gif'
+            ];
+
+            const fileName = file.name.toLowerCase();
+            const extension = fileName.split('.').pop();
+
+            // CEK FORMAT
+            if (!allowedExtensions.includes(extension)) {
+
+                errorElement.innerHTML =
+                    '<i class="fas fa-exclamation-circle"></i> ' +
+                    'Format file tidak diperbolehkan. ' +
+                    'Gunakan JPG, JPEG, PNG, atau GIF.';
+
+                this.value = '';
+                return;
+            }
+
+            // CEK UKURAN
+            if (file.size > maxSize) {
+
+                errorElement.innerHTML =
+                    '<i class="fas fa-exclamation-circle"></i> ' +
+                    'Ukuran file terlalu besar. ' +
+                    'Ukuran maksimal file adalah 5 MB.';
+
+                this.value = '';
+                return;
+            }
+
+            // FILE VALID
+            errorElement.innerHTML =
+                '<span class="text-success">' +
+                '<i class="fas fa-check-circle"></i> ' +
+                'File sesuai. Siap diunggah.' +
+                '</span>';
+        });
+
+    });
 </script>
 @endsection

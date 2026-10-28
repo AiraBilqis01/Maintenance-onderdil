@@ -5,6 +5,55 @@
     <title>{{ $judul }}</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 10px; color: #333; }
+
+        /* Style Kop Surat */
+        .kop-surat {
+            display: table;
+            width: 100%;
+            border-bottom: 3px double #1a1a2e;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .kop-logo {
+            display: table-cell;
+            width: 70px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .kop-logo img {
+            width: 60px;
+            height: auto;
+        }
+
+        .kop-teks {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 8px;
+        }
+
+        .kop-teks h1 {
+            font-size: 15px;
+            font-weight: bold;
+            color: #1a1a2e;
+            text-transform: uppercase;
+            margin-bottom: 1px;
+        }
+
+        .kop-teks h2 {
+            font-size: 10px;
+            font-weight: normal;
+            color: #4a5568;
+            margin-bottom: 1px;
+        }
+
+        .kop-teks p {
+            font-size: 8px;
+            color: #718096;
+        }
+
+        /* Style Header */
         .header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid #2C3E50; padding-bottom: 10px; }
         .header h1 { margin: 0; font-size: 18px; color: #2C3E50; }
         .header p { margin: 5px 0 0; color: #666; font-size: 11px; }
@@ -15,8 +64,8 @@
         
         /* Style untuk Gambar di PDF */
         .img-pdf { 
-            width: 40px; 
-            height: 40px; 
+            width: 120px; 
+            height: 120px; 
             object-fit: cover; 
             border-radius: 4px; 
             border: 1px solid #eee;
@@ -29,7 +78,32 @@
         .bg-danger { background-color: #e53e3e; }
     </style>
 </head>
+
 <body>
+@php
+    $logoPath = public_path('assets/img/logopt.png');
+
+    $logoSrc = file_exists($logoPath)
+        ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+        : null;
+@endphp
+
+    <div class="kop-surat">
+        <div class="kop-logo">
+            @if($logoSrc)
+                <img src="{{ $logoSrc }}" alt="Logo">
+            @endif
+        </div>
+
+        <div class="kop-teks">
+            <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
+            <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
+            <p>
+                Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com"> adminpemeliharaan.pltmsh@gmail.com </a>
+            </p>
+        </div>
+
+    </div>
     <div class="header">
         <h1>{{ $judul }}</h1>
         <p>{{ $periode }}</p>
