@@ -79,7 +79,7 @@
     }
     
     .table-custom {
-        min-width: 900px; /* Diperlebar karena ada kolom tambahan */
+        min-width: 1200px; /* Diperlebar karena ada kolom tambahan */
         margin-bottom: 0;
     }
     
@@ -254,6 +254,17 @@
                         <i class="fas fa-check-circle"></i> {{ session('sukses') }}
                     </div>
                 @endif
+
+                @if($errors->any())
+                    <div class="alert alert-danger mx-4 mt-3">
+                        <strong>Data gagal disimpan:</strong>
+                        <ul class="mb-0 mt-2">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 
                 <div class="card-body p-4">
                     <div class="table-responsive-custom">
@@ -265,6 +276,7 @@
                                     <th width="15%">No Telepon</th>
                                     <th width="20%">Email</th>
                                     <th width="15%">Jenis Pelaksana</th> <!-- KOLOM BARU -->
+                                    <th width="20%">Jenis Tugas</th> <!-- KOLOM BARU -->
                                     <th width="15%">Keahlian</th> <!-- KOLOM BARU -->
                                     <th width="10%">Aksi</th>
                                 </tr>
@@ -287,18 +299,29 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        @if($tk->jenis_tugas == 'pemeliharaan_peralatan')
+                                            <span class="badge-custom"><i class="fas fa-tools mr-1"></i> Pemeliharaan Peralatan</span>
+                                        @elseif($tk->jenis_tugas == 'pengecekan_onderdil')
+                                            <span class="badge-custom"><i class="fas fa-boxes mr-1"></i> Pengecekan Sparepart</span>
+                                        @elseif($tk->jenis_tugas == 'keduanya')
+                                            <span class="badge-custom"><i class="fas fa-tasks mr-1"></i> Pemeliharaan Peralatan & Pengecekan Sparepart</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $tk->keahlian ?? '-' }}</td>
                                     <!-- END DATA BARU -->
 
                                     <td>
                                         @include('supervisor.kelola-tenagakerja.edit', ['tenagaKerja' => $tk])
                                         @include('supervisor.kelola-tenagakerja.delete', ['tenagaKerja' => $tk])
-                                    </td>                                
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <!-- Colspan diubah dari 5 menjadi 7 -->
-                                    <td colspan="7" class="text-center py-4">
+                                    <!-- Colspan diubah dari 5 menjadi 8 -->
+                                    <td colspan="8" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data tenaga kerja</span>
                                     </td>

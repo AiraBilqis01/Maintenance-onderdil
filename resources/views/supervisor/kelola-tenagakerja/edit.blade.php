@@ -43,7 +43,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="jenis_pelaksana">Jenis Pelaksana <span class="text-danger">*</span></label>
-                                <select name="jenis_pelaksana" class="form-control" required>
+                                <select name="jenis_pelaksana" id="jenis_pelaksana" class="form-control" required>
                                     <option value="Internal" {{ $tenagaKerja->jenis_pelaksana == 'Internal' ? 'selected' : '' }}>Internal</option>
                                     <option value="Subkontraktor" {{ $tenagaKerja->jenis_pelaksana == 'Subkontraktor' ? 'selected' : '' }}>Subkontraktor</option>
                                 </select>
@@ -52,7 +52,18 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="jenis_tugas">Jenis Tugas <span class="text-danger">*</span></label>
+                                <select name="jenis_tugas" id="jenis_tugas" class="form-control" required>
+                                    <option value="pemeliharaan_peralatan" {{ $tenagaKerja->jenis_tugas == 'pemeliharaan_peralatan' ? 'selected' : '' }}>Pemeliharaan Peralatan</option>
+                                    <option value="pengecekan_onderdil" {{ $tenagaKerja->jenis_tugas == 'pengecekan_onderdil' ? 'selected' : '' }}>Pengecekan Sparepart</option>
+                                    <option value="keduanya" {{ $tenagaKerja->jenis_tugas == 'keduanya' ? 'selected' : '' }}>Pemeliharaan Peralatan & Pengecekan Sparepart</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="keahlian">Keahlian <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="keahlian" value="{{ $tenagaKerja->keahlian }}" placeholder="Contoh: Mekanik Mesin, Las Listrik, dll" required />

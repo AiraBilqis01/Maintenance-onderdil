@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Stok Onderdil')
+@section('title', 'Stok Sparepart')
 
 @section('content')
 <style>
@@ -176,11 +176,17 @@
         color: white;
         border: none;
         border-radius: 10px;
-        padding: 0.55rem 1.5rem;
+        padding: 0 1.2rem;
         font-weight: 500;
         font-size: 0.9rem;
         transition: all 0.3s;
-        width: 100%;
+        width: auto;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
     }
     .btn-filter:hover {
         color: white;
@@ -188,12 +194,21 @@
         box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
     }
 
+    .filter-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        width: auto;
+    }
+
     .btn-reset {
         background: #edf2f7;
         color: #4a5568;
         border: none;
         border-radius: 10px;
-        padding: 0.55rem 1rem;
+        width: 45px;
+        height: 38px;
+        padding: 0;
         font-weight: 500;
         font-size: 0.9rem;
         transition: all 0.3s;
@@ -324,7 +339,7 @@
             
             <div class="page-header">
                 <div>
-                    <h2><i class="fas fa-boxes mr-3"></i> Stok Onderdil</h2>
+                    <h2><i class="fas fa-boxes mr-3"></i> Stok Sparepart</h2>
                     <p>Kelola dan pantau ketersediaan sparepart di gudang</p>
                 </div>
                 <div class="d-flex gap-2 align-items-center flex-wrap">
@@ -370,11 +385,11 @@
                 <h5><i class="fas fa-filter"></i> Filter Data</h5>
                 <form action="{{ route('supervisor.stok-onderdil.index') }}" method="GET">
                     <div class="row g-3 align-items-end">
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <label for="search">Pencarian Nama</label>
                             <input type="text" name="search" id="search" class="form-control" placeholder="Ketik nama sparepart..." value="{{ request('search') }}">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label for="kondisi_stok">Kondisi Stok</label>
                             <select name="kondisi_stok" id="kondisi_stok" class="form-select">
                                 <option value="">Semua Kondisi</option>
@@ -382,15 +397,38 @@
                                 <option value="aman" {{ request('kondisi_stok') == 'aman' ? 'selected' : '' }}>Stok Aman (>= 10)</option>
                             </select>
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
+                        <div class="col-md-2">
+                            <label for="bulan">Bulan</label>
+                            <select name="bulan" id="bulan" class="form-select">
+                                <option value="">Semua Bulan</option>
+                                @php
+                                    $daftarBulan = [
+                                        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                                        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                                        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+                                    ];
+                                @endphp
+                                @foreach($daftarBulan as $nomor => $namaBulan)
+                                    <option value="{{ $nomor }}" {{ request('bulan') == $nomor ? 'selected' : '' }}>{{ $namaBulan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="tahun">Tahun</label>
+                            <select name="tahun" id="tahun" class="form-select">
+                                <option value="">Semua Tahun</option>
+                                @for($tahun = now()->year; $tahun >= now()->year - 10; $tahun-- )
+                                    <option value="{{ $tahun }}" {{ request('tahun') == $tahun ? 'selected' : '' }}> {{ $tahun }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-auto filter-actions">
                             <button type="submit" class="btn-filter">
                                 <i class="fas fa-search"></i> Cari Data
                             </button>
-                            @if(request('search') || request('kondisi_stok'))
-                                <a href="{{ route('supervisor.stok-onderdil.index') }}" class="btn-reset" title="Reset Filter">
-                                    <i class="fas fa-redo"></i>
-                                </a>
-                            @endif
+                            <a href="{{ route('supervisor.stok-onderdil.index') }}" class="btn-reset" title="Reset Filter">
+                                <i class="fas fa-redo"></i>
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -399,7 +437,7 @@
             <!-- Tabel Data -->
             <div class="card card-custom">
                 <div class="card-header">
-                    <h3><i class="fas fa-list"></i> Data Stok Onderdil</h3>
+                    <h3><i class="fas fa-list"></i> Data Stok Sparepart</h3>
                 </div>
 
                 @if (session('sukses'))
@@ -456,7 +494,7 @@
                                     <td>
                                         @include('supervisor.stok-onderdil.edit', ['stokOnderdil' => $item])
                                         @include('supervisor.stok-onderdil.delete', ['stokOnderdil' => $item])
-                                    </td>                                
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
@@ -473,7 +511,7 @@
                 
                 <div class="card-footer-custom">
                     <div class="info-data">
-                        Menampilkan <strong>{{ $stokOnderdil->count() }}</strong> data stok onderdil
+                        Menampilkan <strong>{{ $stokOnderdil->count() }}</strong> data stok sparepart
                     </div>
                 </div>
             </div>

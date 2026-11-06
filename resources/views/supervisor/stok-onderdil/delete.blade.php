@@ -9,7 +9,7 @@
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
                 <h5 class="modal-title text-white">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Hapus Stok Onderdil
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Hapus Stok Sparepart
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -18,7 +18,7 @@
             <div class="modal-body text-center py-4">
                 <i class="fas fa-trash-alt text-danger" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                 <p class="mb-0" style="font-size: 1.1rem;">
-                    Apakah Anda yakin ingin menghapus stok onderdil<br>
+                    Apakah Anda yakin ingin menghapus stok sparepart<br>
                     <strong>{{ $stokOnderdil->nama_sparepart }}</strong>?
                 </p>
                 <p class="text-muted mt-2" style="font-size: 0.9rem;">Data yang dihapus tidak dapat dikembalikan!</p>

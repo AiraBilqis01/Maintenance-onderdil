@@ -82,8 +82,8 @@
                     <a class="nav-link text-white" data-widget="pushmenu" href="#" role="button"><i
                             class="fas fa-bars"></i></a>
                 </li>
-                <li style="margin-bottom: -20px; margin-left:20px">
-                    <h4 class="text-white fw-bold">
+                <li style="margin-left:20px; display:flex; align-items:center;">
+                    <h4 class="text-white fw-bold" style="margin:0;">
                         Sistem Informasi Manajemen Pemeliharaan
                     </h4>
                 </li>                
@@ -93,7 +93,6 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <div class="user-panel d-flex">
-                        
                     </div>
                 </li>
             </ul>
@@ -114,7 +113,7 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper mt-5 pt-3"
-            style="background-image: url('{{ asset('img/bg.jpg') }}'); background-size: 165%; background-repeat: no-repeat; background-position: right;">
+            style="background-image: url('img/bg.jpg'); background-size: 165%; background-repeat: no-repeat; background-position: right;">
             <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
@@ -126,7 +125,7 @@
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Pengguna</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ Auth::user()->name }}</a></li>
                                 <li class="breadcrumb-item active">@yield('title')</li>
                             </ol>
                         </div><!-- /.col -->
@@ -202,6 +201,138 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     @yield('script')
+
+    {{-- ========================================================= --}}
+    {{-- PERBAIKAN DATATABLE SAAT SIDEBAR DIBUKA / DITUTUP --}}
+    {{-- ========================================================= --}}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let dataTableResizeTimer = null;
+
+        /*
+        * Hitung ulang lebar seluruh DataTables
+        * yang sedang tampil di halaman.
+        */
+        function adjustDataTables() {
+
+            if (
+                typeof jQuery === 'undefined' ||
+                !$.fn.dataTable
+            ) {
+                return;
+            }
+
+            const tables = $.fn.dataTable.tables({
+                visible: true,
+                api: true
+            });
+
+            tables.columns.adjust().draw(false);
+        }
+
+
+        /*
+        * =====================================================
+        * DETEKSI PERUBAHAN SIDEBAR ADMINLTE
+        * =====================================================
+        */
+        const observer = new MutationObserver(function (mutations) {
+
+            mutations.forEach(function (mutation) {
+
+                if (
+                    mutation.type === 'attributes' &&
+                    mutation.attributeName === 'class'
+                ) {
+
+                    clearTimeout(dataTableResizeTimer);
+
+                    /*
+                    * Tunggu animasi sidebar selesai,
+                    * lalu hitung ulang lebar tabel.
+                    */
+                    dataTableResizeTimer = setTimeout(function () {
+
+                        adjustDataTables();
+
+                    }, 350);
+
+                }
+
+            });
+
+        });
+
+
+        /*
+        * Pantau perubahan class pada body.
+        * AdminLTE mengubah class body ketika sidebar
+        * dibuka atau ditutup.
+        */
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+
+        /*
+        * Hitung ulang jika ukuran browser berubah.
+        */
+        window.addEventListener('resize', function () {
+
+            clearTimeout(dataTableResizeTimer);
+
+            dataTableResizeTimer = setTimeout(function () {
+
+                adjustDataTables();
+
+            }, 150);
+
+        });
+
+
+        /*
+        * Penyesuaian awal setelah halaman selesai dimuat.
+        */
+        setTimeout(function () {
+
+            adjustDataTables();
+
+        }, 100);
+
+    });
+    </script>
+
+
+    {{-- ========================================================= --}}
+    {{-- FIX CONTAINER DATATABLE --}}
+    {{-- ========================================================= --}}
+
+    <style>
+
+        .dataTables_wrapper {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .dataTables_scroll {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .dataTables_scrollHead {
+            width: 100% !important;
+            max-width: 100%;
+        }
+
+        .dataTables_scrollBody {
+            width: 100% !important;
+            max-width: 100%;
+        }
+
+    </style>
 
     <script>
         window.addEventListener('pageshow', function (event) {

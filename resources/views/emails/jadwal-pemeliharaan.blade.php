@@ -103,8 +103,7 @@
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="center" style="padding: 10px 0 25px 0;">
-                                        <a href="{{ url('/tenagakerja/checklist') }}"
-                                           style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 40px; font-size: 14px; font-weight: bold; letter-spacing: 0.5px;">
+                                        <a href="{{ url('/tenagakerja/checklist') }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 40px; font-size: 14px; font-weight: bold; letter-spacing: 0.5px;">
                                             Lihat Checklist Saya
                                         </a>
                                     </td>

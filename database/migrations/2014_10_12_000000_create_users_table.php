@@ -15,10 +15,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('role')->default('tenagakerja'); 
+            $table->string('role')->default('tenagakerja');
             
-            $table->string('jenis_pelaksana')->nullable(); 
-            $table->string('keahlian')->nullable();        
+            $table->string('jenis_pelaksana')->nullable();
+            $table->string('jenis_tugas')->nullable();
+            $table->string('keahlian')->nullable();
 
             $table->rememberToken();
             $table->timestamps();

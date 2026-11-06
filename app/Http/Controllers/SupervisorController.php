@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\JadwalPemeliharaan;
 use App\Models\StokOnderdil;
+use App\Models\JadwalPengecekanOnderdil;
 use Illuminate\Support\Facades\Hash;
 
 class SupervisorController extends Controller
@@ -15,14 +16,16 @@ class SupervisorController extends Controller
         $totalTenagaKerja = User::where('role', 'tenagakerja')->count();
         $totalLaporan = JadwalPemeliharaan::count();
         $totalSparepart = StokOnderdil::count();
+        $totalJadwalPengecekan = JadwalPengecekanOnderdil::count();
         
         $stokMenipis = StokOnderdil::where('stok_terbaru', '<', 10)->orderBy('stok_terbaru', 'asc')->take(5)->get();
         $totalStokMenipis = StokOnderdil::where('stok_terbaru', '<', 10)->count();
 
         return view('supervisor.dashboard', compact(
-            'totalTenagaKerja', 
-            'totalLaporan', 
-            'totalSparepart', 
+            'totalTenagaKerja',
+            'totalLaporan',
+            'totalSparepart',
+            'totalJadwalPengecekan',
             'stokMenipis',
             'totalStokMenipis'
         ));
@@ -88,8 +91,9 @@ class SupervisorController extends Controller
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor', 
-            'keahlian' => 'required|string|max:255',                 
+            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor',
+            'jenis_tugas' => 'required|in:pemeliharaan_peralatan,pengecekan_onderdil,keduanya',
+            'keahlian' => 'required|string|max:255',
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -106,8 +110,9 @@ class SupervisorController extends Controller
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon,' . $tenagaKerja->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $tenagaKerja->id,
             'password' => 'nullable|string|min:6|confirmed',
-            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor', 
-            'keahlian' => 'required|string|max:255',                 
+            'jenis_pelaksana' => 'required|in:Internal,Subkontraktor',
+            'jenis_tugas' => 'required|in:pemeliharaan_peralatan,pengecekan_onderdil,keduanya',
+            'keahlian' => 'required|string|max:255',
         ]);
 
         if (!empty($data['password'])) {

@@ -117,8 +117,6 @@
                 <th width="8%">Peralatan</th>
                 <th width="6%">Lokasi</th>
                 <th width="7%">Status</th>
-                <th width="8%">Nama Onderdil</th>
-                <th width="5%">Jumlah Pakai</th>
                 <th width="10%">Keterangan</th>
             </tr>
         </thead>
@@ -140,7 +138,7 @@
                     @endif
                 </td>
                 <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
                 <td>{{ $item->user ? $item->user->name : '-' }}</td>
                 <td>{{ $item->nama_peralatan }}</td>
                 <td>{{ $item->lokasi ?? '-' }}</td>
@@ -155,8 +153,6 @@
                         <span class="badge badge-pending">⌛ Pending</span>
                     @endif
                 </td>
-                <td>{{ $item->nama_onderdil ?? '-' }}</td>
-                <td style="text-align: center;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
                 <td>{{ Str::limit($item->keterangan, 40) ?? '-' }}</td>
             </tr>
             @endforeach

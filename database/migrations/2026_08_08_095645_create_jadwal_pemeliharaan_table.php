@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nama_tenaga_kerja');
             $table->string('nama_peralatan');
             $table->string('lokasi')->nullable();
-            $table->integer('quantity')->default(1);
+            $table->integer('quantity')->nullable();
             $table->string('serial_number')->nullable();
             $table->string('kapasitas')->nullable();
             $table->string('merek')->nullable();

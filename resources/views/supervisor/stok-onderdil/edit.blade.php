@@ -12,7 +12,7 @@
             <div class="modal-content" style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
                 <div class="modal-header">
                     <h5 class="modal-title text-white" id="modalEditStokOnderdilLabel">
-                        <i class="fas fa-edit mr-2"></i> Edit Stok Onderdil
+                        <i class="fas fa-edit mr-2"></i> Edit Stok sparepart
                     </h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -36,8 +36,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="periode">Periode <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="periode" value="{{ $stokOnderdil->periode }}" required />
+                                <label for="periode_{{ $stokOnderdil->id }}">Periode <span class="text-danger">*</span></label>
+                                <input type="date" id="periode_{{ $stokOnderdil->id }}" class="form-control" name="periode" value="{{ $stokOnderdil->periode }}" readonly/>
                             </div>
                         </div>
                         <div class="col-md-6">

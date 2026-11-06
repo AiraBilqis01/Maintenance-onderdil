@@ -191,7 +191,7 @@
             <div class="stat-card card-purple">
                 <div class="stat-card-body">
                     <div class="stat-info">
-                        <h6>Total Jadwal</h6>
+                        <h6>Total Jadwal Pemeliharaan</h6>
                         <h2 data-count="{{ $totalLaporan }}">0</h2>
                     </div>
                     <div class="stat-icon">
@@ -204,19 +204,19 @@
             </div>
         </div>
 
-        <!-- Card 3: Stok Onderdil -->
+        <!-- Card 3: Total Jadwal Pengecekan -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card card-green">
                 <div class="stat-card-body">
                     <div class="stat-info">
-                        <h6>Jenis Sparepart</h6>
-                        <h2 data-count="{{ $totalSparepart }}">0</h2>
+                        <h6>Total Jadwal Pengecekan</h6>
+                        <h2 data-count="{{ $totalJadwalPengecekan }}">0</h2>
                     </div>
                     <div class="stat-icon">
-                        <i class="fas fa-boxes"></i>
+                        <i class="fas fa-clipboard-check"></i>
                     </div>
                 </div>
-                <a href="{{ route('supervisor.stok-onderdil.index') }}" class="card-footer-btn">
+                <a href="{{ route('supervisor.pengecekan-onderdil.index') }}" class="card-footer-btn">
                     Lihat Detail <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>

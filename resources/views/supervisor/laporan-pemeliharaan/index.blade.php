@@ -483,8 +483,9 @@
                                     <th width="10%">Nama Peralatan</th>
                                     <th width="8%">Lokasi</th>
                                     <th width="8%">Tanggal Selesai</th>
+                                    <th width="9%">Hasil Dikirim (ACC)</th>
                                     <th width="8%">Status</th>
-                                    <th width="12%">Hasil / Keterangan</th>
+                                    <th width="12%">Hasil/Keterangan</th>
                                     <th width="7%">Bukti</th>
                                     <th width="10%">Aksi</th>
                                 </tr>
@@ -496,8 +497,19 @@
                                     <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
                                     <td>{{ $item->user ? $item->user->name : '-' }}</td>
                                     <td>{{ $item->nama_peralatan }}</td>
-                                    <td><span class="badge-info">{{ $item->lokasi ?? '-' }}</span></td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                                    <td><span class="badge-info">{{ $item->lokasi ?? '-' }}</span></td>    
+                                    {{-- Target penyelesaian terakhir dari Supervisor --}}
+                                    <td>
+                                        {{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}
+                                    </td>
+                                    {{-- Tanggal hasil dikirim yang sudah di-ACC --}}
+                                    <td>
+                                        @if($item->status === 'selesai' && !empty($item->tanggal_kirim_hasil))
+                                            {{ \Carbon\Carbon::parse($item->tanggal_kirim_hasil)->format('d/m/Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($item->status == 'selesai')
                                             <span class="badge-selesai"><i class="fas fa-check-circle"></i> Selesai</span>
@@ -541,7 +553,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data laporan pemeliharaan</span>
                                     </td>

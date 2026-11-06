@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(145deg, #f5f0ff 0%, #f0eaff 100%);
@@ -56,7 +61,13 @@
             background-clip: text;
         }
 
-        .nav-menu { display: flex; gap: 2rem; margin-left: 2rem; }
+        .nav-menu { display: flex; gap: 1rem; margin-left: 1.25rem; align-items: center; white-space: nowrap;}
+
+        .desktop-auth {
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+        
         .nav-menu .nav-link {
             color: #4a5568;
             font-weight: 500;
@@ -142,6 +153,7 @@
             color: #4a5568;
             margin: 1.8rem 0 2.5rem 0;
             max-width: 520px;
+            text-align: justify;
         }
 
         .floating-card {
@@ -366,17 +378,16 @@
             font-size: 1.1rem;
         }
         .footer-menu { list-style: none; padding: 0; margin: 0; }
-        .footer-menu li { margin-bottom: 0.8rem; }
+        .footer-menu li { margin-bottom: 0.8rem; min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
         .footer-menu a {
             color: #4a5568;
             text-decoration: none;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
         .footer-menu a:hover { color: #667eea; transform: translateX(5px); }
-        .footer-menu i { color: #667eea; font-size: 1rem; }
+        .footer-menu i { color: #667eea; font-size: 1rem; margin-right: 6px; }
 
         .footer-bottom {
             border-top: 1px solid rgba(102, 126, 234, 0.2);
@@ -495,6 +506,20 @@
             color: #667eea;
         }
 
+        @media (max-width: 1199.98px) {
+        .footer-modern .col-lg-5,
+        .footer-modern .col-lg-3 {
+            min-width: 0;
+        }
+
+        .footer-menu a,
+        .footer-menu li {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+    }
+
         @media (max-width: 992px) {
             .hero-title { font-size: 2.5rem; }
             .floating-card { margin: 2rem auto 0 auto; }
@@ -510,13 +535,18 @@
             <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
 
-        <div class="nav-menu d-none d-lg-flex">
+        <div class="nav-menu d-none d-xxl-flex">
             <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link active"><i class="bi bi-house"></i> Dashboard</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
-            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+            @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
+            @endif
+            @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="nav-link"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a>
+            @endif
+            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Sparepart</a>
         </div>
 
-        <div class="d-none d-lg-flex">
+        <div class="d-none d-xxl-flex desktop-auth">
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
@@ -532,24 +562,32 @@
         </div>
 
         {{-- TOMBOL HAMBURGER MOBILE --}}
-        <button class="btn btn-menu-mobile d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuTenagaKerja" aria-expanded="false" aria-controls="mobileMenuTenagaKerja">
+        <button class="btn btn-menu-mobile d-xxl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuTenagaKerja" aria-expanded="false" aria-controls="mobileMenuTenagaKerja">
             <i class="bi bi-list"></i>
         </button>
 
         {{-- MENU MOBILE --}}
-        <div class="collapse d-lg-none w-100" id="mobileMenuTenagaKerja">
+        <div class="collapse d-xxl-none w-100" id="mobileMenuTenagaKerja">
             <div class="mobile-dropdown-menu">
                 <a href="{{ route('tenagakerja.dashboard') }}" class="mobile-menu-link active">
                     <i class="bi bi-house"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link">
-                    <i class="bi bi-check2-square"></i>
-                    <span>Jadwal Pemeliharaan</span>
-                </a>
+                @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                    <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Jadwal Pemeliharaan</span>
+                    </a>
+                @endif
+                @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                    <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="mobile-menu-link">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Pengecekan Sparepart</span>
+                    </a>
+                @endif
                 <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="mobile-menu-link">
                     <i class="bi bi-box-seam"></i>
-                    <span>Stok Onderdil</span>
+                    <span>Stok Sparepart</span>
                 </a>
 
                 <div class="mobile-menu-divider"></div>
@@ -577,19 +615,34 @@
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center g-5">
-            <div class="col-lg-7">
+            <div class="col-lg-7 col-xxl-8">
                 <h1 class="hero-title">
                     Selamat datang, <span>{{ Auth::user()->name ?? 'Tenaga Kerja' }}</span>
                 </h1>
                 <p class="hero-description">
-                    Berikut rekap tugas pemeliharaan Anda. Pantau status, lihat detail, dan kelola checklist tugas pemeliharaan dari sini.
+                    @if($jenisTugas === 'pemeliharaan_peralatan')
+                        Berikut rekap tugas pemeliharaan Anda. Pantau status, lihat detail, dan kelola checklist tugas pemeliharaan dari sini.
+                    @elseif($jenisTugas === 'pengecekan_onderdil')
+                        Berikut rekap tugas pengecekan sparepart Anda. Pantau status, lihat detail, dan kelola hasil tugas pengecekan sparepart dari sini.
+                    @elseif($jenisTugas === 'keduanya')
+                        Berikut rekap tugas pemeliharaan dan rekap tugas pengecekan sparepart Anda. Pantau status, lihat detail, kelola checklist tugas pemeliharaan dan hasil tugas pengecekan sparepart dari sini.
+                    @endif
                 </p>
-                <a href="{{ route('tenagakerja.checklist.index') }}" class="btn btn-login-modern btn-lg">
-                    <i class="bi bi-check2-square"></i> Buka Jadwal Pemeliharaan
-                </a>
+                <div class="d-flex flex-column flex-xxl-row align-items-start gap-3">
+                    @if(in_array($jenisTugas, ['pemeliharaan_peralatan', 'keduanya']))
+                        <a href="{{ route('tenagakerja.checklist.index') }}" class="btn btn-login-modern btn-lg">
+                            <i class="bi bi-check2-square"></i> Buka Jadwal Pemeliharaan
+                        </a>
+                    @endif
+                    @if(in_array($jenisTugas, ['pengecekan_onderdil', 'keduanya']))
+                        <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="btn btn-login-modern btn-lg">
+                            <i class="bi bi-clipboard-check"></i> Buka Jadwal Pengecekan
+                        </a>
+                    @endif
+                </div>
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-lg-5 col-xxl-4">
                 <div class="floating-card">
                     <img src="assets/img/logopt.png" alt="Logo" class="card-logo">
                 </div>
@@ -654,6 +707,7 @@
     </div>
 </section>
 
+@if(in_array($jenisTugas, ['pemeliharaan_peralatan', 'keduanya']))
 <section class="table-section">
     <div class="container">
         <div class="table-card">
@@ -674,22 +728,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($jadwal ?? [] as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
-                            <td>{{ $item->nama_peralatan }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
-                            <td>
-                                @if($item->status == 'selesai')
-                                    <span class="status-badge selesai"><i class="bi bi-check-circle-fill"></i> Selesai</span>
-                                @elseif($item->status == 'ditolak')
-                                    <span class="status-badge ditolak"><i class="bi bi-x-circle-fill"></i> Ditolak</span>
-                                @else
-                                    <span class="status-badge pending"><i class="bi bi-clock-fill"></i> Belum Selesai</span>
-                                @endif
-                            </td>
-                        </tr>
+                        @forelse($jadwalPemeliharaanAktif ?? [] as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
+                                <td>{{ $item->nama_peralatan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($item->status === 'pending')
+                                        <span class="status-badge pending"><i class="bi bi-clock-fill"></i>Belum Selesai</span>
+                                    @elseif($item->status === 'menunggu_verifikasi')
+                                        <span class="status-badge pending"><i class="bi bi-hourglass-split"></i>Menunggu Verifikasi</span>
+                                    @elseif($item->status === 'selesai')
+                                        <span class="status-badge selesai"><i class="bi bi-check-circle-fill"></i>Selesai</span>
+                                    @elseif($item->status === 'ditolak')
+                                        <span class="status-badge ditolak"><i class="bi bi-x-circle-fill"></i>Ditolak</span>
+                                    @endif
+                                </td>
+                            </tr>
                         @empty
                         <tr>
                             <td colspan="5">
@@ -706,6 +762,71 @@
         </div>
     </div>
 </section>
+@endif
+
+@if(in_array($jenisTugas, ['pengecekan_onderdil', 'keduanya']))
+<section class="table-section">
+    <div class="container">
+        <div class="table-card">
+            <div class="table-card-header">
+                <h4><i class="bi bi-clipboard-check"></i>Daftar Tugas Pengecekan</h4>
+                <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}">Lihat Kalender →</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Pengecekan</th>
+                            <th>Nama Sparepart</th>
+                            <th>Tanggal Pengecekan</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($jadwalPengecekanAktif as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td><strong>{{ $item->judul_pengecekan }}</strong></td>
+                                <td>
+                                    @forelse($item->details as $detail)
+                                        <span class="badge bg-light text-dark me-1">{{ $detail->nama_sparepart_snapshot }}</span>
+                                    @empty
+                                        -
+                                    @endforelse
+                                </td>
+                                <td>{{ \Carbon\Carbon::parse($item->tanggal_pengecekan)->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($item->status === 'pending')
+                                        <span class="status-badge pending"><i class="bi bi-clock-fill"></i>Belum Selesai</span>
+                                    @elseif($item->status === 'menunggu_verifikasi')
+                                        <span class="status-badge pending"><i class="bi bi-hourglass-split"></i>Menunggu Verifikasi</span>
+                                    @elseif($item->status === 'selesai')
+                                        <span class="status-badge selesai"><i class="bi bi-check-circle-fill"></i>Selesai</span>
+                                    @elseif($item->status === 'ditolak')
+                                        <span class="status-badge ditolak"><i class="bi bi-x-circle-fill"></i>Ditolak</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        <p class="mb-0">Belum ada tugas pengecekan sparepart yang harus diperiksa.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
 
 <footer class="footer-modern">
     <div class="container">
@@ -715,15 +836,20 @@
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan sparepart pada PLTMH Sangir Hulu</p>
             </div>
 
             <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
-                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
+                    @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
+                    @endif
+                    @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a></li>
+                    @endif
+                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Sparepart</a></li>
                 </ul>
             </div>
 
@@ -770,11 +896,7 @@
                 labels: ['Belum Selesai', 'Selesai', 'Ditolak'],
                 datasets: [{
                     data: [pending, selesai, ditolak],
-                    backgroundColor: [
-                        '#f6e05e',
-                        '#48bb78',
-                        '#f56565'
-                    ],
+                    backgroundColor: [ '#f6e05e', '#48bb78', '#f56565'],
                     borderColor: '#ffffff',
                     borderWidth: 3,
                     hoverOffset: 8
@@ -786,8 +908,7 @@
                 cutout: '65%',
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: {
+                        position: 'bottom', labels: {
                             font: {
                                 family: 'Poppins',
                                 size: 11,

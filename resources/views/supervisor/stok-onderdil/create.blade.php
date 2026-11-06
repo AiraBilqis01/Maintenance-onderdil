@@ -1,5 +1,5 @@
 <button type="button" class="btn btn-tambah-header" data-toggle="modal" data-target="#modalTambahStokOnderdil">
-    <i class="fas fa-plus"></i> Tambah Stok Onderdil
+    <i class="fas fa-plus"></i> Tambah Stok sparepart.
 </button>
 
 <div class="modal fade" id="modalTambahStokOnderdil" tabindex="-1" role="dialog" aria-labelledby="modalTambahStokOnderdilLabel" aria-hidden="true">
@@ -9,7 +9,7 @@
             <div class="modal-content" style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="modalTambahStokOnderdilLabel" style="color: white">
-                        <i class="fas fa-plus-circle mr-2"></i> Tambah Stok Onderdil
+                        <i class="fas fa-plus-circle mr-2"></i> Tambah Stok Sparepart
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" style="color: white;">&times;</span>
@@ -34,7 +34,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="periode">Periode <span class="text-danger">*</span></label>
-                                <input type="date" name="periode" class="form-control" required>
+                                <input type="date" id="periode" name="periode" class="form-control" value="{{ old('periode', now()->format('Y-m-d')) }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">

@@ -1,5 +1,5 @@
 <!-- Tombol Delete -->
-<button type="button" class="btn btn-delete-action" data-toggle="modal" data-target="#modalDeleteJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}">
+<button type="button" class="btn btn-action btn-delete-action" data-toggle="modal" data-target="#modalDeleteJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}">
     <i class="fas fa-trash"></i> Hapus
 </button>
 

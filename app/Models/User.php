@@ -18,8 +18,9 @@ class User extends Authenticatable
         'no_telepon',
         'password',
         'role',
-        'jenis_pelaksana', 
-        'keahlian',       
+        'jenis_pelaksana',
+        'jenis_tugas',
+        'keahlian',
     ];
 
     protected $hidden = [
@@ -33,11 +34,11 @@ class User extends Authenticatable
 
     public function isSupervisor()
     {
-        return $this->role === 'supervisor'; 
+        return $this->role === 'supervisor';
     }
     
     public function isTenagaKerja()
     {
-        return $this->role === 'tenagakerja'; 
+        return $this->role === 'tenagakerja';
     }
 }

@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-edit-action" data-toggle="modal" data-target="#modalEditJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}">
+<button type="button" class="btn btn-action btn-edit-action" data-toggle="modal" data-target="#modalEditJadwalPemeliharaan{{ $jadwalPemeliharaan->id }}">
     <i class="fas fa-edit"></i> Edit
 </button>
 
@@ -29,7 +29,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="tanggal_selesai">Tanggal Selesai <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="tanggal_selesai" value="{{ $jadwalPemeliharaan->tanggal_selesai }}" required />
+                                <input type="date" class="form-control" name="tanggal_selesai" value="{{ \Carbon\Carbon::parse($jadwalPemeliharaan->tanggal_selesai)->format('Y-m-d') }}" min="{{ min(\Carbon\Carbon::parse($jadwalPemeliharaan->tanggal_selesai)->format('Y-m-d'), now('Asia/Jakarta')->toDateString()) }}" required />
+                                @error('tanggal_selesai')
+                                    <small class="text-warning d-block mt-1">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -43,6 +46,14 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class ="col-md-12 mt-3">
+                            <!-- ALASAN REVISI TANGGAL PENYELESAIAN -->
+                            <div class="form-group">
+                                <label class="font-weight-bold"> Alasan Perubahan Tenggat</label>
+                                <textarea name="alasan_revisi" class="form-control" rows="3" maxlength="1000" placeholder="Masukkan alasan perubahan tanggal penyelesaian...">{{ old('alasan_revisi') }}</textarea>
+                                <small class="text-muted">Wajib diisi jika tanggal penyelesaian diubah. Minimal 10 karakter.</small>
                             </div>
                         </div>
                     </div>
@@ -64,7 +75,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
-                                <input type="number" class="form-control" name="quantity" value="{{ $jadwalPemeliharaan->quantity }}" min="1" />
+                                <input type="number" class="form-control" name="quantity" value="{{ $jadwalPemeliharaan->quantity  ?? '' }}" placeholder="Masukkan quantity (opsional)" min="1" step="1" />
                             </div>
                         </div>
                         <div class="col-md-6">

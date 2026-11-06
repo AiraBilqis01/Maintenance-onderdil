@@ -356,7 +356,8 @@
                 <th width="8%">Tenaga Kerja</th>
                 <th width="9%">Peralatan</th>
                 <th width="6%">Lokasi</th>
-                <th width="6%">Tgl Selesai</th>
+                <th width="7%">Tanggal Selesai</th>
+                <th width="8%">Hasil Dikirim (ACC)</th>
                 <th width="6%">Status</th>
                 <th width="10%">Nama Onderdil</th>
                 <th width="6%">Jumlah Pakai</th>
@@ -373,7 +374,14 @@
                 <td>{{ $item->user ? $item->user->name : '-' }}</td>
                 <td>{{ $item->nama_peralatan }}</td>
                 <td>{{ $item->lokasi ?? '-' }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
+                <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
+                <td>
+                    @if($item->status === 'selesai' && !empty($item->tanggal_kirim_hasil))
+                        {{ \Carbon\Carbon::parse($item->tanggal_kirim_hasil)->format('d/m/Y') }}
+                    @else
+                        -
+                    @endif
+                </td>
                 <td style="text-align: center;">
                     @if($item->status == 'selesai')
                         <span class="badge badge-selesai">✓ Selesai</span>

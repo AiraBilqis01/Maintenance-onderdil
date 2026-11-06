@@ -9,31 +9,24 @@
 
            <li class="nav-item">
             <a href="{{route('supervisor.kelola-supervisor.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.kelola-supervisor.index') ? 'active':'')}}">
-                <i class="nav-icon fas fa-users-cog"></i> 
+                <i class="nav-icon fas fa-users-cog"></i>
                 <p>Kelola Supervisior</p>
             </a>
         </li>
 
         <li class="nav-item">
             <a href="{{route('supervisor.kelola-tenagakerja.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.kelola-tenagakerja.index') ? 'active':'')}}">
-                <i class="nav-icon fas fa-users-cog"></i> 
+                <i class="nav-icon fas fa-users-cog"></i>
                 <p>Kelola Tenaga Kerja</p>
             </a>
         </li>
 
         <li class="nav-item">
             <a href="{{route('supervisor.jadwal-pemeliharaan.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.jadwal-pemeliharaan.index') ? 'active':'')}}">
-                <i class="nav-icon fas fa-calendar-alt"></i> 
+                <i class="nav-icon fas fa-calendar-alt"></i>
                 <p>Jadwal Pemeliharaan</p>
             </a>
         </li>
-
-        {{-- <li class="nav-item">
-            <a href="#" class="nav-link text-white">
-                <i class="nav-icon fas fa-tools"></i> 
-                <p>Pelaksanaan Pemeliharaan</p>
-            </a>
-        </li> --}}
                         
         <li class="nav-item">
             <a href="{{route('supervisor.stok-onderdil.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.stok-onderdil.index') ? 'active':'')}}">
@@ -43,24 +36,27 @@
         </li>
 
         <li class="nav-item">
-           <a href="{{route('supervisor.laporan-pemeliharaan.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.laporan-pemeliharaan.index') ? 'active':'')}}">
-                <i class="nav-icon fas fa-file-alt"></i> 
-                <p>Laporan Pemeliharaan</p>
+            <a href="{{ route('supervisor.pengecekan-onderdil.index')}}" class="nav-link text-white {{Request::routeIs('supervisor.pengecekan-onderdil.index') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clipboard-check"></i>
+                <p>Pengecekan Sparepart</p>
             </a>
         </li>
 
+        <li class="nav-item">
+           <a href="{{route('supervisor.laporan-pemeliharaan.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.laporan-pemeliharaan.index') ? 'active':'')}}">
+                <i class="nav-icon fas fa-file-alt"></i>
+                <p>Laporan Pemeliharaan</p>
+            </a>
+        </li>
                                                           
         <li class="nav-item">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" hidden>
                 @csrf
             </form>
-            <a href="#" class="nav-link text-white @yield('')"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="#" class="nav-link text-white @yield('')" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="nav-icon fas fa-sign-out"></i>
-                <p>
-                    Logout
-                </p>
+                <p>Logout</p>
             </a>
-        </li>          
+        </li>
     </ul>
 </nav>

@@ -14,6 +14,9 @@ class JadwalPemeliharaan extends Model
     protected $fillable = [
         'judul_pemeliharaan',
         'tanggal_selesai',
+        'tanggal_target_awal',
+        'tanggal_kirim_hasil',
+        'tanggal_verifikasi',
         'nama_tenaga_kerja',
         'nama_peralatan',
         'lokasi',
@@ -30,7 +33,7 @@ class JadwalPemeliharaan extends Model
         'jumlah_pemakaian',
         'detail_penyelesaian',
         'gambar_bukti',
-        'bukti_pemakaian_onderdil', 
+        'bukti_pemakaian_onderdil',
         'keterangan_tolak',
         'alasan_penolakan',
     ];
@@ -38,6 +41,9 @@ class JadwalPemeliharaan extends Model
     protected $casts = [
         'tanggal_selesai' => 'date',
         'tahun_pembuatan' => 'integer',
+        'tanggal_target_awal' => 'date',
+        'tanggal_kirim_hasil' => 'datetime',
+        'tanggal_verifikasi' => 'datetime',
         'quantity' => 'integer',
         'jumlah_pemakaian' => 'integer',
     ];
@@ -45,5 +51,12 @@ class JadwalPemeliharaan extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'nama_tenaga_kerja', 'id')->withTrashed();
+    }
+
+    
+    /* Relasi riwayat perubahan tenggat pemeliharaan. */
+    public function riwayatRevisi()
+    {
+        return $this->hasMany(\App\Models\RiwayatRevisiJadwal::class, 'jadwal_id')->where('jenis_jadwal', 'pemeliharaan')->orderBy('direvisi_pada', 'asc');
     }
 }

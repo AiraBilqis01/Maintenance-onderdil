@@ -97,7 +97,7 @@
 
         <div class="kop-teks">
             <h1>PLTM Sangir Hulu (PT Waskita Energi)</h1>
-            <h2>Sistem Manajemen Pemeliharan & Onderdil</h2>
+            <h2>Sistem Manajemen Pemeliharan & Sparepart</h2>
             <p>
                 Jorong Letter W, Nagari Lubuk Gadang Tim., Kec. Sangir, Kabupaten Solok Selatan, Prov. Sumatera Barat &nbsp;|&nbsp; <a href="mailto:adminpemeliharaan.pltmsh@gmail.com"> adminpemeliharaan.pltmsh@gmail.com </a>
             </p>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Stok Onderdil</title>
+    <title>Stok Sparepart</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -398,8 +398,13 @@
 
        <div class="nav-menu d-none d-lg-flex">
             <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
-            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link active"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+            @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
+            @endif
+            @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="nav-link"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a>
+            @endif
+            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link active"><i class="bi bi-box-seam"></i> Stok Sparepart</a>
         </div>
 
         <div class="d-none d-lg-flex">
@@ -429,13 +434,21 @@
                     <i class="bi bi-house"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link">
-                    <i class="bi bi-check2-square"></i>
-                    <span>Jadwal Pemeliharaan</span>
-                </a>
+                @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                    <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Jadwal Pemeliharaan</span>
+                    </a>
+                @endif
+                @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                    <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="mobile-menu-link">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Pengecekan Sparepart</span>
+                    </a>
+                @endif
                 <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="mobile-menu-link active">
                     <i class="bi bi-box-seam"></i>
-                    <span>Stok Onderdil</span>
+                    <span>Stok Sparepart</span>
                 </a>
 
                 <div class="mobile-menu-divider"></div>
@@ -464,8 +477,8 @@
     <div class="container">
         <div class="page-title-card">
             <div>
-                <h2><i class="bi bi-box-seam"></i> Stok Onderdil</h2>
-                <p>Daftar stok onderdil yang tersedia (hanya lihat)</p>
+                <h2><i class="bi bi-box-seam"></i> Stok Sparepart</h2>
+                <p>Daftar stok sparepart yang tersedia (hanya lihat)</p>
             </div>
             <div>
                 <span class="user-badge">
@@ -524,7 +537,7 @@
                             <td colspan="9">
                                 <div class="empty-state">
                                     <i class="bi bi-inbox"></i>
-                                    <p class="mb-0">Belum ada data stok onderdil</p>
+                                    <p class="mb-0">Belum ada data stok sparepart.</p>
                                 </div>
                             </td>
                         </tr>
@@ -544,15 +557,20 @@
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan sparepart pada PLTMH Sangir Hulu</p>
             </div>
 
             <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
-                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
+                    @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
+                    @endif
+                    @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a></li>
+                    @endif
+                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Sparepart</a></li>
                 </ul>
             </div>
 

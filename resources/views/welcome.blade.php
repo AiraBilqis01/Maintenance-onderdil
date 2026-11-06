@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(145deg, #f5f0ff 0%, #f0eaff 100%);
@@ -61,9 +66,17 @@
         
         .nav-menu {
             display: flex;
-            gap: 2rem;
-            margin-left: 2rem;
+            gap: 1rem;
+            margin-left: 1.25rem;
+            align-items: center;
+            white-space: nowrap;
         }
+
+        .desktop-auth {
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+        
         .nav-menu .nav-link {
             color: #4a5568;
             font-weight: 500;
@@ -271,15 +284,17 @@
         
         .footer-menu li {
             margin-bottom: 0.8rem;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
         
         .footer-menu a {
             color: #4a5568;
             text-decoration: none;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
         
         .footer-menu a:hover {
@@ -290,6 +305,7 @@
         .footer-menu i {
             color: #667eea;
             font-size: 1rem;
+            margin-right: 6px;
         }
         
         .footer-bottom {
@@ -383,7 +399,27 @@
 
         @media (max-width: 992px) {
             .hero-title { font-size: 2.8rem; }
-            .floating-card { margin: 2rem auto 0 auto; }        }
+            .floating-card { margin: 2rem auto 0 auto; }
+        }
+
+        @media (max-width: 767.98px) {
+        .footer-modern {
+            padding: 2rem 0 1rem;
+        }
+
+        .footer-title {
+            margin-top: 0.5rem;
+        }
+
+        .footer-menu a,
+        .footer-menu li {
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom {
+            margin-top: 1.5rem;
+        }
+    }
     </style>
 </head>
 <body>
@@ -395,32 +431,37 @@
             <span>Manajemen<b>Pemeliharaan</b></span>
         </a>
         
-        <div class="nav-menu d-none d-lg-flex">
-            <a href="#" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
-            <a href="#" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+        <div class="nav-menu d-none d-xxl-flex">
+            <a href="{{ route('login') }}" class="nav-link"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
+            <a href="{{ route('login') }}" class="nav-link"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a>
+            <a href="{{ route('login') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Sparepart</a>
         </div>
         
-        <div class="d-none d-lg-flex">
+        <div class="d-none d-xxl-flex desktop-auth">
             <a href="/login" class="btn btn-login-modern">
                 <i class="bi bi-box-arrow-in-right"></i> Login
             </a>
         </div>
 
         {{-- TOMBOL HAMBURGER MOBILE --}}
-        <button class="btn btn-menu-mobile d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuWelcome" aria-expanded="false" aria-controls="mobileMenuWelcome">
+        <button class="btn btn-menu-mobile d-xxl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenuWelcome" aria-expanded="false" aria-controls="mobileMenuWelcome">
             <i class="bi bi-list"></i>
         </button>
 
         {{-- MENU MOBILE --}}
-        <div class="collapse d-lg-none w-100" id="mobileMenuWelcome">
+        <div class="collapse d-xxl-none w-100" id="mobileMenuWelcome">
             <div class="mobile-dropdown-menu">
-                <a href="#" class="mobile-menu-link">
+                <a href="{{ route('login') }}" class="mobile-menu-link">
                     <i class="bi bi-check2-square"></i>
                     <span>Jadwal Pemeliharaan</span>
                 </a>
-                <a href="#" class="mobile-menu-link">
+                <a href="{{ route('login') }}" class="mobile-menu-link">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span>Pengecekan Sparepart</span>
+                </a>
+                <a href="{{ route('login') }}" class="mobile-menu-link">
                     <i class="bi bi-box-seam"></i>
-                    <span>Stok Onderdil</span>
+                    <span>Stok Sparepart</span>
                 </a>
 
                 <div class="mobile-menu-divider"></div>
@@ -441,17 +482,17 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <h1 class="hero-title">
-                    Pemeliharaan <span>Terjadwal</span>, <br>Stok Onderdil <span>Terkendali</span>
+                    Pemeliharaan <span>Terjadwal</span>, <br>Stok Sparepart <span>Terkendali</span>
                 </h1>
                 <p class="hero-description">
-                    Sistem terintegrasi untuk membantu pengelolaan jadwal pemeliharaan,
-                    pelaksanaan pekerjaan, serta ketersediaan persediaan onderdil pada PLTMH Sangir Hulu.
+                    Sistem terintegrasi untuk membantu pengelolaan jadwal pemeliharaan, pengecekan sparepart,
+                    pelaksanaan pekerjaan, serta pemantauan ketersediaan persediaan sparepart pada PLTMH Sangir Hulu.
                 </p>
             </div>
 
             <div class="col-lg-5">
                 <div class="floating-card">
-                    <img src="assets/img/logopt.png" alt="Logo StokOnderdil" class="card-logo">
+                    <img src="assets/img/logopt.png" alt="Logo Stok Sparepart" class="card-logo">
                 </div>
             </div>
         </div>
@@ -462,21 +503,21 @@
     <div class="container py-4">
         <div class="text-center mb-5">
             <span class="hero-badge">FITUR UTAMA</span>
-            <h2 class="fw-bold display-6 mb-3">Kelola pemeliharaan dan stok onderdil <br>dalam satu sistem.</h2>
+            <h2 class="fw-bold display-6 mb-3">Kelola pemeliharaan, pengecekan, dan stok sparepart <br>dalam satu sistem.</h2>
         </div>
 
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="feature-item p-4" style="border-radius: 32px;">
                     <div class="feature-icon"><i class="bi bi-database-add"></i></div>
-                    <h4 class="h5 fw-semibold">Data Onderdil terpusat</h4>
+                    <h4 class="h5 fw-semibold">Data Sparepart terpusat</h4>
                     <p class="text-secondary">
-                        Data onderdil, jumlah stok tersedia, stok 
-                        yang terpakai, dan kondisi stok tersimpan 
+                        Data nama sparepart, jumlah stok tersedia, stok
+                        yang terpakai, dan kondisi stok tersimpan
                         secara terpusat sehingga lebih mudah dipantau dan dikelola.</p>
                 </div>
             </div>
-           <div class="col-md-4">
+            <div class="col-md-4">
                 <div class="feature-item p-4" style="border-radius: 32px;">
                     <div class="feature-icon">
                         <i class="bi bi-calendar-check"></i>
@@ -484,12 +525,33 @@
                     <h4 class="h5 fw-semibold">Manajemen Jadwal Pemeliharaan</h4>
                     <p class="text-secondary">
                         Sistem membantu supervisor untuk membuat,
-                        melihat, memperbarui, dan mengelola jadwal
-                        pemeliharaan secara terstruktur dan terkontrol.
+                        melihat, memperbarui, mengelola jadwal
+                        pemeliharaan secara terstruktur, dan
+                        memverifikasi hasil checklist dari tenaga kerja.
+                        Tenaga kerja dapat melihat jadwal pemeliharaan
+                        yang harus dikerjakan, mengisi checklist, dan
+                        mengirimkan hasil pekerjaan untuk diverifikasi
+                        oleh Supervisor.
                     </p>
                 </div>
             </div>
-
+            <div class="col-md-4">
+                <div class="feature-item p-4" style="border-radius: 32px;">
+                    <div class="feature-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <h4 class="h5 fw-semibold">Manajemen Pengecekan Sparepart</h4>
+                    <p class="text-secondary">
+                        Sistem membantu supervisor untuk membuat,
+                        melihat, memperbarui, dan mengelola jadwal
+                        untuk pengecekan secara terstruktur, dan
+                        memverifikasi hasil pengecekan dari tenaga kerja.
+                        Tenaga kerja dapat melakukan pengecekan stok
+                        fisik setiap sparepart, mencatat kondisi dan selisih stok,
+                        serta mengirimkan hasil pengecekan untuk diverifikasi oleh Supervisor.
+                    </p>
+                </div>
+            </div>
             <div class="col-md-4">
                 <div class="feature-item p-4" style="border-radius: 32px;">
                     <div class="feature-icon">
@@ -498,8 +560,8 @@
                     <h4 class="h5 fw-semibold">Laporan Pemeliharaan</h4>
                     <p class="text-secondary">
                         Sistem menyediakan laporan pemeliharaan lengkap
-                        termasuk laporan stok, jadwal pemeliharaan,
-                        dan hasil checklist pemeliharaanyang dapat dicetak.
+                        dari laporan stok, jadwal pemeliharaan, hasil pengecekan sparepart
+                        dan hasil checklist pemeliharaan yang dapat dicetak.
                     </p>
                 </div>
             </div>
@@ -523,23 +585,24 @@
 <footer class="footer-modern">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-5">
+            <div class="col-12 col-xl-5">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan sparepart pada PLTMH Sangir Hulu</p>
             </div>
             
-            <div class="col-lg-3 offset-lg-1">
+            <div class="col-12 col-md-6 col-xl-3 offset-xl-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
-                    <li><a href="#"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
-                    <li><a href="#"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
+                    <li><a href="{{ route('login') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
+                    <li><a href="{{ route('login') }}"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a></li>
+                    <li><a href="{{ route('login') }}"><i class="bi bi-box-seam"></i> Stok Sparepart</a></li>
                 </ul>
             </div>
             
-            <div class="col-lg-3">
+            <div class="col-12 col-md-6 col-xl-3">
                 <h5 class="footer-title">Kontak</h5>
                 <ul class="footer-menu">
                     <li>
@@ -553,11 +616,11 @@
         </div>
         
         <div class="footer-bottom">
-            <div class="row">
-                <div class="col-md-6 text-md-start">
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-md-6 text-center text-md-start">
                     <i class="bi bi-c-circle me-1" style="color: #667eea;"></i> 2026 Manajemen Pemeliharaan. All rights reserved.
                 </div>
-                <div class="col-md-6 text-md-end">
+                <div class="col-12 col-md-6 text-center text-md-end">
                     <span class="me-3"><i class="bi bi-shield-lock" style="color: #667eea;"></i> Secure System</span>
                     <span><i class="bi bi-arrow-repeat" style="color: #667eea;"></i> Real-time Updates</span>
                 </div>

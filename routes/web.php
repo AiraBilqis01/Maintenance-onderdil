@@ -6,6 +6,7 @@ use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TenagakerjaController;
 use App\Http\Controllers\Supervisor\StokOnderdilController;
 use App\Http\Controllers\Supervisor\JadwalPemeliharaanController;
+use App\Http\Controllers\Supervisor\PengecekanOnderdilController;
 use App\Http\Controllers\Supervisor\LaporanPemeliharaanController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -55,6 +56,27 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/verifikasi-tolak', [JadwalPemeliharaanController::class, 'verifikasiTolak'])->name('supervisor.jadwal-pemeliharaan.verifikasi-tolak');
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/tolak-jadwal', [JadwalPemeliharaanController::class, 'tolakJadwal'])->name('supervisor.jadwal-pemeliharaan.tolak-jadwal');
 
+        // Halaman utama Pengecekan Onderdil
+        Route::get('/pengecekan-onderdil', [PengecekanOnderdilController::class, 'index'])->name('supervisor.pengecekan-onderdil.index');
+        // Simpan jadwal pengecekan baru
+        Route::post('/pengecekan-onderdil', [PengecekanOnderdilController::class, 'store'])->name('supervisor.pengecekan-onderdil.store');
+        // Edit jadwal pengecekan
+        Route::put('/pengecekan-onderdil/{jadwal}', [PengecekanOnderdilController::class, 'update'])->name('supervisor.pengecekan-onderdil.update');
+        // Hapus jadwal pengecekan
+        Route::delete('/pengecekan-onderdil/{jadwal}', [PengecekanOnderdilController::class, 'destroy'])->name('supervisor.pengecekan-onderdil.destroy');
+
+        // Export laporan Pengecekan Onderdil ke PDF
+        Route::get('/pengecekan-onderdil/export-pdf', [PengecekanOnderdilController::class, 'exportPdf'])->name('supervisor.pengecekan-onderdil.pdf');
+        // Export laporan Pengecekan Onderdil ke Excel
+        Route::get('/pengecekan-onderdil/export-excel', [PengecekanOnderdilController::class, 'exportExcel'])->name('supervisor.pengecekan-onderdil.excel');
+        
+        // Supervisor ACC hasil pengecekan Tenaga Kerja
+        Route::put('/pengecekan-onderdil/{jadwal}/verifikasi', [PengecekanOnderdilController::class, 'verifikasi'])->name('supervisor.pengecekan-onderdil.verifikasi');
+        // Supervisor menolak hasil pengecekan Tenaga Kerja
+        Route::put('/pengecekan-onderdil/{jadwal}/tolak-hasil', [PengecekanOnderdilController::class, 'tolakHasil'])->name('supervisor.pengecekan-onderdil.tolak-hasil');
+        // Supervisor menyetujui penolakan tugas dari Tenaga Kerja
+        Route::put('/pengecekan-onderdil/{jadwal}/verifikasi-tolak', [PengecekanOnderdilController::class, 'verifikasiTolak'])->name('supervisor.pengecekan-onderdil.verifikasi-tolak');
+
         Route::get('/laporan-pemeliharaan', [LaporanPemeliharaanController::class, 'index'])->name('supervisor.laporan-pemeliharaan.index');
         Route::get('/laporan-pemeliharaan/export-pdf', [LaporanPemeliharaanController::class, 'exportPdf'])->name('supervisor.laporan-pemeliharaan.pdf');
         Route::get('/laporan-pemeliharaan/export-excel', [LaporanPemeliharaanController::class, 'exportExcel'])->name('supervisor.laporan-pemeliharaan.excel');
@@ -66,6 +88,9 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::get('/tenagakerja/checklist', [TenagakerjaController::class, 'checklist'])->name('tenagakerja.checklist.index');
         Route::put('/tenagakerja/checklist/{jadwal}/selesai', [TenagakerjaController::class, 'selesai'])->name('tenagakerja.checklist.selesai');
         Route::put('/tenagakerja/checklist/{jadwal}/tolak', [TenagakerjaController::class, 'tolak'])->name('tenagakerja.checklist.tolak');
+        Route::get('/tenagakerja/pengecekan-onderdil', [TenagakerjaController::class, 'pengecekanOnderdil'])->name('tenagakerja.pengecekan-onderdil.index');
+        Route::put('/tenagakerja/pengecekan-onderdil/{jadwal}/selesai', [TenagakerjaController::class, 'selesaiPengecekanOnderdil'])->name('tenagakerja.pengecekan-onderdil.selesai');
+        Route::put('/tenagakerja/pengecekan-onderdil/{jadwal}/tolak', [TenagakerjaController::class, 'tolakPengecekanOnderdil'])->name('tenagakerja.pengecekan-onderdil.tolak');
         Route::get('/tenagakerja/stok-onderdil', [TenagakerjaController::class, 'stokOnderdil'])->name('tenagakerja.stok-onderdil.index');
     });
 });

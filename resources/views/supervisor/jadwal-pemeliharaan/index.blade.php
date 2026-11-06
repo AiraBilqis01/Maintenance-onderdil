@@ -29,6 +29,101 @@
         font-weight: 300;
         font-size: 0.95rem;
     }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        border: 1px solid #eef2f7;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-card h5 {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1a1a2e;
+        margin-bottom: 1rem;
+    }
+
+    .filter-card h5 i {
+        color: #2b6cb0;
+        margin-right: 6px;
+    }
+
+    .filter-card label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.3rem;
+    }
+
+    .filter-card .form-control {
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.9rem;
+    }
+
+    .filter-card .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .filter-actions {
+            margin-top: 0.8rem;
+        }
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.55rem 1.2rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-filter:hover {
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(102,126,234,0.4);
+    }
+
+    .btn-reset {
+        background: #edf2f7;
+        color: #4a5568;
+        border: none;
+        border-radius: 10px;
+        padding: 0.55rem 1.2rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-reset:hover {
+        background: #e2e8f0;
+        color: #2d3748;
+        text-decoration: none;
+    }
+
     .btn-print-header {
         background: rgba(255,255,255,0.15);
         border: 1px solid rgba(255,255,255,0.2);
@@ -241,7 +336,6 @@
 <section class="content">
     <div class="row">
         <div class="col-12">
-            
             <div class="page-header">
                 <div>
                     <h2><i class="fas fa-calendar-check mr-3"></i> Jadwal Pemeliharaan</h2>
@@ -260,12 +354,75 @@
                     </div>
                 </div>
             </div>
-            
+            <div class="filter-card">
+                <h5>
+                    <i class="fas fa-filter"></i> Filter Jadwal Pemeliharaan
+                </h5>
+                <form action="{{ route('supervisor.jadwal-pemeliharaan.index') }}" method="GET">
+                    <div class="row align-items-end">
+                        {{-- TENAGA KERJA --}}
+                        <div class="col-md-3">
+                            <div class="form-group mb-0">
+                                <label for="tenaga_kerja">Tenaga Kerja</label>
+                                <select name="tenaga_kerja" id="tenaga_kerja" class="form-control">
+                                    <option value="">Semua Tenaga Kerja</option>
+                                    @foreach($tenagaKerja as $tk)
+                                        <option value="{{ $tk->id }}" {{ request('tenaga_kerja') == $tk->id ? 'selected' : '' }}>
+                                            {{ $tk->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- DARI TANGGAL --}}
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label for="tanggal_dari">Dari Tanggal</label>
+                                <input type="date" name="tanggal_dari" id="tanggal_dari" class="form-control" value="{{ request('tanggal_dari') }}">
+                            </div>
+                        </div>
+
+                        {{-- SAMPAI TANGGAL --}}
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label for="tanggal_sampai">Sampai Tanggal</label>
+                                <input type="date" name="tanggal_sampai" id="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
+                            </div>
+                        </div>
+
+                        {{-- STATUS --}}
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="menunggu_verifikasi" {{ request('status') == 'menunggu_verifikasi' ? 'selected' : '' }}>Menunggu Verifikasi</option>
+                                    <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- TOMBOL --}}
+                        <div class="col-md-3">
+                            <div class="filter-actions">
+                                <button type="submit" class="btn-filter">
+                                    <i class="fas fa-search"></i> Cari
+                                </button>
+                                <a href="{{ route('supervisor.jadwal-pemeliharaan.index') }}" class="btn-reset">
+                                    <i class="fas fa-redo"></i> Reset
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="card card-custom">
                 <div class="card-header">
                     <h3><i class="fas fa-list mr-2"></i> Data Jadwal Pemeliharaan</h3>
                 </div>
-                
                 @if (session('sukses'))
                     <div class="alert alert-custom">
                         <i class="fas fa-check-circle"></i> {{ session('sukses') }}
@@ -296,6 +453,7 @@
                                     <th width="6%">Tahun</th>
                                     <th width="6%">Gambar</th>
                                     <th width="8%">Status</th>
+                                    <th width="12%">Ketepatan Waktu</th>
                                     <th width="28%">Aksi</th>
                                 </tr>
                             </thead>
@@ -308,7 +466,7 @@
                                     <td><strong>{{ $item->user ? $item->user->name : '-' }}</strong></td>
                                     <td><strong>{{ $item->nama_peralatan }}</strong></td>
                                     <td><span class="badge-info">{{ $item->lokasi ?? '-' }}</span></td>
-                                    <td class="text-center">{{ $item->quantity }}</td>
+                                    <td class="text-center">{{ $item->quantity ?? '-' }}</td>
                                     <td><span class="badge-custom">{{ $item->serial_number ?? '-' }}</span></td>
                                     <td>{{ $item->kapasitas ?? '-' }}</td>
                                     <td>{{ $item->merek ?? '-' }}</td>
@@ -334,11 +492,46 @@
                                             <span class="badge-pending"><i class="fas fa-clock"></i> Pending</span>
                                         @endif
                                     </td>
+                                    {{-- =====================================================
+                                        INFORMASI KETEPATAN WAKTU PEMELIHARAAN
+                                        ===================================================== --}}
+                                    <td>
+                                        @php
+                                            $ketepatan = \App\Support\KetepatanJadwal::hitung($item, 'pemeliharaan');
+                                            $kelasKetepatan = match ($ketepatan['warna']) {
+                                                'danger' => 'badge-ditolak',
+                                                'success' => 'badge-selesai',
+                                                default => 'badge-custom',
+                                            };
+                                        @endphp
+
+                                        {{-- Informasi ketepatan waktu terhadap target aktif --}}
+                                        <span class="{{ $kelasKetepatan }}">
+                                            {{ $ketepatan['label'] }}
+                                        </span>
+
+                                        {{-- Informasi keterlambatan yang tercatat sebelum revisi --}}
+                                        @if($ketepatan['pernah_terlambat_sebelum_revisi'])
+                                            <div class="text-danger small mt-2">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Pernah terlambat {{ $ketepatan['hari_terlambat_tercatat'] }}  hari sebelum revisi
+                                            </div>
+                                        @endif
+
+                                        {{-- Jumlah revisi tanggal yang sudah dilakukan --}}
+                                        @if($ketepatan['jumlah_revisi'] > 0)
+                                            <div class="text-muted small mt-1">
+                                                <i class="fas fa-history"></i>
+                                                Revisi: {{ $ketepatan['jumlah_revisi'] }} kali
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="d-flex flex-row flex-nowrap align-items-center">
                                             @include('supervisor.jadwal-pemeliharaan.detail', ['jadwalPemeliharaan' => $item])
-                                            @include('supervisor.jadwal-pemeliharaan.edit', ['jadwalPemeliharaan' => $item])
-                                            
+                                            @if($item->status == 'pending')
+                                                @include('supervisor.jadwal-pemeliharaan.edit', ['jadwalPemeliharaan' => $item])
+                                            @endif
                                             @if($item->status == 'menunggu_verifikasi')
                                                 {{-- KASUS 1:TENAGA KERJA MENYELESAIKAN PEKERJAAN --}}
                                                 @if(!empty($item->detail_penyelesaian))
@@ -364,9 +557,11 @@
                                                 @endif
                                             @endif
 
-                                            @include('supervisor.jadwal-pemeliharaan.delete', ['jadwalPemeliharaan' => $item])
+                                            @if($item->status !== 'menunggu_verifikasi')
+                                                @include('supervisor.jadwal-pemeliharaan.delete', ['jadwalPemeliharaan' => $item])
+                                            @endif
                                         </div>
-                                    </td>                                
+                                    </td>
                                 </tr>
 
                                 @if($item->status == 'menunggu_verifikasi' && !empty($item->detail_penyelesaian))
@@ -442,7 +637,7 @@
 
                                 @empty
                                 <tr>
-                                    <td colspan="15" class="text-center py-4">
+                                    <td colspan="16" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data jadwal pemeliharaan</span>
                                     </td>

@@ -15,8 +15,8 @@
                         <span aria-hidden="true" style="color: white;">&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body" style="color: white;">
-                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -42,7 +42,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="jenis_pelaksana">Jenis Pelaksana <span class="text-danger">*</span></label>
-                                <select name="jenis_pelaksana" class="form-control" required>
+                                <select name="jenis_pelaksana" id="jenis_pelaksana" class="form-control" required>
                                     <option value="" disabled selected>-- Pilih Jenis Pelaksana --</option>
                                     <option value="Internal">Internal</option>
                                     <option value="Subkontraktor">Subkontraktor</option>
@@ -50,9 +50,21 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="jenis_tugas">Jenis Tugas <span class="text-danger">*</span></label>
+                                <select name="jenis_tugas" id="jenis_tugas" class="form-control" required>
+                                    <option value="" disabled selected>-- Pilih Jenis Tugas --</option>
+                                    <option value="pemeliharaan_peralatan">Pemeliharaan Peralatan</option>
+                                    <option value="pengecekan_onderdil">Pengecekan Sparepart</option>
+                                    <option value="keduanya">Pemeliharaan Peralatan & Pengecekan Sparepart</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="keahlian">Keahlian <span class="text-danger">*</span></label>
                                 <input type="text" name="keahlian" class="form-control" placeholder="Contoh: Mekanik Mesin, Las Listrik, dll" required>

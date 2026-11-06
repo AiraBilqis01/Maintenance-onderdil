@@ -28,7 +28,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="tanggal_selesai">Tanggal Selesai <span class="text-danger">*</span></label>
-                                <input type="date" name="tanggal_selesai" class="form-control" required>
+                                <input type="date" name="tanggal_selesai" class="form-control" min="{{ now('Asia/Jakarta')->toDateString() }}" required>
+                                @error('tanggal_selesai')
+                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -61,7 +64,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
-                                <input type="number" name="quantity" class="form-control" placeholder="1" min="1">
+                                <input type="number" name="quantity" class="form-control" placeholder="Masukkan quantity (opsional)" min="1" step="1">
                             </div>
                         </div>
                         <div class="col-md-6">

@@ -27,6 +27,14 @@ class StokOnderdilController extends Controller
             }
         }
 
+        if ($request->filled('bulan')) {
+            $query->whereMonth('periode', $request->bulan);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->whereYear('periode', $request->tahun);
+        }
+
         return $query;
     }
 
@@ -40,12 +48,30 @@ class StokOnderdilController extends Controller
     {
         $stokOnderdil = $this->buildQuery($request)->get();
         $judul = 'Laporan Stok Onderdil';
-        $periode = 'Semua Data';
+        $parts = [];
         
         if ($request->filled('search')) {
-            $periode = 'Pencarian: "' . $request->search . '"';
+            $parts[] = 'Pencarian: "' . $request->search . '"';
+        }
+        if ($request->filled('kondisi_stok')) {
+            $kondisiText = ['menipis' => 'Stok Menipis', 'aman' => 'Stok Aman',];
+            $parts[] = 'Kondisi Stok: ' . ($kondisiText[$request->kondisi_stok] ?? $request->kondisi_stok);
         }
 
+        if ($request->filled('bulan')) {
+            $daftarBulan = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            ];
+            $parts[] = 'Bulan: ' . ($daftarBulan[(int) $request->bulan] ?? $request->bulan);
+        }
+
+        if ($request->filled('tahun')) {
+            $parts[] = 'Tahun: ' . $request->tahun;
+        }
+
+        $periode = empty($parts) ? 'Semua Data' : implode(' | ', $parts);
         $pdf = Pdf::loadView('supervisor.stok-onderdil.pdf', compact('stokOnderdil', 'judul', 'periode'))
                     ->setPaper('a4', 'landscape');
 
@@ -94,7 +120,6 @@ class StokOnderdilController extends Controller
             'nama_sparepart' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'stok_periode_sebelum' => 'required|integer|min:0',
-            'periode' => 'required|date',
             'kondisi_sekarang' => 'required|string|max:255',
             'pemakaian' => 'required|integer|min:0',
             'stok_terbaru' => 'required|integer|min:0',
@@ -110,6 +135,12 @@ class StokOnderdilController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('assets/img'), $imageName);
             $data['gambar'] = 'assets/img/' . $imageName;
+        }
+
+        $stokBerubah = (int) $stokOnderdil->stok_periode_sebelum !== (int) $data['stok_periode_sebelum'] || (int) $stokOnderdil->pemakaian !== (int) $data['pemakaian'] || (int) $stokOnderdil->stok_terbaru !== (int) $data['stok_terbaru'] || $stokOnderdil->kondisi_sekarang !== $data['kondisi_sekarang'];
+
+        if ($stokBerubah) {
+            $data['periode'] = now()->toDateString();
         }
 
         $stokOnderdil->update($data);

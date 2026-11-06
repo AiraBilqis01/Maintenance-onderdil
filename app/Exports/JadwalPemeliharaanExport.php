@@ -23,15 +23,27 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
     {
         $query = JadwalPemeliharaan::with('user');
 
+        /* Filter Tenaga Kerja */
+        if ($this->request->filled('tenaga_kerja')) {
+            $query->where('nama_tenaga_kerja', $this->request->tenaga_kerja);
+        }
+
+        /* Filter Dari Tanggal */
+        if ($this->request->filled('tanggal_dari')) {
+            $query->whereDate( 'tanggal_selesai', '>=', $this->request->tanggal_dari);
+        }
+
+        /* Filter Sampai Tanggal */
+        if ($this->request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_selesai', '<=', $this->request->tanggal_sampai);
+        }
+
+        /* Filter Status */
         if ($this->request->filled('status')) {
             $query->where('status', $this->request->status);
         }
 
-        if ($this->request->filled('search')) {
-            $query->where('judul_pemeliharaan', 'like', '%' . $this->request->search . '%');
-        }
-
-        return $query->get();
+        return $query->orderBy('tanggal_selesai', 'desc')->get();
     }
 
     public function headings(): array
@@ -50,8 +62,6 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
             'Tipe',
             'Tahun',
             'Status',
-            'Nama Onderdil',
-            'Jumlah Pemakaian',
             'Keterangan',
         ];
     }
@@ -68,15 +78,13 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
             $item->user ? $item->user->name : '-',
             $item->nama_peralatan,
             $item->lokasi ?? '-',
-            $item->quantity,
+            $item->quantity ?? '-',
             $item->serial_number ?? '-',
             $item->kapasitas ?? '-',
             $item->merek ?? '-',
             $item->tipe ?? '-',
             $item->tahun_pembuatan ?? '-',
             ucfirst($item->status),
-            $item->nama_onderdil ?? '-',
-            $item->jumlah_pemakaian ?? '-',
             $item->keterangan ?? '-',
         ];
     }

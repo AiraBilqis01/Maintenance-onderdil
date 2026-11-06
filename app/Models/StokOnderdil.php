@@ -18,4 +18,14 @@ class StokOnderdil extends Model
         'stok_terbaru',
         'keterangan',
     ];
+
+    /**
+     * Relasi ke detail pengecekan onderdil.
+     * Satu stok onderdil dapat muncul
+     * pada banyak detail pengecekan.
+     */
+    public function detailPengecekan()
+    {
+        return $this->hasMany(DetailPengecekanOnderdil::class,'stok_onderdil_id');
+    }
 }

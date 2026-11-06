@@ -242,6 +242,33 @@
             font-weight: 600 !important;
         }
 
+        /* Event Pending: box putih seperti sebelumnya */
+        .fc-event.status-pending {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #1a202c !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+        }
+
+        /* Tulisan event pending hitam */
+        .fc-event.status-pending .fc-event-title,
+        .fc-event.status-pending .fc-event-time,
+        .fc-event.status-pending .fc-event-title-container {
+            color: #1a202c !important;
+        }
+
+        /* Titik biru kecil di depan event */
+        .fc-event.status-pending .fc-event-title::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: #4299e1;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
         /* =========================================
            7. MODAL DETAIL & FORM
            ========================================= */
@@ -510,8 +537,13 @@
         </a>
         <div class="nav-menu d-none d-lg-flex">
             <a href="{{ route('tenagakerja.dashboard') }}" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
-            <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link active"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
-            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Onderdil</a>
+            @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                <a href="{{ route('tenagakerja.checklist.index') }}" class="nav-link active"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a>
+            @endif
+            @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="nav-link"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a>
+            @endif
+            <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="nav-link"><i class="bi bi-box-seam"></i> Stok Sparepart</a>
         </div>
         <div class="d-none d-lg-flex">
             @auth
@@ -540,13 +572,21 @@
                     <i class="bi bi-house"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link active">
-                    <i class="bi bi-check2-square"></i>
-                    <span>Jadwal Pemeliharaan</span>
-                </a>
+                @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                    <a href="{{ route('tenagakerja.checklist.index') }}" class="mobile-menu-link active">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Jadwal Pemeliharaan</span>
+                    </a>
+                @endif
+                @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                    <a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}" class="mobile-menu-link">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Pengecekan Sparepart</span>
+                    </a>
+                @endif
                 <a href="{{ route('tenagakerja.stok-onderdil.index') }}" class="mobile-menu-link">
                     <i class="bi bi-box-seam"></i>
-                    <span>Stok Onderdil</span>
+                    <span>Stok Sparepart</span>
                 </a>
 
                 <div class="mobile-menu-divider"></div>
@@ -652,9 +692,9 @@
                         <input type="text" class="form-control" id="selesai_judul" readonly>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Onderdil <small class="text-muted">(opsional)</small></label>
+                        <label class="form-label fw-semibold">Nama Sparepart <small class="text-muted">(opsional)</small></label>
                         <select class="form-control" name="nama_onderdil" id="select_nama_onderdil">
-                            <option value="">-- Tidak menggunakan onderdil --</option>
+                            <option value="">-- Tidak menggunakan sparepart --</option>
                             @foreach($stokOnderdil as $stok)
                                 <option value="{{ $stok->nama_sparepart }}">{{ $stok->nama_sparepart }} (Stok: {{ $stok->stok_terbaru }})</option>
                             @endforeach
@@ -670,17 +710,13 @@
                             <div class="col-md-8 mb-3">
                                 <label class="form-label fw-semibold text-danger">Upload Bukti Pemakaian <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control validasi-gambar" id="bukti_pemakaian_onderdil" name="bukti_pemakaian_onderdil" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                <small class="text-muted d-block mt-1"> Wajib diisi karena Anda memilih onderdil.</small>
+                                <small class="text-muted d-block mt-1"> Wajib diisi karena Anda memilih sparepart.</small>
                                 <small class="text-muted d-block"> Format file: JPG, JPEG, PNG, atau GIF. Maksimal 5 MB. </small>
                                 <div id="error_bukti_pemakaian_onderdil"
                                     class="text-danger small mt-1">
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tanggal Selesai <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" name="tanggal_selesai" value="{{ date('Y-m-d') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Detail Penyelesaian <span class="text-danger">*</span></label>
@@ -723,7 +759,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Keterangan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="keterangan_tolak" rows="3" placeholder="Contoh: Stok onderdil kosong" required></textarea>
+                        <textarea class="form-control" name="keterangan_tolak" rows="3" placeholder="Contoh: Stok sparepart kosong" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Alasan Penolakan <span class="text-danger">*</span></label>
@@ -749,14 +785,19 @@
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
                 </div>
-                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan onderdil pada PLTMH Sangir Hulu</p>
+                <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan sparepart pada PLTMH Sangir Hulu</p>
             </div>
             <div class="col-lg-3 offset-lg-1">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
-                    <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
-                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Onderdil</a></li>
+                    @if(in_array(Auth::user()->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.checklist.index') }}"><i class="bi bi-check2-square"></i> Jadwal Pemeliharaan</a></li>
+                    @endif
+                    @if(in_array(Auth::user()->jenis_tugas, ['pengecekan_onderdil', 'keduanya']))
+                        <li><a href="{{ route('tenagakerja.pengecekan-onderdil.index') }}"><i class="bi bi-clipboard-check"></i> Pengecekan Sparepart</a></li>
+                    @endif
+                    <li><a href="{{ route('tenagakerja.stok-onderdil.index') }}"><i class="bi bi-box-seam"></i> Stok Sparepart</a></li>
                 </ul>
             </div>
             <div class="col-lg-3">
@@ -792,11 +833,41 @@
         var calendarEl = document.getElementById('calendar');
         var events = @json($events);
 
+        // Tanggal hari ini berdasarkan waktu PLTMH (WIB)
+        var tanggalHariIni = @json(now('Asia/Jakarta')->format('Y-m-d'));
+
+        // Mengubah misal 2026-11-09 menjadi 9 November 2026
+        function formatTanggal(tanggal) {
+            if (!tanggal) return '-';
+            var bagian = tanggal.substring(0, 10).split('-');
+            var tanggalObj = new Date(Number(bagian[0]), Number(bagian[1]) - 1, Number(bagian[2]));
+            return tanggalObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        // Mengubah tanggal pengiriman menjadi tanggal + jam
+        function formatTanggalJam(tanggal) {
+            if (!tanggal) return 'Belum tercatat';
+            var bagian = tanggal.split(' ');
+            return formatTanggal(bagian[0]) + (bagian[1] ? ', ' + bagian[1] + ' WIB' : '');
+        }
+
+        // Menghitung selisih hari menggunakan tanggal kalender
+        function selisihHari(tanggalTarget, tanggalAktual) {
+            if (!tanggalTarget || !tanggalAktual) return 0;
+            var awal = tanggalTarget.substring(0, 10).split('-').map(Number);
+            var akhir = tanggalAktual.substring(0, 10).split('-').map(Number);
+            var waktuAwal = Date.UTC(awal[0], awal[1] - 1, awal[2]);
+            var waktuAkhir = Date.UTC(akhir[0], akhir[1] - 1, akhir[2]);
+
+            return Math.round((waktuAkhir - waktuAwal) / 86400000);
+        }
+
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
             headerToolbar: false,
             events: events,
+            views: { dayGridMonth: { dayMaxEvents: 3 }, dayGridWeek: { dayMaxEvents: 4 }},
             eventClick: function (info) {
                 var props = info.event.extendedProps;
                 var eventId = info.event.id;
@@ -804,7 +875,7 @@
 
                 var html = '';
                 html += '<div class="detail-row"><div class="detail-label">Judul</div><div class="detail-value"><strong>' + info.event.title + '</strong></div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Tanggal Selesai</div><div class="detail-value">' + info.event.start.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + '</div></div>';
+                html += '<div class="detail-row"><div class="detail-label">Batas Penyelesaian</div><div class="detail-value">' + info.event.start.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Nama Peralatan</div><div class="detail-value">' + (props.nama_peralatan || '-') + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Lokasi</div><div class="detail-value">' + (props.lokasi || '-') + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Quantity</div><div class="detail-value">' + (props.quantity || '-') + '</div></div>';
@@ -818,17 +889,120 @@
                     html += '<div class="detail-row"><div class="detail-label">Gambar</div><div class="detail-value"><img src="/' + props.gambar + '" alt="Gambar"></div></div>';
                 }
 
-                if (status === 'selesai' || status === 'menunggu_verifikasi') {
+                // ============================================
+                // INFORMASI KETEPATAN WAKTU PEMELIHARAAN
+                // ============================================
+                // Tanggal target aktif mengikuti jadwal terbaru.
+                var targetAktif = info.event.startStr.substring(0, 10);
+
+                // Target awal tidak berubah walaupun pernah direvisi.
+                var targetAwal = props.tanggal_target_awal || targetAktif;
+
+                // Waktu penyelesaian dan verifikasi.
+                var tanggalKirim = props.tanggal_kirim_hasil;
+                var tanggalVerifikasi = props.tanggal_verifikasi;
+
+                // Hasil perhitungan dari helper Laravel.
+                var teksKetepatan = props.ketepatan_label || 'Informasi belum tersedia';
+                var warnaKetepatan = 'text-secondary';
+
+                if (props.ketepatan_warna === 'danger') {
+                    warnaKetepatan = 'text-danger';
+                } else if (props.ketepatan_warna === 'success') {
+                    warnaKetepatan = 'text-success';
+                }
+
+                // ============================================
+                // PENANGANAN PENOLAKAN TUGAS
+                // ============================================
+                /* Penolakan tugas tidak dianggap sebagai pengiriman hasil pekerjaan. */
+                var pengajuanPenolakan = (status === 'menunggu_verifikasi' || status === 'ditolak') && !props.detail_penyelesaian && Boolean(props.alasan_penolakan);
+
+                if (pengajuanPenolakan) {
+                    teksKetepatan = 'Penolakan Tugas - Tidak Dinilai';
+                    warnaKetepatan = 'text-secondary';
+                }
+
+                // Riwayat perubahan jadwal.
+                var jumlahRevisi = Number(props.jumlah_revisi || 0);
+                var pernahTerlambat = props.pernah_terlambat_sebelum_revisi === true;
+                var hariTerlambatTercatat = Number(props.hari_terlambat_tercatat || 0);
+                var daftarRiwayat = Array.isArray(props.riwayat_revisi_detail) ? props.riwayat_revisi_detail : [];
+
+                // ============================================
+                // TAMPILAN INFORMASI KETEPATAN WAKTU
+                // ============================================
+                html += '<div class="result-section" style="background:#f3f6ff;border-left:4px solid #667eea;">';
+                html += '<h6 style="color:#4a5568;">' + '<i class="bi bi-clock-history me-2"></i>' + 'Ketepatan Waktu Pemeliharaan' + '</h6>';
+                // Target awal.
+                html += '<div class="detail-row">' + '<div class="detail-label">Target Awal</div>' + '<div class="detail-value">' + formatTanggal(targetAwal) + '</div></div>';
+                // Target aktif ditampilkan jika pernah ada revisi.
+                if (jumlahRevisi > 0 || targetAwal !== targetAktif) {
+                    html += '<div class="detail-row">' + '<div class="detail-label">Target Setelah Revisi</div>' + '<div class="detail-value">' + formatTanggal(targetAktif) + '</div></div>';
+                }
+                // Tanggal pengiriman hasil.
+                html += '<div class="detail-row">' + '<div class="detail-label">Hasil Dikirim</div>' + '<div class="detail-value">' + formatTanggalJam(tanggalKirim) + '</div></div>';
+                // Tanggal verifikasi Supervisor.
+                html += '<div class="detail-row">' + '<div class="detail-label">Verifikasi Supervisor</div>' + '<div class="detail-value">' + formatTanggalJam(tanggalVerifikasi) + '</div></div>';
+                // Status ketepatan waktu dari helper.
+                html += '<div class="detail-row">' + '<div class="detail-label">Ketepatan Waktu</div>' + '<div class="detail-value">' + '<strong class="' + warnaKetepatan + '">' + teksKetepatan + '</strong></div></div>';
+                // Keterlambatan sebelum revisi.
+                if (pernahTerlambat) {
+                    html += '<div class="detail-row">' + '<div class="detail-label">Riwayat Terlambat</div>' + '<div class="detail-value text-danger">' + '<i class="bi bi-exclamation-triangle me-1"></i>' + hariTerlambatTercatat + ' hari' + ' (keterlambatan terbesar sebelum revisi).' + '</div></div>';
+                }
+                // Jumlah revisi.
+                if (jumlahRevisi > 0) {
+                    html += '<div class="detail-row">' + '<div class="detail-label">Jumlah Revisi</div>' + '<div class="detail-value">' + jumlahRevisi + ' kali' + '</div></div>';
+                }
+                
+                // ============================================
+                // RINCIAN RIWAYAT REVISI PEMELIHARAAN
+                // ============================================
+                if (daftarRiwayat.length > 0) {
+                    html += '<div class="mt-3">';
+                    html += '<h6 class="fw-semibold mb-3">' + '<i class="bi bi-clock-history me-2"></i>' + 'Rincian Riwayat Revisi' + '</h6>';
+                    daftarRiwayat.forEach(function(revisi, index) {
+                        var hariTerlambat = Number(revisi.hari_terlambat || 0);
+                        var informasiKeterlambatan = '';
+
+                        if (hariTerlambat > 0) {
+                            informasiKeterlambatan = '<span class="text-danger fw-semibold">' + 'Terlambat ' + hariTerlambat + ' hari sebelum revisi' + '</span>';
+                        } else {
+                            informasiKeterlambatan = '<span class="text-success">' + 'Tidak terlambat sebelum revisi' + '</span>';
+                        }
+
+                        // Amankan alasan revisi sebelum dimasukkan ke HTML.
+                        var alasanAman = String(revisi.alasan_revisi || '-')
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+
+                        html += '<div class="border rounded p-3 mb-2 bg-white">';
+                        html += '<div class="fw-bold mb-2">' + 'Revisi ke-' + (index + 1) + '</div>';
+                        html += '<div class="detail-row">' + '<div class="detail-label">Target Sebelumnya</div>' + '<div class="detail-value">' + formatTanggal(revisi.tanggal_lama) + '</div></div>';
+                        html += '<div class="detail-row">' + '<div class="detail-label">Target Baru</div>' + '<div class="detail-value">' + formatTanggal(revisi.tanggal_baru) + '</div></div>';
+                        html += '<div class="detail-row">' + '<div class="detail-label">Tanggal Revisi</div>' + '<div class="detail-value">' + formatTanggalJam(revisi.direvisi_pada) + '</div></div>';
+                        html += '<div class="detail-row">' + '<div class="detail-label">Keterlambatan</div>' + '<div class="detail-value">' + informasiKeterlambatan + '</div></div>';
+                        html += '<div class="detail-row">' + '<div class="detail-label">Alasan Revisi</div>' + '<div class="detail-value">' + alasanAman + '</div></div>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+
+                if ((status === 'selesai' || status === 'menunggu_verifikasi') && props.detail_penyelesaian) {
                     html += '<div class="result-section ' + (status === 'selesai' ? 'selesai' : '') + '">';
                     html += '<h6><i class="bi bi-check-circle me-2"></i> Detail Penyelesaian</h6>';
-                    html += '<div class="detail-row"><div class="detail-label">Nama Onderdil</div><div class="detail-value">' + (props.nama_onderdil || '-') + '</div></div>';
+                    html += '<div class="detail-row"><div class="detail-label">Nama Sparepart</div><div class="detail-value">' + (props.nama_onderdil || '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Jumlah Pemakaian</div><div class="detail-value">' + (props.jumlah_pemakaian ? props.jumlah_pemakaian + ' unit' : '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Detail Penyelesaian</div><div class="detail-value">' + (props.detail_penyelesaian || '-') + '</div></div>';
                     if (props.gambar_bukti) {
                         html += '<div class="detail-row"><div class="detail-label">Bukti Alat</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
                     }
                     if (props.bukti_pemakaian_onderdil) {
-                        html += '<div class="detail-row"><div class="detail-label">Bukti Pemakaian Onderdil</div><div class="detail-value"><img src="/' + props.bukti_pemakaian_onderdil + '" alt="Bukti Onderdil"></div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Bukti Pemakaian Sparepart</div><div class="detail-value"><img src="/' + props.bukti_pemakaian_onderdil + '" alt="Bukti Sparepart"></div></div>';
                     }
                     html += '</div>';
                 }
@@ -836,7 +1010,6 @@
                 // ============================================
                 // DETAIL PENOLAKAN / CATATAN DARI SUPERVISOR
                 // ============================================
-
                 if (props.alasan_penolakan) {
                     html += '<div class="result-section ditolak">';
                     // Jika status kembali Pending karena hasil pekerjaan ditolak Supervisor
@@ -912,12 +1085,14 @@
         }
 
         btnBulan.addEventListener('click', function() {
+            calendar.setOption('height', 'auto');    
             calendar.changeView('dayGridMonth');
             setActiveButton(btnBulan);
         });
 
         btnMinggu.addEventListener('click', function() {
-            calendar.changeView('timeGridWeek');
+            calendar.setOption('height', 230);
+            calendar.changeView('dayGridWeek');
             setActiveButton(btnMinggu);
         });
 
