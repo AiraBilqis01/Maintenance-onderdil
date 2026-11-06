@@ -48,6 +48,11 @@ class JadwalPemeliharaan extends Model
         'jumlah_pemakaian' => 'integer',
     ];
 
+    public function pemakaianOnderdil()
+    {
+        return $this->hasMany(PemakaianOnderdilPemeliharaan::class, 'jadwal_pemeliharaan_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'nama_tenaga_kerja', 'id')->withTrashed();
