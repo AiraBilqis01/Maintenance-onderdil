@@ -13,7 +13,7 @@ class LaporanPemeliharaanController extends Controller
 {
     private function buildQuery(Request $request)
     {
-        $query = JadwalPemeliharaan::with('user');
+        $query = JadwalPemeliharaan::with(['user', 'pemakaianOnderdil']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -85,7 +85,7 @@ class LaporanPemeliharaanController extends Controller
 
     public function exportSatuPdf(JadwalPemeliharaan $jadwal)
     {
-        $laporan = collect([$jadwal->load('user')]);
+        $laporan = collect([$jadwal->load(['user', 'pemakaianOnderdil'])]);
         $judul = 'Laporan Pemeliharaan - ' . $jadwal->judul_pemeliharaan;
         $periode = \Carbon\Carbon::parse($jadwal->tanggal_selesai)->format('d/m/Y');
 
