@@ -1216,7 +1216,6 @@
     });
 
     function openSelesaiModal(id, judul) {
-        document.getElementById('selesai_judul').value = judul;
         var form = document.getElementById('formSelesai');
         form.action = '/tenagakerja/checklist/' + id + '/selesai';
         var detailModal = bootstrap.Modal.getInstance(document.getElementById('eventDetailModal'));
@@ -1224,6 +1223,7 @@
         
         form.reset();
         window.resetSparepartPemeliharaan();
+        document.getElementById('selesai_judul').value = judul;
 
         // Bersihkan notifikasi validasi file sebelumnya
         document.getElementById('error_gambar_bukti').innerHTML = '';
