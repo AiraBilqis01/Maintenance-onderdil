@@ -692,31 +692,18 @@
                         <input type="text" class="form-control" id="selesai_judul" readonly>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Sparepart <small class="text-muted">(opsional)</small></label>
-                        <select class="form-control" name="nama_onderdil" id="select_nama_onderdil">
-                            <option value="">-- Tidak menggunakan sparepart --</option>
-                            @foreach($stokOnderdil as $stok)
-                                <option value="{{ $stok->nama_sparepart }}">{{ $stok->nama_sparepart }} (Stok: {{ $stok->stok_terbaru }})</option>
-                            @endforeach
-                        </select>
+                        <label class="form-label fw-semibold">Sparepart yang Digunakan <small class="text-muted">(opsional)</small></label>
+                        <div id="daftar_sparepart_pemeliharaan"></div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="tambah_sparepart_pemeliharaan">
+                            <i class="bi bi-plus-circle me-1"></i> Tambah Jenis Sparepart
+                        </button>
+                        <small class="text-muted d-block mt-1">Tambahkan satu baris untuk setiap jenis sparepart yang digunakan.</small>
                     </div>
-                    <div class="d-none" id="wrapper_bukti_onderdil">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label fw-semibold text-danger">Jumlah Pemakaian <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="jumlah_pemakaian" id="input_jumlah_pemakaian" min="1" value="1">
-                                <small class="text-muted">Berapa unit yang dipakai?</small>
-                            </div>
-                            <div class="col-md-8 mb-3">
-                                <label class="form-label fw-semibold text-danger">Upload Bukti Pemakaian <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control validasi-gambar" id="bukti_pemakaian_onderdil" name="bukti_pemakaian_onderdil" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                <small class="text-muted d-block mt-1"> Wajib diisi karena Anda memilih sparepart.</small>
-                                <small class="text-muted d-block"> Format file: JPG, JPEG, PNG, atau GIF. Maksimal 5 MB. </small>
-                                <div id="error_bukti_pemakaian_onderdil"
-                                    class="text-danger small mt-1">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="mb-3 d-none" id="wrapper_bukti_onderdil">
+                        <label class="form-label fw-semibold text-danger">Bukti Pemakaian Sparepart <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control validasi-gambar" id="bukti_pemakaian_onderdil" name="bukti_pemakaian_onderdil" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                        <small class="text-muted d-block mt-1">Satu gambar bukti untuk seluruh sparepart. JPG, JPEG, PNG atau GIF, maksimal 5 MB.</small>
+                        <div id="error_bukti_pemakaian_onderdil" class="text-danger small mt-1"></div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Detail Penyelesaian <span class="text-danger">*</span></label>
@@ -995,8 +982,17 @@
                 if ((status === 'selesai' || status === 'menunggu_verifikasi') && props.detail_penyelesaian) {
                     html += '<div class="result-section ' + (status === 'selesai' ? 'selesai' : '') + '">';
                     html += '<h6><i class="bi bi-check-circle me-2"></i> Detail Penyelesaian</h6>';
-                    html += '<div class="detail-row"><div class="detail-label">Nama Sparepart</div><div class="detail-value">' + (props.nama_onderdil || '-') + '</div></div>';
-                    html += '<div class="detail-row"><div class="detail-label">Jumlah Pemakaian</div><div class="detail-value">' + (props.jumlah_pemakaian ? props.jumlah_pemakaian + ' unit' : '-') + '</div></div>';
+                    var rincian = Array.isArray(props.pemakaian_onderdil) ? props.pemakaian_onderdil : [];
+                    if (rincian.length) {
+                        html += '<div class="detail-row"><div class="detail-label">Pemakaian Sparepart</div><div class="detail-value">';
+                        rincian.forEach(function(item) {
+                            html += '<div>' + escapeHtml(item.nama) + ' — ' + Number(item.jumlah) + ' unit</div>';
+                        });
+                        html += '</div></div>';
+                    } else {
+                        html += '<div class="detail-row"><div class="detail-label">Nama Sparepart</div><div class="detail-value">' + escapeHtml(props.nama_onderdil || '-') + '</div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Jumlah Pemakaian</div><div class="detail-value">' + (props.jumlah_pemakaian ? Number(props.jumlah_pemakaian) + ' unit' : '-') + '</div></div>';
+                    }
                     html += '<div class="detail-row"><div class="detail-label">Detail Penyelesaian</div><div class="detail-value">' + (props.detail_penyelesaian || '-') + '</div></div>';
                     if (props.gambar_bukti) {
                         html += '<div class="detail-row"><div class="detail-label">Bukti Alat</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
@@ -1096,25 +1092,78 @@
             setActiveButton(btnMinggu);
         });
 
-        var selectOnderdil = document.getElementById('select_nama_onderdil');
-        var wrapperBukti = document.getElementById('wrapper_bukti_onderdil');
-        var inputBukti = wrapperBukti.querySelector('input[type="file"]');
-        var inputJumlah = document.getElementById('input_jumlah_pemakaian');
+        const daftarSparepart = document.getElementById('daftar_sparepart_pemeliharaan');
+        const wrapperBukti = document.getElementById('wrapper_bukti_onderdil');
+        const buktiSparepart = document.getElementById('bukti_pemakaian_onderdil');
+        const opsiStok = @json($stokOnderdil->map(fn($stok) => [
+            'id' => $stok->id,
+            'nama' => $stok->nama_sparepart,
+            'stok' => $stok->stok_terbaru,
+        ])->values());
+        let nomorSparepart = 0;
 
-        selectOnderdil.addEventListener('change', function() {
-            if (this.value !== "") {
-                wrapperBukti.classList.remove('d-none');
-                inputBukti.setAttribute('required', 'required');
-                inputJumlah.setAttribute('required', 'required');
-            } else {
-                wrapperBukti.classList.add('d-none');
-                inputBukti.removeAttribute('required');
-                inputJumlah.removeAttribute('required');
-                inputBukti.value = '';
-                inputJumlah.value = 1;
+        function escapeHtml(text) {
+            return String(text).replace(/[&<>"']/g, c => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;',
+                '"':'&quot;', "'":'&#39;'
+            }[c]));
+        }
+
+        function updateKebutuhanBukti() {
+            const adaSparepart = daftarSparepart.querySelectorAll('.baris-sparepart').length > 0;
+            wrapperBukti.classList.toggle('d-none', !adaSparepart);
+            buktiSparepart.required = adaSparepart;
+            if (!adaSparepart) buktiSparepart.value = '';
+        }
+
+        function tambahSparepart() {
+            let nomor = nomorSparepart++;
+            let pilihan = opsiStok.map(stok =>
+                '<option value="' + stok.id + '">' +
+                escapeHtml(stok.nama) + ' (Stok: ' + stok.stok + ')</option>'
+            ).join('');
+            const baris = document.createElement('div');
+            baris.className = 'baris-sparepart border rounded p-3 mb-2 bg-white';
+            baris.innerHTML = `
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label">Nama Sparepart</label>
+                        <select class="form-select input-sparepart" name="spareparts[${nomor}][stok_onderdil_id]" required>
+                            <option value="">-- Pilih Sparepart --</option>
+                            ${pilihan}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Jumlah Unit</label>
+                        <input type="number" class="form-control input-jumlah" name="spareparts[${nomor}][jumlah]" min="1" value="1" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100 hapus-sparepart">Hapus</button>
+                    </div>
+                </div>`;
+            daftarSparepart.appendChild(baris);
+            baris.querySelector('.hapus-sparepart').addEventListener('click', function () {
+                baris.remove();
+                updateKebutuhanBukti();
+            });
+            updateKebutuhanBukti();
+        }
+
+        document.getElementById('tambah_sparepart_pemeliharaan').addEventListener('click', tambahSparepart);
+        document.getElementById('formSelesai').addEventListener('submit', function (event) {
+            const ids = [...daftarSparepart.querySelectorAll('.input-sparepart')].map(el => el.value);
+            if (new Set(ids).size !== ids.length) {
+                event.preventDefault();
+                alert('Jenis sparepart tidak boleh dipilih lebih dari sekali.');
             }
         });
-        
+
+        window.resetSparepartPemeliharaan = function () {
+            daftarSparepart.innerHTML = '';
+            nomorSparepart = 0;
+            updateKebutuhanBukti();
+        };
+
         document.querySelectorAll('.validasi-gambar').forEach(function(input) {
             input.addEventListener('change', function() {
                 const file = this.files[0];
@@ -1173,12 +1222,9 @@
         var detailModal = bootstrap.Modal.getInstance(document.getElementById('eventDetailModal'));
         if (detailModal) detailModal.hide();
         
-        document.getElementById('select_nama_onderdil').value = "";
-        document.getElementById('wrapper_bukti_onderdil').classList.add('d-none');
-        document.getElementById('wrapper_bukti_onderdil').querySelector('input[type="file"]').removeAttribute('required');
-        document.getElementById('input_jumlah_pemakaian').removeAttribute('required');
-        document.getElementById('input_jumlah_pemakaian').value = 1;
-        
+        form.reset();
+        window.resetSparepartPemeliharaan();
+
         // Bersihkan notifikasi validasi file sebelumnya
         document.getElementById('error_gambar_bukti').innerHTML = '';
         document.getElementById('error_bukti_pemakaian_onderdil').innerHTML = '';
