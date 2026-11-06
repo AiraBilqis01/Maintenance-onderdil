@@ -24,7 +24,7 @@ class JadwalPemeliharaanController extends Controller
 {
     private function buildQuery(Request $request)
     {
-        $query = JadwalPemeliharaan::with('user');
+        $query = JadwalPemeliharaan::with(['user', 'pemakaianOnderdil']);
 
         /* Filter Tenaga Kerja */
         if ($request->filled('tenaga_kerja')) {
@@ -274,31 +274,71 @@ class JadwalPemeliharaanController extends Controller
 
     public function verifikasiSelesai(JadwalPemeliharaan $jadwalPemeliharaan)
     {
-        if ($jadwalPemeliharaan->status !== 'menunggu_verifikasi' || empty($jadwalPemeliharaan->detail_penyelesaian)) {
-            return back()->withErrors(['error' => 'Tidak ada laporan penyelesaian yang dapat diverifikasi.']);
-        }
+        DB::transaction(function () use ($jadwalPemeliharaan) {
+            $jadwal = JadwalPemeliharaan::whereKey($jadwalPemeliharaan->id)
+                ->lockForUpdate()->firstOrFail();
 
-        if (!empty($jadwalPemeliharaan->nama_onderdil) && !empty($jadwalPemeliharaan->jumlah_pemakaian)) {
-            $stok = StokOnderdil::where('nama_sparepart', $jadwalPemeliharaan->nama_onderdil)->first();
-            
-            if ($stok) {
-                if ($stok->stok_terbaru >= $jadwalPemeliharaan->jumlah_pemakaian) {
-                    $stokSebelum = $stok->stok_terbaru;
-                    $stok->stok_periode_sebelum = $stokSebelum;
+            if ($jadwal->status !== 'menunggu_verifikasi' || empty($jadwal->detail_penyelesaian)) {
+                throw ValidationException::withMessages([
+                    'error' => 'Tidak ada laporan penyelesaian yang dapat diverifikasi.',
+                ]);
+            }
 
-                    $stok->stok_terbaru = $stokSebelum - $jadwalPemeliharaan->jumlah_pemakaian;
-                    $stok->pemakaian = $stok->pemakaian + $jadwalPemeliharaan->jumlah_pemakaian;
-                    $stok->periode = now()->toDateString();
-                    $stok->save();
-                } else {
-                    return back()->withErrors(['error' => 'Gagal verifikasi: Stok fisik saat ini tidak mencukupi untuk dipotong.']);
+            $pemakaian = $jadwal->pemakaianOnderdil()->orderBy('stok_onderdil_id')->get();
+
+            // Kompatibilitas laporan lama yang belum tersalin ke tabel detail.
+            if ($pemakaian->isEmpty() && !empty($jadwal->nama_onderdil) && !empty($jadwal->jumlah_pemakaian)) {
+                $stokLama = StokOnderdil::where('nama_sparepart', $jadwal->nama_onderdil)->get();
+                if ($stokLama->count() !== 1) {
+                    throw ValidationException::withMessages([
+                        'error' => 'Nama sparepart lama tidak ditemukan atau tidak unik. Periksa data stok.',
+                    ]);
+                }
+                $pemakaian = collect([$jadwal->pemakaianOnderdil()->create([
+                    'stok_onderdil_id' => $stokLama->first()->id,
+                    'nama_sparepart_snapshot' => $stokLama->first()->nama_sparepart,
+                    'jumlah' => (int) $jadwal->jumlah_pemakaian,
+                ])]);
+            }
+
+            // Lock semua baris stok dalam urutan konsisten. Semua perubahan atomic.
+            $ids = $pemakaian->pluck('stok_onderdil_id')->filter()->unique()->sort()->values();
+            $stokTerkunci = StokOnderdil::whereIn('id', $ids)
+                ->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+
+            foreach ($pemakaian as $item) {
+                $stok = $stokTerkunci->get((int) $item->stok_onderdil_id);
+                if (!$stok) {
+                    throw ValidationException::withMessages([
+                        'error' => 'Sparepart ' . $item->nama_sparepart_snapshot . ' sudah tidak tersedia.',
+                    ]);
+                }
+                if ((int) $item->jumlah < 1 || (int) $stok->stok_terbaru < (int) $item->jumlah) {
+                    throw ValidationException::withMessages([
+                        'error' => 'Stok ' . $item->nama_sparepart_snapshot . ' tidak mencukupi untuk ACC.',
+                    ]);
                 }
             }
-        }
 
-        $jadwalPemeliharaan->update(['status' => 'selesai', 'tanggal_verifikasi' => now('Asia/Jakarta'), 'keterangan_tolak' => null, 'alasan_penolakan' => null,]);
+            foreach ($pemakaian as $item) {
+                $stok = $stokTerkunci->get((int) $item->stok_onderdil_id);
+                $stokSebelum = (int) $stok->stok_terbaru;
+                $stok->stok_periode_sebelum = $stokSebelum;
+                $stok->stok_terbaru = $stokSebelum - (int) $item->jumlah;
+                $stok->pemakaian = (int) $stok->pemakaian + (int) $item->jumlah;
+                $stok->periode = now('Asia/Jakarta')->toDateString();
+                $stok->save();
+            }
 
-        return back()->with('sukses', 'Laporan berhasil diverifikasi. Stok dan pemakaian onderdil telah diperbarui.');
+            $jadwal->update([
+                'status' => 'selesai',
+                'tanggal_verifikasi' => now('Asia/Jakarta'),
+                'keterangan_tolak' => null,
+                'alasan_penolakan' => null,
+            ]);
+        });
+
+        return back()->with('sukses', 'Laporan berhasil diverifikasi. Seluruh pemakaian sparepart telah diperbarui.');
     }
 
     public function verifikasiTolak(JadwalPemeliharaan $jadwalPemeliharaan)
@@ -327,6 +367,8 @@ class JadwalPemeliharaanController extends Controller
 
         /* Kembalikan pekerjaan menjadi Pending. Artinya pekerjaan belum dianggap selesai
         * dan tenaga kerja harus mengisi checklist kembali. */
+        $jadwalPemeliharaan->pemakaianOnderdil()->delete();
+
         $jadwalPemeliharaan->update(['status' => 'pending',
             'tanggal_kirim_hasil' => null,
             'tanggal_verifikasi' => null,

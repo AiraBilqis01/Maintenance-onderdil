@@ -88,7 +88,7 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
             ($item->status === 'selesai' && !empty($item->tanggal_kirim_hasil)) 
                 ? \Carbon\Carbon::parse($item->tanggal_kirim_hasil)->format('d/m/Y') : '-',
             ucfirst($item->status ?? 'pending'),
-            $item->nama_onderdil ?? '-',
+            $item->pemakaianOnderdil->isNotEmpty() ? $item->pemakaianOnderdil->map(fn($p) => $p->nama_sparepart_snapshot . ' (' . $p->jumlah . ' unit)')->implode('; ') : ($item->nama_onderdil ?? '-'),
             $item->detail_penyelesaian ?? '-',
             $item->keterangan_tolak ?? '-',
             $item->alasan_penolakan ?? '-',

@@ -521,10 +521,14 @@
                                     </td>
                                     <td>
                                         @if($item->status == 'selesai')
-                                            <strong>{{ $item->nama_onderdil ?? '-' }}</strong>
-                                            @if($item->jumlah_pemakaian)
-                                                <span class="text-primary">({{ $item->jumlah_pemakaian }} Unit)</span>
-                                            @endif
+                                            @forelse($item->pemakaianOnderdil as $pemakaian)
+                                                <div><strong>{{ $pemakaian->nama_sparepart_snapshot }}</strong> <span class="text-primary">({{ $pemakaian->jumlah }} Unit)</span></div>
+                                            @empty
+                                                <strong>{{ $item->nama_onderdil ?? '-' }}</strong>
+                                                @if($item->jumlah_pemakaian)
+                                                    <span class="text-primary">({{ $item->jumlah_pemakaian }} Unit)</span>
+                                                @endif
+                                            @endforelse
                                             <br>
                                             <small class="text-muted">{{ Str::limit($item->detail_penyelesaian, 50) ?? '-' }}</small>
                                         @elseif($item->status == 'ditolak')

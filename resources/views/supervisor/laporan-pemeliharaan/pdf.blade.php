@@ -393,8 +393,14 @@
                 </td>
                 
                 {{-- KOLOM BARU: NAMA ONDERDIL & JUMLAH PEMAKAIAN --}}
-                <td>{{ $item->nama_onderdil ?? '-' }}</td>
-                <td style="text-align: center; font-weight: bold;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
+                <td>
+                    @forelse($item->pemakaianOnderdil as $pemakaian)
+                        <div>{{ $pemakaian->nama_sparepart_snapshot }} ({{ $pemakaian->jumlah }} unit)</div>
+                    @empty
+                        {{ $item->nama_onderdil ?? '-' }}
+                    @endforelse
+                </td>
+                <td style="text-align: center; font-weight: bold;">{{ $item->pemakaianOnderdil->isNotEmpty() ? $item->pemakaianOnderdil->sum('jumlah') : ($item->jumlah_pemakaian ?? '-') }}</td>
 
                 <td>{{ $item->detail_penyelesaian ?? '-' }}</td>
                 <td>{{ $item->alasan_penolakan ?? '-' }}</td>
