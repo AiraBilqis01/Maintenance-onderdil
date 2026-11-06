@@ -1095,11 +1095,7 @@
         const daftarSparepart = document.getElementById('daftar_sparepart_pemeliharaan');
         const wrapperBukti = document.getElementById('wrapper_bukti_onderdil');
         const buktiSparepart = document.getElementById('bukti_pemakaian_onderdil');
-        const opsiStok = @json($stokOnderdil->map(fn($stok) => [
-            'id' => $stok->id,
-            'nama' => $stok->nama_sparepart,
-            'stok' => $stok->stok_terbaru,
-        ])->values());
+        const opsiStok = @json($opsiStok);
         let nomorSparepart = 0;
 
         function escapeHtml(text) {
