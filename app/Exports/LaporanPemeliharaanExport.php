@@ -21,7 +21,7 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
 
     public function collection()
     {
-        $query = JadwalPemeliharaan::with('user');
+        $query = JadwalPemeliharaan::with(['user', 'pemakaianOnderdil']);
 
         if ($this->request->filled('status')) {
             $query->where('status', $this->request->status);
@@ -61,7 +61,7 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
             'Tanggal Selesai',
             'Hasil Dikirim (ACC)',
             'Status',
-            'Nama Onderdil',
+            'Sparepart yang Digunakan',
             'Detail Penyelesaian',
             'Keterangan Tolak',
             'Alasan Penolakan',
@@ -72,6 +72,28 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
     {
         static $no = 0;
         $no++;
+        
+        /* ============================================
+         RINCIAN PEMAKAIAN MULTI-SPAREPART UNTUK EXCEL
+        ============================================ */
+        // Gabungkan seluruh nama sparepart beserta jumlahnya
+        $rincianSparepart = $item->pemakaianOnderdil
+            ->map(function ($pemakaian) {
+                return $pemakaian->nama_sparepart_snapshot . ' (' . $pemakaian->jumlah . ' Unit)';
+            })
+            ->implode('; ');
+
+        // Tetap mendukung laporan pemeliharaan lama
+        if ($rincianSparepart === '') {
+            if (!empty($item->nama_onderdil)) {
+                $rincianSparepart = $item->nama_onderdil;
+                if (!empty($item->jumlah_pemakaian)) {
+                    $rincianSparepart .= ' (' . $item->jumlah_pemakaian . ' Unit)';
+                }
+            } else {
+                $rincianSparepart = '-';
+            }
+        }
 
         return [
             $no,
@@ -88,7 +110,7 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
             ($item->status === 'selesai' && !empty($item->tanggal_kirim_hasil)) 
                 ? \Carbon\Carbon::parse($item->tanggal_kirim_hasil)->format('d/m/Y') : '-',
             ucfirst($item->status ?? 'pending'),
-            $item->nama_onderdil ?? '-',
+            $rincianSparepart,
             $item->detail_penyelesaian ?? '-',
             $item->keterangan_tolak ?? '-',
             $item->alasan_penolakan ?? '-',
@@ -97,6 +119,18 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
 
     public function styles(Worksheet $sheet)
     {
+        // Kolom N berisi rincian sparepart yang digunakan
+        // Perlebar kolom agar nama sparepart mudah dibaca
+        $sheet->getColumnDimension('N')->setWidth(50);
+
+        // Bungkus teks panjang ke beberapa baris dalam sel
+        $barisTerakhir = $sheet->getHighestRow();
+
+        if ($barisTerakhir >= 2) {
+            $sheet->getStyle('N2:N' . $barisTerakhir)->getAlignment()->setWrapText(true);
+        }
+
+        // Pertahankan format header Excel yang sudah ada
         return [
             1 => ['font' => ['bold' => true]],
         ];

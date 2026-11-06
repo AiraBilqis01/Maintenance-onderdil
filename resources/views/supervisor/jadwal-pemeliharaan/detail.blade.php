@@ -107,16 +107,33 @@
                     <div class="detail-section mb-4">
                         <h6 class="detail-title text-success"><i class="fas fa-check-circle mr-2"></i> Detail Penyelesaian</h6>
                         <table class="table table-sm table-borderless detail-table">
+                            <!-- DAFTAR SPAREPART YANG DIGUNAKAN -->
                             <tr>
-                                <td width="35%" class="text-muted">Nama Onderdil</td>
-                                <td width="65%" class="font-weight-bold">{{ $jadwalPemeliharaan->nama_onderdil ?? '-' }}</td>
+                                <td width="35%" class="text-muted">Sparepart yang Digunakan</td>
+                                <td width="65%" class="font-weight-bold">
+                                    @forelse($jadwalPemeliharaan->pemakaianOnderdil as $pemakaian)
+                                        <div class="mb-2">
+                                            {{ $loop->iteration }}. {{ $pemakaian->nama_sparepart_snapshot }}
+                                            <span class="text-primary">({{ $pemakaian->jumlah }} Unit)</span>
+                                        </div>
+                                    @empty
+                                        <!-- Tetap mendukung data pemeliharaan lama -->
+                                        @if($jadwalPemeliharaan->nama_onderdil)
+                                            {{ $jadwalPemeliharaan->nama_onderdil }}
+                                            ({{ $jadwalPemeliharaan->jumlah_pemakaian ?? 0 }} Unit)
+                                        @else
+                                            -
+                                        @endif
+                                    @endforelse
+                                </td>
                             </tr>
-                            
-                            <!-- TAMBAHAN: JUMLAH PEMAKAIAN -->
+                            <!-- TOTAL PEMAKAIAN SEMUA JENIS SPAREPART -->
                             <tr>
-                                <td class="text-muted">Jumlah Pemakaian</td>
+                                <td class="text-muted">Total Pemakaian Sparepart</td>
                                 <td class="font-weight-bold text-primary">
-                                    @if($jadwalPemeliharaan->jumlah_pemakaian)
+                                    @if($jadwalPemeliharaan->pemakaianOnderdil->isNotEmpty())
+                                        {{ $jadwalPemeliharaan->pemakaianOnderdil->sum('jumlah') }} Unit
+                                    @elseif($jadwalPemeliharaan->jumlah_pemakaian)
                                         {{ $jadwalPemeliharaan->jumlah_pemakaian }} Unit
                                     @else
                                         -

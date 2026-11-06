@@ -359,7 +359,7 @@
                 <th width="7%">Tanggal Selesai</th>
                 <th width="8%">Hasil Dikirim (ACC)</th>
                 <th width="6%">Status</th>
-                <th width="10%">Nama Onderdil</th>
+                <th width="10%">Nama Sparepart</th>
                 <th width="6%">Jumlah Pakai</th>
                 <th width="12%">Detail Penyelesaian</th>
                 <th width="10%">Alasan Penolakan</th>
@@ -391,11 +391,34 @@
                         <span class="badge badge-pending">⏳ Pending</span>
                     @endif
                 </td>
-                
-                {{-- KOLOM BARU: NAMA ONDERDIL & JUMLAH PEMAKAIAN --}}
-                <td>{{ $item->nama_onderdil ?? '-' }}</td>
-                <td style="text-align: center; font-weight: bold;">{{ $item->jumlah_pemakaian ?? '-' }}</td>
-
+                {{-- DAFTAR NAMA SPAREPART --}}
+                <td>
+                    @if($item->pemakaianOnderdil->isNotEmpty())
+                        @foreach($item->pemakaianOnderdil as $pemakaian)
+                            <div style="margin-bottom: 4px;">
+                                {{ $loop->iteration }}. {{ $pemakaian->nama_sparepart_snapshot }}
+                            </div>
+                        @endforeach
+                    @else
+                        {{-- Mendukung laporan pemeliharaan lama --}}
+                        {{ $item->nama_onderdil ?? '-' }}
+                    @endif
+                </td>
+                {{-- JUMLAH PEMAKAIAN SETIAP SPAREPART --}}
+                <td style="text-align: center; font-weight: bold;">
+                    @if($item->pemakaianOnderdil->isNotEmpty())
+                        @foreach($item->pemakaianOnderdil as $pemakaian)
+                            <div style="margin-bottom: 4px;">{{ $pemakaian->jumlah }} Unit</div>
+                        @endforeach
+                    @else
+                        {{-- Mendukung laporan pemeliharaan lama --}}
+                        @if($item->jumlah_pemakaian)
+                            {{ $item->jumlah_pemakaian }} Unit
+                        @else
+                            -
+                        @endif
+                    @endif
+                </td>
                 <td>{{ $item->detail_penyelesaian ?? '-' }}</td>
                 <td>{{ $item->alasan_penolakan ?? '-' }}</td>
                 <td class="foto-cell">

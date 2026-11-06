@@ -521,12 +521,27 @@
                                     </td>
                                     <td>
                                         @if($item->status == 'selesai')
-                                            <strong>{{ $item->nama_onderdil ?? '-' }}</strong>
-                                            @if($item->jumlah_pemakaian)
-                                                <span class="text-primary">({{ $item->jumlah_pemakaian }} Unit)</span>
-                                            @endif
-                                            <br>
-                                            <small class="text-muted">{{ Str::limit($item->detail_penyelesaian, 50) ?? '-' }}</small>
+                                            {{-- Tampilkan semua jenis sparepart yang digunakan --}}
+                                            @forelse($item->pemakaianOnderdil as $pemakaian)
+                                                <div class="mb-1">
+                                                    <strong>{{ $loop->iteration }}. {{ $pemakaian->nama_sparepart_snapshot }}</strong>
+                                                    <span class="text-primary">({{ $pemakaian->jumlah }} Unit)</span>
+                                                </div>
+                                            @empty
+                                                {{-- Tetap mendukung data pemeliharaan lama --}}
+                                                @if($item->nama_onderdil)
+                                                    <strong>{{ $item->nama_onderdil }}</strong>
+                                                    @if($item->jumlah_pemakaian)
+                                                        <span class="text-primary">({{ $item->jumlah_pemakaian }} Unit)</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            @endforelse
+                                            {{-- Detail hasil pekerjaan tetap ditampilkan --}}
+                                            <div class="mt-1">
+                                                <small class="text-muted">{{ Str::limit($item->detail_penyelesaian ?? '-', 50) }}</small>
+                                            </div>
                                         @elseif($item->status == 'ditolak')
                                             <span class="text-danger">{{ Str::limit($item->alasan_penolakan, 60) ?? '-' }}</span>
                                         @else

@@ -48,11 +48,18 @@ class JadwalPemeliharaan extends Model
         'jumlah_pemakaian' => 'integer',
     ];
 
+    /* Relasi satu jadwal pemeliharaan dengan banyak pemakaian sparepart. */
+    public function pemakaianOnderdil()
+    {
+        return $this->hasMany(
+            PemakaianOnderdilPemeliharaan::class, 'jadwal_pemeliharaan_id', 'id'
+        );
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'nama_tenaga_kerja', 'id')->withTrashed();
     }
-
     
     /* Relasi riwayat perubahan tenggat pemeliharaan. */
     public function riwayatRevisi()

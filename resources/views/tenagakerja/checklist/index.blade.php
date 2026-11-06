@@ -691,9 +691,24 @@
                         <label class="form-label fw-semibold">Judul Pemeliharaan</label>
                         <input type="text" class="form-control" id="selesai_judul" readonly>
                     </div>
-                    <div class="mb-3">
+                    <!-- ==========================================
+                        FORM MULTI-SPAREPART PEMELIHARAAN
+                        ========================================== -->
+                    <div class="mb-3" id="bagian_multi_sparepart">
+                        <label class="form-label fw-semibold"> Sparepart yang Digunakan <small class="text-muted">(opsional)</small></label>
+                        <p class="text-muted small mb-2">
+                            Tambahkan setiap jenis sparepart beserta jumlah unit yang digunakan dalam pemeliharaan.
+                        </p>
+                        <!-- Tempat menampilkan daftar sparepart -->
+                        <div id="daftar_sparepart_pemeliharaan"></div>
+                        <!-- Tombol menambahkan jenis sparepart -->
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="tambah_sparepart_pemeliharaan">
+                            <i class="bi bi-plus-circle me-1"></i>Tambah Jenis Sparepart
+                        </button>
+                    </div>
+                    <div class="mb-3 d-none">
                         <label class="form-label fw-semibold">Nama Sparepart <small class="text-muted">(opsional)</small></label>
-                        <select class="form-control" name="nama_onderdil" id="select_nama_onderdil">
+                        <select class="form-control" name="nama_onderdil" id="select_nama_onderdil" disabled>
                             <option value="">-- Tidak menggunakan sparepart --</option>
                             @foreach($stokOnderdil as $stok)
                                 <option value="{{ $stok->nama_sparepart }}">{{ $stok->nama_sparepart }} (Stok: {{ $stok->stok_terbaru }})</option>
@@ -702,12 +717,12 @@
                     </div>
                     <div class="d-none" id="wrapper_bukti_onderdil">
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4 mb-3 d-none">
                                 <label class="form-label fw-semibold text-danger">Jumlah Pemakaian <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="jumlah_pemakaian" id="input_jumlah_pemakaian" min="1" value="1">
+                                <input type="number" class="form-control" name="jumlah_pemakaian" id="input_jumlah_pemakaian" min="1" value="1" disabled>
                                 <small class="text-muted">Berapa unit yang dipakai?</small>
                             </div>
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label fw-semibold text-danger">Upload Bukti Pemakaian <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control validasi-gambar" id="bukti_pemakaian_onderdil" name="bukti_pemakaian_onderdil" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                 <small class="text-muted d-block mt-1"> Wajib diisi karena Anda memilih sparepart.</small>
@@ -995,8 +1010,40 @@
                 if ((status === 'selesai' || status === 'menunggu_verifikasi') && props.detail_penyelesaian) {
                     html += '<div class="result-section ' + (status === 'selesai' ? 'selesai' : '') + '">';
                     html += '<h6><i class="bi bi-check-circle me-2"></i> Detail Penyelesaian</h6>';
-                    html += '<div class="detail-row"><div class="detail-label">Nama Sparepart</div><div class="detail-value">' + (props.nama_onderdil || '-') + '</div></div>';
-                    html += '<div class="detail-row"><div class="detail-label">Jumlah Pemakaian</div><div class="detail-value">' + (props.jumlah_pemakaian ? props.jumlah_pemakaian + ' unit' : '-') + '</div></div>';
+                    // TAMPILKAN RINCIAN MULTI-SPAREPART
+                    // Ambil rincian sparepart dari data kalender
+                    var daftarPemakaian = Array.isArray(props.pemakaian_onderdil) ? props.pemakaian_onderdil : [];
+
+                    // Amankan teks sebelum ditampilkan sebagai HTML
+                    function amankanNamaSparepart(teks) {
+                        return String(teks ?? '-')
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    }
+
+                    var rincianSparepart = '-';
+                    var totalPemakaian = 0;
+                    if (daftarPemakaian.length > 0) {
+                        // Tampilkan seluruh sparepart
+                        rincianSparepart = daftarPemakaian.map(function (item, index) {
+                            var nama = amankanNamaSparepart(item.nama);
+                            var jumlah = Number(item.jumlah) || 0;
+                            totalPemakaian += jumlah;
+                            return '<div class="mb-1">' + (index + 1) + '. ' + nama + ' (' + jumlah + ' unit)' + '</div>';
+                        }).join('');
+                    } else if (props.nama_onderdil) {
+                        // Tetap mendukung data pemeliharaan lama
+                        rincianSparepart = amankanNamaSparepart(props.nama_onderdil);
+                        totalPemakaian = Number(props.jumlah_pemakaian) || 0;
+                    }
+
+                    // Tampilkan daftar sparepart
+                    html += '<div class="detail-row">' + '<div class="detail-label">Sparepart Dipakai</div>' + '<div class="detail-value">' + rincianSparepart + '</div></div>';
+                    // Tampilkan total unit pemakaian
+                    html += '<div class="detail-row">' + '<div class="detail-label">Total Pemakaian</div>' + '<div class="detail-value">' + (totalPemakaian > 0 ? totalPemakaian + ' unit' : '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Detail Penyelesaian</div><div class="detail-value">' + (props.detail_penyelesaian || '-') + '</div></div>';
                     if (props.gambar_bukti) {
                         html += '<div class="detail-row"><div class="detail-label">Bukti Alat</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
@@ -1007,9 +1054,7 @@
                     html += '</div>';
                 }
 
-                // ============================================
                 // DETAIL PENOLAKAN / CATATAN DARI SUPERVISOR
-                // ============================================
                 if (props.alasan_penolakan) {
                     html += '<div class="result-section ditolak">';
                     // Jika status kembali Pending karena hasil pekerjaan ditolak Supervisor
@@ -1022,7 +1067,6 @@
 
                     html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan_tolak || '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Alasan Penolakan</div><div class="detail-value">' + (props.alasan_penolakan || '-') + '</div></div>';
-
                     html += '</div>';
                 }
 
@@ -1094,6 +1138,143 @@
             calendar.setOption('height', 230);
             calendar.changeView('dayGridWeek');
             setActiveButton(btnMinggu);
+        });
+        /* ============================================
+                MULTI-SPAREPART: TAMBAH BARIS INPUT
+        ============================================ */
+        // Ambil daftar sparepart dari database Laravel
+        const pilihanStokMulti = [
+            @foreach($stokOnderdil as $stok) {
+                id: @json($stok->id),
+                nama: @json($stok->nama_sparepart),
+                tersedia: @json($stok->stok_terbaru)
+            },
+            @endforeach
+        ];
+
+        // Ambil elemen HTML form multi-sparepart
+        const daftarSparepartMulti = document.getElementById(
+            'daftar_sparepart_pemeliharaan'
+        );
+
+        const tombolTambahSparepart = document.getElementById(
+            'tambah_sparepart_pemeliharaan'
+        );
+
+        // Nomor unik untuk setiap baris input
+        let nomorSparepartMulti = 0;
+
+        /* ============================================
+            PENGATURAN BUKTI PEMAKAIAN MULTI-SPAREPART
+        ============================================ */
+        function perbaruiBuktiPemakaian() {
+            const jumlahBaris = daftarSparepartMulti .querySelectorAll('.baris-sparepart').length;
+            const wrapperBukti = document.getElementById('wrapper_bukti_onderdil');
+            const inputBukti = document.getElementById('bukti_pemakaian_onderdil');
+            const errorBukti = document.getElementById('error_bukti_pemakaian_onderdil');
+            // Jika ada sparepart, bukti wajib diunggah
+            if (jumlahBaris > 0) {
+                wrapperBukti.classList.remove('d-none');
+                inputBukti.required = true;
+            } else {
+                // Jika tidak ada sparepart, sembunyikan bukti
+                wrapperBukti.classList.add('d-none');
+                inputBukti.required = false;
+                inputBukti.value = '';
+                if (errorBukti) {
+                    errorBukti.innerHTML = '';
+                }
+            }
+        }
+
+        /* ============================================
+                RESET FORM MULTI-SPAREPART
+        ============================================ */
+        window.resetMultiSparepart = function () {
+            // Hapus semua baris sparepart
+            daftarSparepartMulti.innerHTML = '';
+            // Kembalikan nomor baris ke awal
+            nomorSparepartMulti = 0;
+            // Perbarui tampilan bukti pemakaian
+            perbaruiBuktiPemakaian();
+        };
+
+        // Jalankan ketika tombol Tambah Jenis Sparepart diklik
+        tombolTambahSparepart.addEventListener('click', function () {
+            const nomor = nomorSparepartMulti++;
+            // Buat wadah untuk satu baris sparepart
+            const baris = document.createElement('div');
+            baris.className = 'baris-sparepart border rounded p-3 mb-2 bg-white';
+            // Buat input nama dan jumlah sparepart
+            baris.innerHTML = `
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label">Nama Sparepart</label>
+                        <select class="form-select pilihan-sparepart" name="spareparts[${nomor}][stok_onderdil_id]" required>
+                            <option value="">-- Pilih Sparepart --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Jumlah Pemakaian</label>
+                        <input type="number" class="form-control" name="spareparts[${nomor}][jumlah]" min="1" value="1" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100 hapus-sparepart"> Hapus </button>
+                    </div>
+                </div>
+            `;
+
+            // Isi pilihan sparepart berdasarkan stok database
+            const select = baris.querySelector('.pilihan-sparepart');
+            pilihanStokMulti.forEach(function (stok) {
+                const option = document.createElement('option');
+                option.value = stok.id;
+                option.textContent = stok.nama + ' (Stok: ' + stok.tersedia + ')';
+                select.appendChild(option);
+            });
+
+            // Masukkan baris baru ke dalam form
+            daftarSparepartMulti.appendChild(baris);
+
+            // Perbarui tampilan bukti pemakaian
+            perbaruiBuktiPemakaian();
+
+            // Tombol hapus hanya menghapus baris yang dipilih
+            baris.querySelector('.hapus-sparepart') .addEventListener('click', function () {
+                baris.remove();
+                // Perbarui bukti setelah baris dihapus
+                perbaruiBuktiPemakaian();
+            });
+        });
+        
+        /* ============================================
+                  VALIDASI DUPLIKAT SPAREPART
+        ============================================ */
+        document.getElementById('formSelesai') .addEventListener('submit', function (event) {
+            // Ambil seluruh pilihan sparepart dari form baru
+            const pilihan = daftarSparepartMulti
+                .querySelectorAll('.pilihan-sparepart');
+
+            // Ambil ID sparepart yang dipilih
+            const idSparepart = Array.from(pilihan)
+                .map(function (select) {
+                    return select.value;
+                })
+                .filter(function (id) {
+                    return id !== '';
+                });
+
+            // Periksa apakah ada ID sparepart yang sama
+            const idUnik = new Set(idSparepart);
+            if (idUnik.size !== idSparepart.length) {
+                // Batalkan pengiriman checklist
+                event.preventDefault();
+                alert(
+                    'Jenis sparepart yang sama tidak boleh dipilih lebih dari satu kali. ' +
+                    'Silakan pilih jenis sparepart berbeda.'
+                );
+                return;
+            }
         });
 
         var selectOnderdil = document.getElementById('select_nama_onderdil');
@@ -1179,6 +1360,15 @@
         document.getElementById('input_jumlah_pemakaian').removeAttribute('required');
         document.getElementById('input_jumlah_pemakaian').value = 1;
         
+        // Reset input pada form Konfirmasi Selesai
+        form.reset();
+
+        // Isi kembali judul setelah form di-reset
+        document.getElementById('selesai_judul').value = judul;
+
+        // Bersihkan seluruh baris multi-sparepart
+        window.resetMultiSparepart();
+
         // Bersihkan notifikasi validasi file sebelumnya
         document.getElementById('error_gambar_bukti').innerHTML = '';
         document.getElementById('error_bukti_pemakaian_onderdil').innerHTML = '';
