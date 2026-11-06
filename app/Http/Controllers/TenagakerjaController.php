@@ -54,7 +54,7 @@ class TenagakerjaController extends Controller
         if (!in_array($user->jenis_tugas, ['pemeliharaan_peralatan', 'keduanya'])) {
             abort(403, 'Anda tidak memiliki akses ke jadwal pemeliharaan.');
         }
-        $jadwal = JadwalPemeliharaan::with('riwayatRevisi')->where('nama_tenaga_kerja', Auth::id())->get();
+        $jadwal = JadwalPemeliharaan::with(['riwayatRevisi', 'pemakaianOnderdil'])->where('nama_tenaga_kerja', Auth::id())->get();
         $stokOnderdil = StokOnderdil::orderBy('nama_sparepart')->get();
 
         $events = $jadwal->map(function ($item) {
@@ -104,6 +104,10 @@ class TenagakerjaController extends Controller
                     'keterangan' => $item->keterangan,
                     'gambar' => $item->gambar,
                     'nama_onderdil' => $item->nama_onderdil,
+                    'pemakaian_onderdil' => $item->pemakaianOnderdil->map(fn ($pemakaian) => [
+                        'nama' => $pemakaian->nama_sparepart_snapshot,
+                        'jumlah' => $pemakaian->jumlah,
+                    ])->values()->all(),
                     'jumlah_pemakaian' => $item->jumlah_pemakaian,
                     'detail_penyelesaian' => $item->detail_penyelesaian,
                     'gambar_bukti' => $item->gambar_bukti,
@@ -514,53 +518,92 @@ class TenagakerjaController extends Controller
 
     public function selesai(Request $request, JadwalPemeliharaan $jadwal)
     {
+        abort_unless((int) $jadwal->nama_tenaga_kerja === (int) Auth::id(), 403, 'Jadwal ini bukan tugas Anda.');
+
+        if ($jadwal->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hasil hanya dapat dikirim saat status Pending.']);
+        }
+
         $data = $request->validate([
-            'nama_onderdil' => 'nullable|string|max:255',
-            'jumlah_pemakaian' => 'nullable|integer|min:1',
+            'spareparts' => 'nullable|array|max:100',
+            'spareparts.*.stok_onderdil_id' => 'required|integer|distinct|exists:stok_onderdil,id',
+            'spareparts.*.jumlah' => 'required|integer|min:1',
             'detail_penyelesaian' => 'required|string',
             'gambar_bukti' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'bukti_pemakaian_onderdil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'bukti_pemakaian_onderdil' => 'required_with:spareparts|nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ], [
-            'gambar_bukti.image' => 'File bukti penyelesaian harus berupa gambar.',
-            'gambar_bukti.mimes' => 'Format file bukti penyelesaian hanya boleh JPG, JPEG, PNG, atau GIF.',
-            'gambar_bukti.max' => 'Ukuran file bukti penyelesaian maksimal 5 MB.',
-            'gambar_bukti.uploaded' => 'File bukti penyelesaian gagal diunggah. Pastikan ukuran file maksimal 5 MB.',
-            'bukti_pemakaian_onderdil.image' => 'File bukti pemakaian onderdil harus berupa gambar.',
-            'bukti_pemakaian_onderdil.mimes' => 'Format file bukti pemakaian onderdil hanya boleh JPG, JPEG, PNG, atau GIF.',
-            'bukti_pemakaian_onderdil.max' => 'Ukuran file bukti pemakaian onderdil maksimal 5 MB.',
-            'bukti_pemakaian_onderdil.uploaded' => 'File bukti pemakaian onderdil gagal diunggah. Pastikan ukuran file maksimal 5 MB.',
+            'spareparts.*.stok_onderdil_id.distinct' => 'Setiap jenis sparepart hanya boleh dipilih sekali.',
+            'spareparts.*.stok_onderdil_id.exists' => 'Sparepart tidak ditemukan dalam Manajemen Stok.',
+            'bukti_pemakaian_onderdil.required_with' => 'Bukti pemakaian wajib diunggah jika menggunakan sparepart.',
+            'gambar_bukti.max' => 'Ukuran bukti penyelesaian maksimal 5 MB.',
+            'bukti_pemakaian_onderdil.max' => 'Ukuran bukti pemakaian maksimal 5 MB.',
         ]);
 
+        $pemakaian = collect($data['spareparts'] ?? []);
+        $stok = StokOnderdil::whereIn('id', $pemakaian->pluck('stok_onderdil_id'))
+            ->get()->keyBy('id');
+
+        foreach ($pemakaian as $item) {
+            $barang = $stok->get((int) $item['stok_onderdil_id']);
+            if (!$barang || $barang->stok_terbaru < (int) $item['jumlah']) {
+                return back()->withErrors(['spareparts' => 'Stok ' . ($barang->nama_sparepart ?? 'sparepart') . ' tidak mencukupi.']);
+            }
+        }
+
+        // Menyimpan foto baru; stok BELUM berkurang sampai Supervisor ACC.
         if ($request->hasFile('gambar_bukti')) {
-            $image = $request->file('gambar_bukti');
-            $imageName = time() . '_bukti.' . $image->getClientOriginalExtension();
-            $image->move(public_path('assets/img'), $imageName);
-            $data['gambar_bukti'] = 'assets/img/' . $imageName;
+            $file = $request->file('gambar_bukti');
+            $data['gambar_bukti'] = $file->store('bukti-pemeliharaan', 'public');
+            $data['gambar_bukti'] = 'storage/' . $data['gambar_bukti'];
         }
 
         if ($request->hasFile('bukti_pemakaian_onderdil')) {
-            $imageOnderdil = $request->file('bukti_pemakaian_onderdil');
-            $imageNameOnderdil = time() . '_pemakaian.' . $imageOnderdil->getClientOriginalExtension();
-            $imageOnderdil->move(public_path('assets/img'), $imageNameOnderdil);
-            $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $imageNameOnderdil;
+            $file = $request->file('bukti_pemakaian_onderdil');
+            $data['bukti_pemakaian_onderdil'] = 'storage/' . $file->store('bukti-pemakaian', 'public');
         }
-        
-        // Pengajuan terbaru menggantikan catatan penolakan sebelumnya
-        $data['keterangan_tolak'] = null;
-        $data['alasan_penolakan'] = null;
 
-        $data['tanggal_kirim_hasil'] = now('Asia/Jakarta');
-        $data['tanggal_verifikasi'] = null;
+        DB::transaction(function () use ($jadwal, $data, $pemakaian, $stok) {
+            $terkunci = JadwalPemeliharaan::whereKey($jadwal->id)->lockForUpdate()->firstOrFail();
+            if ($terkunci->status !== 'pending') {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'error' => 'Jadwal sudah diproses. Muat ulang halaman.',
+                ]);
+            }
 
-        // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
-        $data['status'] = 'menunggu_verifikasi';
-        $jadwal->update($data);
+            $terkunci->pemakaianOnderdil()->delete();
+            foreach ($pemakaian as $item) {
+                $barang = $stok->get((int) $item['stok_onderdil_id']);
+                $terkunci->pemakaianOnderdil()->create([
+                    'stok_onderdil_id' => $barang->id,
+                    'nama_sparepart_snapshot' => $barang->nama_sparepart,
+                    'jumlah' => (int) $item['jumlah'],
+                ]);
+            }
+
+            $terkunci->update([
+                'nama_onderdil' => null,
+                'jumlah_pemakaian' => null,
+                'detail_penyelesaian' => $data['detail_penyelesaian'],
+                'gambar_bukti' => $data['gambar_bukti'] ?? null,
+                'bukti_pemakaian_onderdil' => $data['bukti_pemakaian_onderdil'] ?? null,
+                'keterangan_tolak' => null,
+                'alasan_penolakan' => null,
+                'tanggal_kirim_hasil' => now('Asia/Jakarta'),
+                'tanggal_verifikasi' => null,
+                'status' => 'menunggu_verifikasi',
+            ]);
+        });
 
         return back()->with('sukses', 'Laporan pemeliharaan berhasil dikirim. Menunggu verifikasi Supervisor.');
     }
 
     public function tolak(Request $request, JadwalPemeliharaan $jadwal)
     {
+        abort_unless((int) $jadwal->nama_tenaga_kerja === (int) Auth::id(), 403);
+        if ($jadwal->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya jadwal Pending yang dapat ditolak.']);
+        }
+        $jadwal->pemakaianOnderdil()->delete();
         $data = $request->validate([
             'keterangan_tolak' => 'required|string',
             'alasan_penolakan' => 'required|string',
