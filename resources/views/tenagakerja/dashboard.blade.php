@@ -397,6 +397,59 @@
             color: #718096;
         }
 
+         /* ==========================================
+                 PERBAIKAN FOOTER RESPONSIF
+        ========================================== */
+        /* Mengatur lebar kolom footer */
+        .footer-modern .row > div {
+            min-width: 0;
+        }
+
+        /* Agar teks panjang tidak keluar dari footer */
+        .footer-modern .footer-menu li {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        /* Memperbaiki link dan email yang terlalu panjang */
+        .footer-modern .footer-menu a {
+            display: inline-block;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* Memperbaiki layout footer pada laptop kecil */
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+
+            .footer-modern .row.g-4 > .col-lg-6,
+            .footer-modern .row.g-4 > .col-lg-3 {
+                width: 50%;
+            }
+
+            .footer-modern .row.g-4 > .offset-lg-1 {
+                margin-left: 0;
+            }
+
+            .footer-modern .row.g-4 > .col-lg-3:last-child {
+                width: 100%;
+            }
+        }
+
+        /* Memperbaiki nama sistem pada footer HP */
+        @media (max-width: 575.98px) {
+
+            .footer-modern .fs-4 {
+                font-size: 1.1rem !important;
+                overflow-wrap: anywhere;
+            }
+
+            .footer-modern .footer-bottom {
+                text-align: center;
+            }
+        }
+
         /* =========================
               TOMBOL HAMBURGER
         ========================= */
@@ -507,22 +560,70 @@
         }
 
         @media (max-width: 1199.98px) {
-        .footer-modern .col-lg-5,
-        .footer-modern .col-lg-3 {
-            min-width: 0;
-        }
+            .footer-modern .col-lg-6,
+            .footer-modern .col-lg-3 {
+                min-width: 0;
+            }
 
-        .footer-menu a,
-        .footer-menu li {
-            max-width: 100%;
-            overflow-wrap: anywhere;
-            word-break: break-word;
+            .footer-menu a,
+            .footer-menu li {
+                max-width: 100%;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
         }
-    }
 
         @media (max-width: 992px) {
             .hero-title { font-size: 2.5rem; }
             .floating-card { margin: 2rem auto 0 auto; }
+        }
+
+        /* Memperkecil ukuran tulisan menu */
+        .navbar-blur .nav-menu .nav-link {
+            font-size: clamp(0.93rem, 0.9vw, 0.9rem);
+            line-height: 1.45;
+            padding: 0.5rem 0;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Kontak menggunakan lebar penuh */
+        .footer-modern .footer-menu li {
+            max-width: 100%;
+        }
+
+        /* Email tidak terpotong di layar desktop */
+        @media (min-width: 576px) {
+            .footer-modern .footer-menu a[href^="mailto:"] {
+                white-space: nowrap;
+                overflow-wrap: normal;
+                word-break: normal;
+            }
+        }
+
+        /* Email menyesuaikan layar HP */
+        @media (max-width: 575.98px) {
+            .footer-modern .footer-menu a[href^="mailto:"] {
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        /* ==========================================
+            MENGGESER MENU UTAMA FOOTER KE KANAN
+        ========================================== */
+        /* Layar laptop dan desktop */
+        @media (min-width: 992px) {
+            .footer-modern .footer-menu-column {
+                padding-left: clamp(3rem, 6vw, 6rem);
+            }
+        }
+
+        /* Layar tablet dan HP */
+        @media (max-width: 991.98px) {
+            .footer-modern .footer-menu-column {
+                padding-left: 12px;
+            }
         }
     </style>
 </head>
@@ -831,7 +932,7 @@
 <footer class="footer-modern">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-5">
+            <div class="col-lg-6">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <i class="bi bi-tools" style="font-size: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="fw-bold fs-4">Manajemen Pemeliharaan</span>
@@ -839,7 +940,7 @@
                 <p class="text-secondary mb-3">Sistem informasi manajemen yang mengintegrasikan pemeliharaan peralatan dengan sparepart pada PLTMH Sangir Hulu</p>
             </div>
 
-            <div class="col-lg-3 offset-lg-1">
+            <div class="col-lg-6 footer-menu-column">
                 <h5 class="footer-title">Menu Utama</h5>
                 <ul class="footer-menu">
                     <li><a href="{{ route('tenagakerja.dashboard') }}"><i class="bi bi-house"></i> Dashboard</a></li>
@@ -853,7 +954,7 @@
                 </ul>
             </div>
 
-            <div class="col-lg-3">
+            <div class="col-12">
                 <h5 class="footer-title">Kontak</h5>
                 <ul class="footer-menu">
                     <li>

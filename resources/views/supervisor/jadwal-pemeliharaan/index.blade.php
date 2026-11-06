@@ -366,9 +366,12 @@
                                 <label for="tenaga_kerja">Tenaga Kerja</label>
                                 <select name="tenaga_kerja" id="tenaga_kerja" class="form-control">
                                     <option value="">Semua Tenaga Kerja</option>
-                                    @foreach($tenagaKerja as $tk)
+                                    @foreach($tenagaKerjaFilter as $tk)
                                         <option value="{{ $tk->id }}" {{ request('tenaga_kerja') == $tk->id ? 'selected' : '' }}>
                                             {{ $tk->name }}
+                                            @if($tk->trashed())
+                                                (Akun Terhapus)
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>

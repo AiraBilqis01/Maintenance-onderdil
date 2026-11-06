@@ -31,6 +31,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::post('/kelola-supervisor', [SupervisorController::class, 'storeSupervisor'])->name('supervisor.kelola-supervisor.store');
         Route::put('/kelola-supervisor/{supervisor}', [SupervisorController::class, 'updateSupervisor'])->name('supervisor.kelola-supervisor.update');
         Route::delete('/kelola-supervisor/{supervisor}', [SupervisorController::class, 'destroySupervisor'])->name('supervisor.kelola-supervisor.destroy');
+        Route::patch('/kelola-tenagakerja/{id}/restore', [SupervisorController::class, 'restoreTenagaKerja'])->whereNumber('id')->name('supervisor.kelola-tenagakerja.restore');
 
         Route::get('/kelola-tenagakerja', [SupervisorController::class, 'kelolaTenagaKerja'])->name('supervisor.kelola-tenagakerja.index');
         Route::post('/kelola-tenagakerja', [SupervisorController::class, 'storeTenagaKerja'])->name('supervisor.kelola-tenagakerja.store');

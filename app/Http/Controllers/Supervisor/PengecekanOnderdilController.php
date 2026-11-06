@@ -70,13 +70,17 @@ class PengecekanOnderdilController extends Controller
          * - keduanya
          * yang dapat menerima jadwal pengecekan. */
         $tenagaKerja = User::where('role', 'tenagakerja')->whereIn('jenis_tugas',['pengecekan_onderdil', 'keduanya'])->orderBy('name')->get();
+        /* ============================================
+            FILTER RIWAYAT TENAGA KERJA PENGECEKAN
+        ============================================
+        Mengambil akun Tenaga Kerja aktif dan yang sudah di-Soft Delete untuk kebutuhan filter riwayat Jadwal Pengecekan Sparepart. */
+        $tenagaKerjaFilter = User::withTrashed()->where('role', 'tenagakerja')->orderBy('name', 'asc')->get();
+        
         /* Data Manajemen Stok digunakan pada form tambah dan edit jadwal. */
         $stokOnderdil = StokOnderdil::orderBy('nama_sparepart')->get();
 
         return view('supervisor.pengecekan-onderdil.index',compact(
-            'jadwalPengecekan',
-            'tenagaKerja',
-            'stokOnderdil'
+            'jadwalPengecekan', 'tenagaKerja', 'tenagaKerjaFilter', 'stokOnderdil'
         ));
     }
 
@@ -90,7 +94,7 @@ class PengecekanOnderdilController extends Controller
         $data = $request->validate([
             'judul_pengecekan' => 'required|string|max:255',
             'tanggal_pengecekan' => 'required|date_format:Y-m-d|after_or_equal:' . now('Asia/Jakarta')->toDateString(),
-            'tenaga_kerja_id' => 'required|exists:users,id',
+            'tenaga_kerja_id' => ['required', Rule::exists('users', 'id')->where('role', 'tenagakerja')->whereIn('jenis_tugas', ['pengecekan_onderdil', 'keduanya'])->whereNull('deleted_at'),],
             /* Supervisor minimal memilih satu onderdil. Boleh memilih satu atau lebih. */
             'stok_onderdil_ids' => 'required|array|min:1',
             'stok_onderdil_ids.*' => 'required|distinct|exists:stok_onderdil,id',
@@ -184,7 +188,7 @@ class PengecekanOnderdilController extends Controller
             'judul_pengecekan' => 'required|string|max:255',
             'tanggal_pengecekan' => $aturanTanggal,
             'alasan_revisi' => [ Rule::requiredIf($tanggalBerubah), 'nullable', 'string', 'min:10', 'max:1000',],
-            'tenaga_kerja_id' => 'required|exists:users,id',
+            'tenaga_kerja_id' => ['required', Rule::exists('users', 'id')->where('role', 'tenagakerja')->whereIn('jenis_tugas', ['pengecekan_onderdil', 'keduanya'])->whereNull('deleted_at'),],
             'stok_onderdil_ids' => 'required|array|min:1',
             'stok_onderdil_ids.*' => 'required|distinct|exists:stok_onderdil,id',
             'keterangan' => 'nullable|string',

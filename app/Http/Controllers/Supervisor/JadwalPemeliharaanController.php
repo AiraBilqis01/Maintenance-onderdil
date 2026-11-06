@@ -50,7 +50,13 @@ class JadwalPemeliharaanController extends Controller
     {
         $jadwalPemeliharaan = $this->buildQuery($request)->with(['riwayatRevisi', 'pemakaianOnderdil'])->orderBy('tanggal_selesai', 'desc')->get();
         $tenagaKerja = User::where('role', 'tenagakerja')->whereIn('jenis_tugas', [ 'pemeliharaan_peralatan', 'keduanya'])->orderBy('name', 'asc')->get();
-        return view('supervisor.jadwal-pemeliharaan.index', compact('jadwalPemeliharaan', 'tenagaKerja'));
+        /* ============================================
+        FILTER RIWAYAT TENAGA KERJA
+        ============================================
+        Mengambil akun aktif maupun yang di-Soft Delete.
+        Hanya digunakan untuk filter riwayat jadwal. */
+        $tenagaKerjaFilter = User::withTrashed()->where('role', 'tenagakerja')->orderBy('name', 'asc')->get();
+        return view('supervisor.jadwal-pemeliharaan.index', compact('jadwalPemeliharaan', 'tenagaKerja', 'tenagaKerjaFilter'));
     }
 
     public function store(Request $request)
@@ -58,7 +64,7 @@ class JadwalPemeliharaanController extends Controller
         $data = $request->validate([
             'judul_pemeliharaan' => 'required|string|max:255',
             'tanggal_selesai' => 'required|date_format:Y-m-d|after_or_equal:' . now('Asia/Jakarta')->toDateString(),
-            'nama_tenaga_kerja' => 'required|exists:users,id',
+            'nama_tenaga_kerja' => ['required', Rule::exists('users', 'id')->where('role', 'tenagakerja')->whereIn('jenis_tugas', ['pemeliharaan_peralatan', 'keduanya'])->whereNull('deleted_at'),],
             'nama_peralatan' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'quantity' => 'nullable|integer|min:1',
@@ -126,7 +132,7 @@ class JadwalPemeliharaanController extends Controller
             'tanggal_selesai' => $aturanTanggal,
             // Validasi alasan perubahan tenggat
             'alasan_revisi' => [ Rule::requiredIf($tanggalBerubah), 'nullable', 'string', 'min:10', 'max:1000',],
-            'nama_tenaga_kerja' => 'required|exists:users,id',
+            'nama_tenaga_kerja' => ['required', Rule::exists('users', 'id')->where('role', 'tenagakerja')->whereIn('jenis_tugas', ['pemeliharaan_peralatan', 'keduanya'])->whereNull('deleted_at'),],
             'nama_peralatan' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'quantity' => 'nullable|integer|min:1',

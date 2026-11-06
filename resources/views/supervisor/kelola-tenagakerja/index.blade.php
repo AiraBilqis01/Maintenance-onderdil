@@ -229,6 +229,32 @@
         background: #edf2f7 !important;
         border: none !important;
     }
+
+    /* ============================================
+            TABEL AKUN TENAGA KERJA TERHAPUS
+    ============================================ */
+    #tabel-akun-terhapus th,
+    #tabel-akun-terhapus td {
+        text-align: left !important;
+        vertical-align: middle !important;
+    }
+
+    /* Tombol pemulihan tetap rata kiri */
+    #tabel-akun-terhapus td form {
+        text-align: left;
+        margin: 0;
+    }
+
+    /* Jaga teks kolom agar tetap rapi */
+    #tabel-akun-terhapus th {
+        white-space: nowrap;
+    }
+
+    /* Khusus pesan ketika belum ada akun terhapus */
+    #tabel-akun-terhapus td.pesan-akun-kosong {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
 </style>
 
 <section class="content">
@@ -335,6 +361,92 @@
                 <div class="card-footer-custom">
                     <div class="info-data">
                         Menampilkan <strong>{{ $tenagaKerja->count() }}</strong> data tenaga kerja
+                    </div>
+                </div>
+            </div>
+            {{-- ============================================
+                DAFTAR AKUN TENAGA KERJA TERHAPUS
+                ============================================ --}}
+            <div class="card card-custom mt-4">
+                <div class="card-header">
+                    <h3>
+                        <i class="fas fa-user-clock mr-2"></i>Daftar Akun Tenaga Kerja Terhapus
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive-custom">
+                        <table class="table table-custom" id="tabel-akun-terhapus">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="25%">Nama</th>
+                                    <th width="20%">No Telepon</th>
+                                    <th width="20%">Email</th>
+                                    <th width="15%">Jenis Pelaksana</th>
+                                    <th width="20%">Jenis Tugas</th>
+                                    <th width="15%">Keahlian</th>
+                                    <th width="20%">Tanggal Dihapus</th>
+                                    <th width="10%">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($tenagaKerjaTerhapus as $akun)
+                                    <tr>
+                                        <td><span class="badge-custom">{{ $loop->iteration }}</span></td>
+                                        <td><strong>{{ $akun->name }}</strong></td>
+                                        <td>{{ $akun->no_telepon ?? '-' }}</td>
+                                        <td>{{ $akun->email }}</td>
+                                        <td>
+                                            @if($akun->jenis_pelaksana == 'Internal')
+                                                <span class="badge-custom badge-internal">
+                                                    <i class="fas fa-building mr-1"></i>Internal
+                                                </span>
+                                            @elseif($akun->jenis_pelaksana == 'Subkontraktor')
+                                                <span class="badge-custom badge-subkontraktor">
+                                                    <i class="fas fa-handshake mr-1"></i>Subkontraktor
+                                                </span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($akun->jenis_tugas == 'pemeliharaan_peralatan')
+                                                Pemeliharaan Peralatan
+                                            @elseif($akun->jenis_tugas == 'pengecekan_onderdil')
+                                                Pengecekan Sparepart
+                                            @elseif($akun->jenis_tugas == 'keduanya')
+                                                Pemeliharaan & Pengecekan
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>{{ $akun->keahlian ?? '-' }}</td>
+                                        <td>{{ $akun->deleted_at ? $akun->deleted_at->format('d/m/Y H:i') : '-' }}</td>
+                                        <td>
+                                            <form action="{{ route('supervisor.kelola-tenagakerja.restore', $akun->id) }}" method="POST" onsubmit="return confirm('Yakin ingin memulihkan akun Tenaga Kerja ini?');">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-undo mr-1"></i>Pulihkan
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="pesan-akun-kosong text-muted py-4">
+                                            <i class="fas fa-inbox mr-2"></i> Belum ada akun Tenaga Kerja yang dihapus.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer-custom">
+                    <div class="info-data">
+                        Total akun terhapus: <strong>{{ $tenagaKerjaTerhapus->count() }}</strong>
                     </div>
                 </div>
             </div>

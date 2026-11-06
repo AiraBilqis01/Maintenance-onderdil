@@ -77,11 +77,17 @@ class SupervisorController extends Controller
         $supervisor->delete();
         return back()->with('sukses', 'Supervisor berhasil dihapus.');
     }
-
+    
     public function kelolaTenagaKerja()
     {
-        $tenagaKerja = User::where('role', 'tenagakerja')->get();
-        return view('supervisor.kelola-tenagakerja.index', compact('tenagaKerja'));
+        // 1. Ambil akun Tenaga Kerja yang masih aktif
+        $tenagaKerja = User::where('role', 'tenagakerja')->orderBy('name', 'asc')->get();
+
+        // 2. Ambil akun Tenaga Kerja yang sudah di-Soft Delete
+        $tenagaKerjaTerhapus = User::onlyTrashed()->where('role', 'tenagakerja')->orderBy('deleted_at', 'desc')->get();
+
+        // 3. Kirim kedua kelompok data ke halaman Kelola Tenaga Kerja
+        return view('supervisor.kelola-tenagakerja.index', compact('tenagaKerja', 'tenagaKerjaTerhapus'));
     }
 
     public function storeTenagaKerja(Request $request)
@@ -127,7 +133,46 @@ class SupervisorController extends Controller
 
     public function destroyTenagaKerja(User $tenagaKerja)
     {
+        // Pastikan akun yang dihapus adalah Tenaga Kerja
+        if ($tenagaKerja->role !== 'tenagakerja') {
+            return back()->withErrors([
+                'error' => 'Akun yang dipilih bukan akun Tenaga Kerja.'
+            ]);
+        }
+
+        // 1. Periksa tugas aktif pada Jadwal Pemeliharaan
+        $adaPemeliharaanAktif = JadwalPemeliharaan::where('nama_tenaga_kerja', $tenagaKerja->id)->whereIn('status', ['pending', 'menunggu_verifikasi'])->exists();
+
+        // 2. Periksa tugas aktif pada Jadwal Pengecekan Sparepart
+        $adaPengecekanAktif = JadwalPengecekanOnderdil::where('tenaga_kerja_id', $tenagaKerja->id)->whereIn('status', ['pending', 'menunggu_verifikasi'])->exists();
+
+        // 3. Tolak penghapusan jika masih memiliki tugas aktif
+        if ($adaPemeliharaanAktif || $adaPengecekanAktif) {
+            return back()->withErrors([
+                'error' => 'Akun Tenaga Kerja tidak dapat dihapus karena masih memiliki tugas pemeliharaan atau pengecekan sparepart yang belum selesai atau belum diverifikasi. Selesaikan atau alihkan tugas terlebih dahulu.'
+            ]);
+        }
+
+        // 4. Hapus akun menggunakan Soft Delete
         $tenagaKerja->delete();
-        return back()->with('sukses', 'Tenaga Kerja berhasil dihapus.');
+        return back()->with('sukses', 'Tenaga Kerja berhasil dihapus. Riwayat pekerjaan tetap tersimpan.');
+    }
+
+    /* =====================================================
+    *        PEMULIHAN AKUN TENAGA KERJA
+    * =====================================================
+    * Mengaktifkan kembali akun yang sebelumnya dihapus menggunakan Soft Delete.
+    * ID akun tetap sama agar riwayat pekerjaan dan hubungan dengan jadwal tidak berubah. */
+
+    public function restoreTenagaKerja(int $id)
+    {
+        // 1. Cari akun Tenaga Kerja yang sudah di-Soft Delete
+        $tenagaKerja = User::onlyTrashed()->where('role', 'tenagakerja')->findOrFail($id);
+
+        // 2. Pulihkan akun tanpa membuat pengguna baru
+        $tenagaKerja->restore();
+
+        // 3. Berikan notifikasi keberhasilan
+        return back()->with('sukses', 'Akun Tenaga Kerja ' . $tenagaKerja->name . ' berhasil dipulihkan dan dapat digunakan kembali.');
     }
 }
