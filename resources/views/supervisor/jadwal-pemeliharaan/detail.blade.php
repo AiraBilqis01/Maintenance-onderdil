@@ -109,14 +109,20 @@
                         <table class="table table-sm table-borderless detail-table">
                             <tr>
                                 <td width="35%" class="text-muted">Nama Onderdil</td>
-                                <td width="65%" class="font-weight-bold">{{ $jadwalPemeliharaan->nama_onderdil ?? '-' }}</td>
+                                <td width="65%" class="font-weight-bold">@forelse($jadwalPemeliharaan->pemakaianOnderdil as $pemakaian)
+                                        <div>{{ $pemakaian->nama_sparepart_snapshot }} ({{ $pemakaian->jumlah }} unit)</div>
+                                    @empty
+                                        {{ $jadwalPemeliharaan->nama_onderdil ?? '-' }}
+                                    @endforelse</td>
                             </tr>
                             
                             <!-- TAMBAHAN: JUMLAH PEMAKAIAN -->
                             <tr>
                                 <td class="text-muted">Jumlah Pemakaian</td>
                                 <td class="font-weight-bold text-primary">
-                                    @if($jadwalPemeliharaan->jumlah_pemakaian)
+                                    @if($jadwalPemeliharaan->pemakaianOnderdil->isNotEmpty())
+                                        {{ $jadwalPemeliharaan->pemakaianOnderdil->sum('jumlah') }} Unit (semua jenis)
+                                    @elseif($jadwalPemeliharaan->jumlah_pemakaian)
                                         {{ $jadwalPemeliharaan->jumlah_pemakaian }} Unit
                                     @else
                                         -
