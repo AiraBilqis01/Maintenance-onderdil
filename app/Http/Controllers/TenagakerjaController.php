@@ -553,13 +553,16 @@ class TenagakerjaController extends Controller
         // Menyimpan foto baru; stok BELUM berkurang sampai Supervisor ACC.
         if ($request->hasFile('gambar_bukti')) {
             $file = $request->file('gambar_bukti');
-            $data['gambar_bukti'] = $file->store('bukti-pemeliharaan', 'public');
-            $data['gambar_bukti'] = 'storage/' . $data['gambar_bukti'];
+            $filename = uniqid('bukti_pemeliharaan_', true) . '.' . $file->extension();
+            $file->move(public_path('assets/img'), $filename);
+            $data['gambar_bukti'] = 'assets/img/' . $filename;
         }
 
         if ($request->hasFile('bukti_pemakaian_onderdil')) {
             $file = $request->file('bukti_pemakaian_onderdil');
-            $data['bukti_pemakaian_onderdil'] = 'storage/' . $file->store('bukti-pemakaian', 'public');
+            $filename = uniqid('bukti_pemakaian_', true) . '.' . $file->extension();
+            $file->move(public_path('assets/img'), $filename);
+            $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $filename;
         }
 
         DB::transaction(function () use ($jadwal, $data, $pemakaian, $stok) {
