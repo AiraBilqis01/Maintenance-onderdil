@@ -56,6 +56,11 @@ class TenagakerjaController extends Controller
         }
         $jadwal = JadwalPemeliharaan::with(['riwayatRevisi', 'pemakaianOnderdil'])->where('nama_tenaga_kerja', Auth::id())->get();
         $stokOnderdil = StokOnderdil::orderBy('nama_sparepart')->get();
+        $opsiStok = $stokOnderdil->map(fn ($stok) => [
+            'id' => $stok->id,
+            'nama' => $stok->nama_sparepart,
+            'stok' => $stok->stok_terbaru,
+        ])->values()->all();
 
         $events = $jadwal->map(function ($item) {
             /* Menghitung ketepatan waktu pemeliharaan menggunakan helper yang sudah dibuat. */
@@ -122,7 +127,7 @@ class TenagakerjaController extends Controller
             ];
         });
 
-        return view('tenagakerja.checklist.index', compact('jadwal', 'events', 'stokOnderdil'));
+        return view('tenagakerja.checklist.index', compact('jadwal', 'events', 'stokOnderdil', 'opsiStok'));
     }
 
     public function pengecekanOnderdil()
