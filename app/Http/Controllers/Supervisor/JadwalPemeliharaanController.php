@@ -264,17 +264,69 @@ class JadwalPemeliharaanController extends Controller
 
     public function destroy(JadwalPemeliharaan $jadwalPemeliharaan)
     {
-        /* Jadwal yang sedang menunggu verifikasi tidak boleh dihapus karena masih berada dalam proses persetujuan Supervisor. */
-        if ($jadwalPemeliharaan->status === 'menunggu_verifikasi') {
-            return back()->withErrors(['error' => 'Jadwal pemeliharaan yang sedang menunggu verifikasi tidak dapat dihapus.']);
-        }
+        $pesan = DB::transaction(function () use ($jadwalPemeliharaan) {
+            $jadwal = JadwalPemeliharaan::whereKey($jadwalPemeliharaan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        /* Status yang boleh dihapus:
-        * - pending
-        * - ditolak
-        * - selesai */
-        $jadwalPemeliharaan->delete();
-        return back()->with('sukses', 'Jadwal pemeliharaan berhasil dihapus.');
+            // 1. Menunggu verifikasi tidak dapat dihapus
+            if ($jadwal->status === 'menunggu_verifikasi') {
+                throw ValidationException::withMessages([
+                    'error' => 'Jadwal sedang menunggu verifikasi dan tidak dapat dihapus.'
+                ]);
+            }
+
+            // 2. Status selesai hanya diarsipkan (Soft Delete)
+            if ($jadwal->status === 'selesai') {
+                $jadwal->delete();
+                return 'Jadwal selesai berhasil diarsipkan tanpa mengubah stok onderdil.';
+            }
+
+            // 3. Hanya pending dan ditolak yang dapat dihapus permanen
+            if (!in_array($jadwal->status, ['pending', 'ditolak'], true)) {
+                throw ValidationException::withMessages([
+                    'error' => 'Status jadwal tidak dapat dihapus.'
+                ]);
+            }
+
+            // 4. Lindungi riwayat pemakaian onderdil
+            if ($jadwal->pemakaianOnderdil()->exists() || (int) $jadwal->jumlah_pemakaian > 0) {
+                throw ValidationException::withMessages([
+                    'error' => 'Jadwal memiliki riwayat pemakaian onderdil sehingga tidak dapat dihapus permanen.'
+                ]);
+            }
+
+            // 5. Hapus riwayat revisi jadwal terkait
+            $jadwal->riwayatRevisi()->delete();
+
+            // 6. Hapus permanen
+            $jadwal->forceDelete();
+            return 'Jadwal berhasil dihapus permanen.';
+        });
+
+        return back()->with('sukses', $pesan);
+    }
+
+    public function arsip()
+    {
+        $arsip = JadwalPemeliharaan::onlyTrashed()
+            ->with(['user', 'pemakaianOnderdil'])
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('supervisor.jadwal-pemeliharaan.arsip', compact('arsip'));
+    }
+
+    public function restore($id)
+    {
+        DB::transaction(function () use ($id) {
+            $jadwal = JadwalPemeliharaan::onlyTrashed()->whereKey($id)->lockForUpdate()->firstOrFail();
+            $jadwal->restore();
+        });
+
+        return redirect()
+            ->route('supervisor.jadwal-pemeliharaan.arsip')
+            ->with('sukses', 'Jadwal berhasil dipulihkan tanpa mengubah stok.');
     }
 
     public function verifikasiSelesai(JadwalPemeliharaan $jadwalPemeliharaan)

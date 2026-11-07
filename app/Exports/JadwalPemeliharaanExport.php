@@ -21,7 +21,7 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
 
     public function collection()
     {
-        $query = JadwalPemeliharaan::with('user');
+        $query = JadwalPemeliharaan::withTrashed()->with(['user', 'pemakaianOnderdil']);
 
         /* Filter Tenaga Kerja */
         if ($this->request->filled('tenaga_kerja')) {

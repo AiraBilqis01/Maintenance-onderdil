@@ -13,8 +13,7 @@ class LaporanPemeliharaanController extends Controller
 {
     private function buildQuery(Request $request)
     {
-        $query = JadwalPemeliharaan::with(['user', 'pemakaianOnderdil']);
-
+        $query = JadwalPemeliharaan::withTrashed()->with(['user', 'pemakaianOnderdil']);
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -46,10 +45,10 @@ class LaporanPemeliharaanController extends Controller
     {
         $laporan = $this->buildQuery($request)->orderBy('tanggal_selesai', 'desc')->get();
 
-        $total   = JadwalPemeliharaan::count();
-        $pending = JadwalPemeliharaan::where('status', 'pending')->count();
-        $selesai = JadwalPemeliharaan::where('status', 'selesai')->count();
-        $ditolak = JadwalPemeliharaan::where('status', 'ditolak')->count();
+        $total = JadwalPemeliharaan::withTrashed()->count();
+        $pending = JadwalPemeliharaan::withTrashed()->where('status', 'pending')->count();
+        $selesai = JadwalPemeliharaan::withTrashed()->where('status', 'selesai')->count();
+        $ditolak = JadwalPemeliharaan::withTrashed()->where('status', 'ditolak')->count();
 
         $tenagaKerja = User::withTrashed()->where('role', 'tenagakerja')->get();
 

@@ -349,6 +349,9 @@
                     <a href="{{ route('supervisor.jadwal-pemeliharaan.pdf', request()->query()) }}" class="btn-print-header pdf">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
+                    <a href="{{ route('supervisor.jadwal-pemeliharaan.arsip') }}" class="btn btn-secondary">
+                        <i class="fas fa-archive mr-1"></i> Lihat Arsip
+                    </a>
                     <div class="ms-2" style="border-left: 1px solid rgba(255,255,255,0.3); padding-left: 1rem;">
                         @include('supervisor.jadwal-pemeliharaan.create')
                     </div>

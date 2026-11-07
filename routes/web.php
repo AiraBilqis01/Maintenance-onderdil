@@ -56,6 +56,9 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/verifikasi-selesai', [JadwalPemeliharaanController::class, 'verifikasiSelesai'])->name('supervisor.jadwal-pemeliharaan.verifikasi-selesai');
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/verifikasi-tolak', [JadwalPemeliharaanController::class, 'verifikasiTolak'])->name('supervisor.jadwal-pemeliharaan.verifikasi-tolak');
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}/tolak-jadwal', [JadwalPemeliharaanController::class, 'tolakJadwal'])->name('supervisor.jadwal-pemeliharaan.tolak-jadwal');
+        
+        Route::get('/jadwal-pemeliharaan/arsip', [JadwalPemeliharaanController::class, 'arsip'])->name('supervisor.jadwal-pemeliharaan.arsip');
+        Route::patch('/jadwal-pemeliharaan/arsip/{id}/restore', [JadwalPemeliharaanController::class, 'restore'])->whereNumber('id')->name('supervisor.jadwal-pemeliharaan.restore');
 
         // Halaman utama Pengecekan Onderdil
         Route::get('/pengecekan-onderdil', [PengecekanOnderdilController::class, 'index'])->name('supervisor.pengecekan-onderdil.index');
@@ -81,7 +84,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::get('/laporan-pemeliharaan', [LaporanPemeliharaanController::class, 'index'])->name('supervisor.laporan-pemeliharaan.index');
         Route::get('/laporan-pemeliharaan/export-pdf', [LaporanPemeliharaanController::class, 'exportPdf'])->name('supervisor.laporan-pemeliharaan.pdf');
         Route::get('/laporan-pemeliharaan/export-excel', [LaporanPemeliharaanController::class, 'exportExcel'])->name('supervisor.laporan-pemeliharaan.excel');
-        Route::get('/laporan-pemeliharaan/{jadwal}/export-pdf', [LaporanPemeliharaanController::class, 'exportSatuPdf'])->name('supervisor.laporan-pemeliharaan.pdf.satu');
+        Route::get('/laporan-pemeliharaan/{jadwal}/export-pdf', [LaporanPemeliharaanController::class, 'exportSatuPdf'])->name('supervisor.laporan-pemeliharaan.pdf.satu')->withTrashed();
     });
 
     Route::middleware(['tenagakerja'])->group(function () {
