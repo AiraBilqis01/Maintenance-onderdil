@@ -785,24 +785,64 @@ class PengecekanOnderdilController extends Controller
         );
     }
 
-    /**
-     * =========================================================
+    /* =========================================================
      *                          DESTROY
      * =========================================================
      * Menghapus jadwal pengecekan. */
-    public function destroy(JadwalPengecekanOnderdil $jadwal) {
-        /* Jadwal menunggu verifikasi tidak boleh dihapus. */
-        if (!in_array($jadwal->status, ['pending', 'ditolak', 'selesai'])) {
-            return back()->withErrors(['error' => 'Jadwal yang sedang menunggu verifikasi tidak dapat dihapus.']);
-        }
+    public function destroy(JadwalPengecekanOnderdil $jadwal)
+    {
+        $pesan = DB::transaction(function () use ($jadwal) {
 
-        /* Detail ikut terhapus karena foreign key menggunakan cascadeOnDelete(). */
-        $jadwal->delete();
-        return back()->with('sukses', 'Jadwal pengecekan sparepart berhasil dihapus.');
+            // Kunci jadwal agar tidak berubah bersamaan
+            $jadwalTerkunci = JadwalPengecekanOnderdil::whereKey($jadwal->id)->lockForUpdate()->firstOrFail();
+
+            // 1. Menunggu verifikasi tidak boleh dihapus
+            if ($jadwalTerkunci->status === 'menunggu_verifikasi') {
+                throw ValidationException::withMessages([
+                    'error' => 'Jadwal yang sedang menunggu verifikasi tidak dapat dihapus.'
+                ]);
+            }
+
+            // 2. Selesai: Soft Delete (Arsipkan)
+            if ($jadwalTerkunci->status === 'selesai') {
+                $jadwalTerkunci->delete();
+                return 'Jadwal pengecekan berhasil diarsipkan. Hasil pengecekan dan stok tetap dipertahankan.';
+            }
+
+            // 3. Hanya pending dan ditolak yang dapat dihapus permanen
+            if (!in_array($jadwalTerkunci->status, ['pending', 'ditolak'], true)) {
+                throw ValidationException::withMessages([
+                    'error' => 'Status jadwal tidak dapat dihapus.'
+                ]);
+            }
+
+            // 4. Hapus riwayat revisi jadwal terkait
+            $jadwalTerkunci->riwayatRevisi()->delete();
+
+            // 5. Hapus jadwal dan detail pengecekan secara permanen
+            $jadwalTerkunci->forceDelete();
+            return 'Jadwal pengecekan sparepart berhasil dihapus permanen.';
+        });
+
+        return back()->with('sukses', $pesan);
+    }
+    
+    public function arsip()
+    {
+        $arsip = JadwalPengecekanOnderdil::onlyTrashed()->with(['tenagaKerja', 'details.stokOnderdil', 'riwayatRevisi'])->orderBy('deleted_at', 'desc')->get();
+        return view('supervisor.pengecekan-onderdil.arsip', compact('arsip'));
     }
 
-    /**
-     * =========================================================
+    public function restore($id)
+    {
+        DB::transaction(function () use ($id) {
+            $jadwal = JadwalPengecekanOnderdil::onlyTrashed()->whereKey($id)->lockForUpdate()->firstOrFail();
+            $jadwal->restore();
+        });
+        return redirect()->route('supervisor.pengecekan-onderdil.arsip')->with('sukses', 'Jadwal pengecekan berhasil dipulihkan tanpa mengubah stok.');
+    }
+
+    /* =========================================================
      *                          EXPORT PDF
      * =========================================================
      * Mencetak data pengecekan onderdil. Filter yang digunakan pada halaman index juga diterapkan pada PDF. */
@@ -823,6 +863,20 @@ class PengecekanOnderdilController extends Controller
         $namaFile = 'laporan-pengecekan-sparepart-' . now()->format('d-m-Y') . '.xlsx';
 
         return Excel::download(new PengecekanOnderdilExport($jadwal), $namaFile);
+    }
+
+    public function exportArsipPdf()
+    {
+        $jadwal = JadwalPengecekanOnderdil::onlyTrashed()->with(['tenagaKerja', 'details.stokOnderdil', 'riwayatRevisi'])->orderBy('tanggal_pengecekan', 'desc')->get();
+        $judul = 'Arsip Hasil Pengecekan Sparepart';
+        $periode = 'Seluruh Jadwal yang Diarsipkan';
+        return Pdf::loadView('supervisor.pengecekan-onderdil.pdf', compact('jadwal', 'judul', 'periode'))->setPaper('a4', 'landscape')->download('arsip-pengecekan-sparepart-' . date('Ymd-His') . '.pdf');
+    }
+
+    public function exportArsipExcel()
+    {
+        $jadwal = JadwalPengecekanOnderdil::onlyTrashed()->with(['tenagaKerja', 'details.stokOnderdil'])->orderBy('tanggal_pengecekan', 'desc')->get();
+        return Excel::download(new PengecekanOnderdilExport($jadwal), 'arsip-pengecekan-sparepart-' . date('Ymd-His') . '.xlsx');
     }
 
     /**

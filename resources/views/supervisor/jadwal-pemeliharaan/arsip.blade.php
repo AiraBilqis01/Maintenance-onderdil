@@ -9,6 +9,7 @@
             <h4>Arsip Jadwal Pemeliharaan</h4>
         </div>
         <div class="card-body">
+            <a href="{{ route('supervisor.jadwal-pemeliharaan.index') }}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left mr-1"></i> Kembali ke Jadwal Pemeliharaan</a>
             @if(session('sukses'))
                 <div class="alert alert-success">
                     {{ session('sukses') }}

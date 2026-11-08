@@ -402,14 +402,14 @@
                 <div class="d-flex align-items-center flex-wrap" style="gap:10px;">
                     {{-- EXPORT EXCEL --}}
                     <a href="{{ route('supervisor.pengecekan-onderdil.excel', request()->query()) }}" class="btn-print-header excel">
-                        <i class="fas fa-file-excel"></i>
-                        Export Excel
+                        <i class="fas fa-file-excel"></i> Export Excel
                     </a>
                     {{-- EXPORT PDF --}}
                     <a href="{{ route('supervisor.pengecekan-onderdil.pdf', request()->query()) }}" class="btn-print-header pdf">
-                        <i class="fas fa-file-pdf"></i>
-                        Export PDF
+                        <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
+                    <a href="{{ route('supervisor.pengecekan-onderdil.arsip') }}" class="btn btn-secondary">
+                        <i class="fas fa-archive mr-1"></i> Lihat Arsip</a>
                     {{-- TAMBAH JADWAL --}}
                     <div style="border-left:1px solid rgba(255,255,255,0.3); padding-left:1rem;">
                         @include('supervisor.pengecekan-onderdil.create')

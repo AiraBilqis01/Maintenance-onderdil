@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JadwalPengecekanOnderdil extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     /* Nama tabel yang digunakan oleh model. */
     protected $table = 'jadwal_pengecekan_onderdil';
 

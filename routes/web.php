@@ -81,6 +81,11 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         // Supervisor menyetujui penolakan tugas dari Tenaga Kerja
         Route::put('/pengecekan-onderdil/{jadwal}/verifikasi-tolak', [PengecekanOnderdilController::class, 'verifikasiTolak'])->name('supervisor.pengecekan-onderdil.verifikasi-tolak');
 
+        Route::get('/pengecekan-onderdil/arsip', [PengecekanOnderdilController::class, 'arsip'])->name('supervisor.pengecekan-onderdil.arsip');
+        Route::patch('/pengecekan-onderdil/arsip/{id}/restore', [PengecekanOnderdilController::class, 'restore'])->whereNumber('id')->name('supervisor.pengecekan-onderdil.restore');
+        Route::get('/pengecekan-onderdil/arsip/export-pdf', [PengecekanOnderdilController::class, 'exportArsipPdf'])->name('supervisor.pengecekan-onderdil.arsip.pdf');
+        Route::get('/pengecekan-onderdil/arsip/export-excel', [PengecekanOnderdilController::class, 'exportArsipExcel'])->name('supervisor.pengecekan-onderdil.arsip.excel');
+
         Route::get('/laporan-pemeliharaan', [LaporanPemeliharaanController::class, 'index'])->name('supervisor.laporan-pemeliharaan.index');
         Route::get('/laporan-pemeliharaan/export-pdf', [LaporanPemeliharaanController::class, 'exportPdf'])->name('supervisor.laporan-pemeliharaan.pdf');
         Route::get('/laporan-pemeliharaan/export-excel', [LaporanPemeliharaanController::class, 'exportExcel'])->name('supervisor.laporan-pemeliharaan.excel');
