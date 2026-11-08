@@ -110,8 +110,40 @@ class PengecekanOnderdilController extends Controller
             return back()->withInput()->withErrors(['tenaga_kerja_id' => 'Tenaga kerja yang dipilih tidak memiliki tugas pengecekan sparepart.']);
         }
         /* Simpan jadwal utama dan detail onderdil dalam satu database transaction. */
+        /* SIMPAN JADWAL PENGECEKAN DAN DETAIL SPAREPART
+        * Kunci stok sebelum membuat jadwal untuk mencegah konflik dengan penghapusan atau arsip. */
         $jadwal = DB::transaction(function () use ($data) {
-            /* Simpan jadwal utama. */
+            /* 1. KUMPULKAN ID SPAREPART
+            * Urutkan ID agar penguncian konsisten. */
+            $idStok = collect($data['stok_onderdil_ids'])
+                ->map(function ($id) {
+                    return (int) $id;
+                })
+                ->unique()
+                ->sort()
+                ->values();
+
+            /* 2. AMBIL ULANG DAN KUNCI STOK AKTIF
+            * SoftDeletes otomatis mengecualikan sparepart yang sudah diarsipkan. */
+            $stokDipilih = StokOnderdil::whereIn('id', $idStok->all())
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            /* 3. PASTIKAN SEMUA SPAREPART TERSEDIA
+            * Jika salah satu telah dihapus atau diarsipkan, batalkan seluruh transaksi. */
+            if ($stokDipilih->count() !== $idStok->count()) {
+                throw ValidationException::withMessages([
+                    'stok_onderdil_ids' =>
+                        'Salah satu sparepart yang dipilih sudah ' .
+                        'tidak tersedia atau telah diarsipkan. ' .
+                        'Silakan muat ulang halaman dan pilih ' .
+                        'kembali sparepart yang masih aktif.'
+                ]);
+            }
+
+            /* 4. SIMPAN JADWAL UTAMA
+            * Dilakukan setelah semua stok valid. */
             $jadwal = JadwalPengecekanOnderdil::create([
                 'judul_pengecekan' => $data['judul_pengecekan'],
                 'tanggal_pengecekan' => $data['tanggal_pengecekan'],
@@ -122,17 +154,19 @@ class PengecekanOnderdilController extends Controller
                 'keterangan_tolak' => null,
                 'alasan_penolakan' => null,
             ]);
-            /* Ambil semua onderdil yang dipilih. */
-            $stokDipilih = StokOnderdil::whereIn('id', $data['stok_onderdil_ids'])->get();
-            /* Simpan setiap onderdil sebagai detail jadwal pengecekan. */
+
+            /* 5. SIMPAN SELURUH DETAIL SPAREPART
+            * Nama sparepart tetap disimpan sebagai snapshot untuk kebutuhan riwayat. */
             foreach ($stokDipilih as $stok) {
                 DetailPengecekanOnderdil::create([
                     'jadwal_pengecekan_id' => $jadwal->id,
                     'stok_onderdil_id' => $stok->id,
-                    /* Snapshot nama digunakan agar riwayat nama onderdil tetap tersedia. */
                     'nama_sparepart_snapshot' => $stok->nama_sparepart,
                 ]);
             }
+
+            /* 6. KEMBALIKAN JADWAL
+            * Digunakan untuk pengiriman email setelah transaksi berhasil. */
             return $jadwal;
         });
 
@@ -342,18 +376,44 @@ class PengecekanOnderdilController extends Controller
             *           TAMBAHKAN SPAREPART BARU
             * ================================================= */
             if ($stokYangDitambahkan->isNotEmpty()) {
-                $dataStokBaru = StokOnderdil::whereIn('id', $stokYangDitambahkan->values()->all())->get();
+                /* 1. Urutkan ID sparepart yang akan ditambahkan.
+                * Urutan konsisten membantu mengurangi risiko konflik penguncian database. */
+                $idStokTambahan = $stokYangDitambahkan
+                    ->map(function ($id) {
+                        return (int) $id;
+                    })
+                    ->unique()
+                    ->sort()
+                    ->values();
 
-                foreach ($dataStokBaru as $stok) {
-                    DetailPengecekanOnderdil::create([
-                        'jadwal_pengecekan_id' => $jadwal->id,
-                        'stok_onderdil_id' => $stok->id,
-                        'nama_sparepart_snapshot' => $stok->nama_sparepart,
+                /* 2. Ambil ulang dan kunci stok aktif.
+                * Sparepart yang sudah diarsipkan tidak akan ditemukan karena menggunakan SoftDeletes. */
+                $dataStokBaru = StokOnderdil::whereIn('id', $idStokTambahan->all())
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get();
+
+                /* 3. Pastikan SELURUH sparepart ditemukan.
+                * Jika salah satu sudah dihapus atau diarsipkan, batalkan seluruh transaksi. */
+                if ($dataStokBaru->count() !== $idStokTambahan->count()) {
+                    throw ValidationException::withMessages([
+                        'stok_onderdil_ids' =>
+                            'Salah satu sparepart yang ingin ditambahkan ' .
+                            'sudah tidak tersedia atau telah diarsipkan. ' .
+                            'Perubahan jadwal dibatalkan. ' .
+                            'Silakan muat ulang halaman dan pilih ' .
+                            'sparepart yang masih aktif.'
                     ]);
+                }
+
+                /* 4. Simpan detail sparepart tambahan.
+                * Hubungan stok dan snapshot nama tetap disimpan seperti kode sebelumnya. */
+                foreach ($dataStokBaru as $stok) {
+                    DetailPengecekanOnderdil::create(['jadwal_pengecekan_id' => $jadwal->id, 'stok_onderdil_id' => $stok->id, 'nama_sparepart_snapshot' => $stok->nama_sparepart,]);
                 }
             }
             /* =====================================================
-            * CATAT RIWAYAT REVISI TANGGAL PENGECEKAN
+            *       CATAT RIWAYAT REVISI TANGGAL PENGECEKAN
             * =====================================================
             * Riwayat hanya dibuat apabila Supervisor
             * benar-benar mengubah tanggal pengecekan. */
@@ -485,36 +545,45 @@ class PengecekanOnderdilController extends Controller
                 *          CEK APAKAH STOK SUDAH BERUBAH
                 * =====================================================
                 * Stok mungkin berubah karena pemeliharaan menggunakan
-                * sparepart setelah hasil pengecekan dikirim. */
-                $stokTerkunci = [];
+                * sparepart setelah hasil pengecekan dikirim.
+                * 1. KUMPULKAN DAN URUTKAN ID SPAREPART
+                * Urutan ID dibuat konsisten untuk mengurangi risiko deadlock antartransaksi. */
+                $idStok = $jadwalTerkunci->details
+                    ->pluck('stok_onderdil_id')->filter(function ($id) {
+                        return $id !== null;
+                    })->map(function ($id) {
+                        return (int) $id;
+                    })->unique()->sort()->values();
 
+                /* 2. AMBIL ULANG DAN KUNCI SEMUA STOK AKTIF
+                * Sparepart yang sudah diarsipkan tidak ikut diambil karena model menggunakan SoftDeletes. */
+                $stokTerkunci = StokOnderdil::whereIn('id', $idStok->all())
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id')
+                    ->all();
+
+                /* 3. VALIDASI SETIAP SPAREPART
+                * Pastikan stok masih tersedia dan belum mengalami perubahan sejak pengecekan. */
                 foreach ($jadwalTerkunci->details as $detail) {
+                    // Pastikan relasi stok masih tersedia.
                     if (empty($detail->stok_onderdil_id)) {
-                        throw new \Exception(
-                            'Data sparepart ' . $detail->nama_sparepart_snapshot . ' sudah tidak tersedia pada Manajemen Stok.'
-                        );
+                        throw new \Exception('Data sparepart ' . $detail->nama_sparepart_snapshot . ' sudah tidak tersedia pada Manajemen Stok.');
                     }
 
-                    $stok = StokOnderdil::whereKey($detail->stok_onderdil_id)->lockForUpdate()->first();
+                    $stokId = (int) $detail->stok_onderdil_id;
+
+                    // Ambil objek stok yang sudah dikunci.
+                    $stok = $stokTerkunci[$stokId] ?? null;
 
                     if (!$stok) {
-                        throw new \Exception(
-                            'Data stok ' . $detail->nama_sparepart_snapshot . ' tidak ditemukan.'
-                        );
+                        throw new \Exception('Data stok ' . $detail->nama_sparepart_snapshot . ' tidak ditemukan atau telah diarsipkan.');
                     }
 
-                    /* Simpan object stok yang sudah dikunci agar tidak perlu melakukan query lockForUpdate() kedua kali. */
-                    $stokTerkunci[$detail->stok_onderdil_id] = $stok;
-
-                    /* Jika stok sistem sekarang sudah berbeda dari stok ketika Tenaga Kerja mengirim hasil pengecekan, ACC tidak boleh dilanjutkan. */
+                    /* Pastikan stok sekarang sama dengan snapshot saat Tenaga Kerja mengirim hasil pengecekan. */
                     if ((int) $stok->stok_terbaru !== (int) $detail->stok_sistem_saat_cek) {
-                        throw new \Exception(
-                            'Stok ' . $detail->nama_sparepart_snapshot .
-                            ' telah berubah sejak pengecekan dilakukan. ' .
-                            'Stok sistem saat diperiksa: ' . $detail->stok_sistem_saat_cek .
-                            ', sedangkan stok sistem sekarang: ' . $stok->stok_terbaru .
-                            '. Silakan lakukan pengecekan kembali sebelum melakukan penyesuaian stok.'
-                        );
+                        throw new \Exception('Stok ' . $detail->nama_sparepart_snapshot . ' telah berubah sejak pengecekan dilakukan. ' . 'Stok sistem saat diperiksa: ' . $detail->stok_sistem_saat_cek . ', sedangkan stok sistem sekarang: ' . $stok->stok_terbaru . '. Silakan lakukan pengecekan kembali ' . 'sebelum melakukan penyesuaian stok.');
                     }
                 }
 

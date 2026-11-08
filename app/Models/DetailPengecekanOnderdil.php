@@ -25,12 +25,13 @@ class DetailPengecekanOnderdil extends Model
         'catatan_pengecekan',
         'gambar_bukti',
     ];
-
-    /* Relasi ke jadwal pengecekan.
-     * Banyak detail pengecekan dimiliki oleh satu jadwal pengecekan. */
+    
+    /* Relasi detail sparepart ke Jadwal Pengecekan.
+    * withTrashed() memungkinkan detail pengecekan tetap mengakses jadwal yang sudah diarsipkan.
+    * Riwayat pengecekan tetap dapat ditelusuri tanpa memulihkan jadwal terlebih dahulu. */
     public function jadwal()
     {
-        return $this->belongsTo(JadwalPengecekanOnderdil::class,'jadwal_pengecekan_id', 'id');
+        return $this->belongsTo(JadwalPengecekanOnderdil::class, 'jadwal_pengecekan_id', 'id')->withTrashed();
     }
 
     /* Relasi ke Manajemen Stok Onderdil.

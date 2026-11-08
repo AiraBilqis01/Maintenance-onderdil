@@ -9,6 +9,11 @@
         <form action="{{ route('supervisor.stok-onderdil.update', $stokOnderdil->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            {{-- DATA AWAL STOK SAAT FORMULIR DITAMPILKAN --}}
+            {{-- Digunakan untuk mendeteksi perubahan stok sebelum penyimpanan --}}
+            <input type="hidden" name="stok_periode_sebelum_awal" value="{{ $stokOnderdil->stok_periode_sebelum }}">
+            <input type="hidden" name="pemakaian_awal" value="{{ $stokOnderdil->pemakaian }}">
+            <input type="hidden" name="stok_terbaru_awal" value="{{ $stokOnderdil->stok_terbaru }}">
             <div class="modal-content" style="background: linear-gradient(90deg, #2C3E50 0%, #284F57 50%, #2F6D73 100%);">
                 <div class="modal-header">
                     <h5 class="modal-title text-white" id="modalEditStokOnderdilLabel">

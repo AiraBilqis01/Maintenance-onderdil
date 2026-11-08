@@ -77,16 +77,44 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="modal-footer">
+            <div class="modal-footer d-block">
                 <form action="{{ route('supervisor.stok-onderdil.destroy', $stokOnderdil->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times mr-1"></i> Batal
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-check mr-1"></i> Ya, Lanjutkan
-                    </button>
+                    {{-- KONFIRMASI KHUSUS DATA SALAH INPUT --}}
+                    <div class="border rounded p-3 mb-3" style="background: #fff8f0;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="konfirmasiHapusSalahInput{{ $stokOnderdil->id }}" name="konfirmasi_hapus_salah_input" value="1">
+                            <label class="form-check-label" for="konfirmasiHapusSalahInput{{ $stokOnderdil->id }}" style="font-size: 0.88rem; line-height: 1.6; cursor: pointer;">
+                                <strong>
+                                    Konfirmasi penghapusan permanen data salah input
+                                </strong>
+                                <span class="d-block text-muted mt-1">
+                                    Saya memastikan bahwa data sparepart ini
+                                    merupakan kesalahan input, bukan catatan
+                                    persediaan fisik yang sebenarnya, dan
+                                    belum pernah digunakan dalam pekerjaan
+                                    pemeliharaan maupun pengecekan.
+                                </span>
+                            </label>
+                        </div>
+                        <small class="d-block text-muted mt-2">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Centang hanya jika ingin menghapus permanen
+                            data yang salah input. Tidak perlu dicentang
+                            untuk pengarsipan data yang memiliki riwayat.
+                        </small>
+                    </div>
+
+                    {{-- TOMBOL AKSI --}}
+                    <div class="d-flex justify-content-end flex-wrap" style="gap: 8px;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times mr-1"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-check mr-1"></i> Ya, Lanjutkan
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

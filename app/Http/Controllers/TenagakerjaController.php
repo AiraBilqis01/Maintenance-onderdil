@@ -309,29 +309,49 @@ class TenagakerjaController extends Controller
 
         $uploadedPaths = [];
         try {
-            DB::transaction(function () use (
-                $request,
-                $jadwal,
-                $data,
-                $detailIdsJadwal,
-                &$uploadedPaths
-            ) {
-                /* Kunci jadwal agar tidak diproses dua kali
-                * pada waktu bersamaan. */
+            DB::transaction(function () use ($request, $jadwal, $data, $detailIdsJadwal, &$uploadedPaths) {
+                /* Kunci jadwal agar tidak diproses dua kali pada waktu bersamaan. */
                 $jadwalTerkunci = JadwalPengecekanOnderdil::whereKey($jadwal->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
+                /* 1. PERIKSA ULANG PEMILIK JADWAL
+                * Pemeriksaan dilakukan setelah jadwal dikunci, sehingga pengalihan tugas oleh Supervisor tidak dapat diabaikan. */
+                if ((int) $jadwalTerkunci->tenaga_kerja_id !== (int) Auth::id()) {
+                    abort(403, 'Jadwal pengecekan ini bukan lagi tugas Anda.');
+                }
+
+                /* 2. PERIKSA ULANG STATUS JADWAL */
                 if ($jadwalTerkunci->status !== 'pending') {
                     throw \Illuminate\Validation\ValidationException::withMessages([
                         'error' => 'Jadwal pengecekan sudah diproses sebelumnya.'
                     ]);
                 }
 
+                /* 3. AMBIL ULANG SELURUH DETAIL JADWAL
+                * Jangan hanya mengambil ID lama dari formulir.
+                * Baca seluruh detail terbaru setelah jadwal dikunci. */
                 $details = $jadwalTerkunci->details()
-                    ->whereIn('id', $detailIdsJadwal)
+                    ->orderBy('id')
                     ->get()
                     ->keyBy('id');
+
+                /* 4. KUMPULKAN ID DETAIL TERBARU */
+                $detailIdsTerbaru = $details
+                    ->keys()->map(function ($id) {
+                        return (int) $id;
+                    })->sort()->values()->all();
+
+                /* 5. BANDINGKAN DENGAN DAFTAR SEBELUM TRANSAKSI
+                * $detailIdsJadwal sebelumnya sudah diperiksa agar sama dengan detail_ids yang dikirim. */
+                if ($detailIdsTerbaru !== $detailIdsJadwal) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'error' => 'Daftar sparepart pada jadwal pengecekan telah berubah ' .
+                                    'sejak formulir dibuka. ' .
+                                    'Silakan muat ulang halaman dan lengkapi hasil pengecekan ' .
+                                    'sesuai daftar sparepart terbaru.'
+                    ]);
+                }
 
                 foreach ($detailIdsJadwal as $detailId) {
                     $detail = $details->get($detailId);
@@ -341,17 +361,14 @@ class TenagakerjaController extends Controller
                         ]);
                     }
 
-                    /*
-                    * Pastikan semua input tersedia.
-                    */
+                    /* Pastikan semua input tersedia. */
                     if (!array_key_exists($detailId, $data['stok_fisik']) || !array_key_exists($detailId, $data['kondisi'])) {
                         throw \Illuminate\Validation\ValidationException::withMessages([
                             'error' => 'Seluruh hasil pengecekan sparepart wajib diisi.'
                         ]);
                     }
 
-                    /* Ambil stok MASTER terbaru saat Tenaga Kerja
-                    * benar-benar mengirim hasil.
+                    /* Ambil stok MASTER terbaru saat Tenaga Kerja benar-benar mengirim hasil.
                     * Angka dari browser TIDAK dipercaya sebagai snapshot. */
                     if (!$detail->stok_onderdil_id) {
                         throw \Illuminate\Validation\ValidationException::withMessages([
@@ -395,8 +412,7 @@ class TenagakerjaController extends Controller
                             ]);
                         }
                     } else {
-                        /* Jika tidak ada selisih, jangan simpan
-                        * penyebab/keterangan yang tidak diperlukan. */
+                        /* Jika tidak ada selisih, jangan simpan penyebab/keterangan yang tidak diperlukan. */
                         $penyebabSelisih = null;
                         $keteranganSelisih = null;
                     }
@@ -546,7 +562,7 @@ class TenagakerjaController extends Controller
         ]);
      
         /* ============================================
-        PEMERIKSAAN KETERSEDIAAN STOK SPAREPART
+            PEMERIKSAAN KETERSEDIAAN STOK SPAREPART
         ============================================ */
         // Ambil seluruh sparepart yang dipilih Tenaga Kerja
         $pemakaian = collect($data['spareparts'] ?? []);
@@ -565,7 +581,6 @@ class TenagakerjaController extends Controller
 
             // Jika jumlah pemakaian melebihi stok tersedia
             if ((int) $item['jumlah'] > (int) $stok->stok_terbaru) {
-
                 return back()
                     ->withErrors([
                         'spareparts' =>
@@ -576,86 +591,155 @@ class TenagakerjaController extends Controller
                     ])->withInput();
             }
         }
-
-        if ($request->hasFile('gambar_bukti')) {
-            $image = $request->file('gambar_bukti');
-            $imageName = time() . '_bukti.' . $image->getClientOriginalExtension();
-            $image->move(public_path('assets/img'), $imageName);
-            $data['gambar_bukti'] = 'assets/img/' . $imageName;
-        }
-
-        if ($request->hasFile('bukti_pemakaian_onderdil')) {
-            $imageOnderdil = $request->file('bukti_pemakaian_onderdil');
-            $imageNameOnderdil = time() . '_pemakaian.' . $imageOnderdil->getClientOriginalExtension();
-            $imageOnderdil->move(public_path('assets/img'), $imageNameOnderdil);
-            $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $imageNameOnderdil;
-        }
         
-        // Pengajuan terbaru menggantikan catatan penolakan sebelumnya
-        $data['keterangan_tolak'] = null;
-        $data['alasan_penolakan'] = null;
+        /* CATAT FILE BARU YANG DIUNGGAH
+        * Agar dapat dibersihkan jika proses gagal. */
+        $uploadedPaths = [];
+        try {
+            /* 1. UPLOAD BUKTI PENYELESAIAN */
+            if ($request->hasFile('gambar_bukti')) {
+                $image = $request->file('gambar_bukti');
 
-        $data['tanggal_kirim_hasil'] = now('Asia/Jakarta');
-        $data['tanggal_verifikasi'] = null;
+                // Gunakan nama unik untuk mencegah bentrok file.
+                $imageName = 'pemeliharaan_' . $jadwal->id .
+                    '_bukti_' . \Illuminate\Support\Str::uuid() .
+                    '.' . strtolower($image->getClientOriginalExtension());
 
-        // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
-        $data['status'] = 'menunggu_verifikasi';
-        
-        /* ============================================
-        SIMPAN CHECKLIST DAN RINCIAN MULTI-SPAREPART
-        ============================================ */
-        DB::transaction(function () use ($jadwal, $data, $pemakaian, $stokDipilih) {
-            // Mengunci jadwal selama proses penyimpanan
-            $jadwalTerkunci = JadwalPemeliharaan::whereKey($jadwal->id)
-                ->lockForUpdate()
-                ->firstOrFail();
+                $image->move(public_path('assets/img'), $imageName);
+                $data['gambar_bukti'] = 'assets/img/' . $imageName;
 
-            // Pastikan jadwal benar-benar milik tenaga kerja yang login
-            if ((int) $jadwalTerkunci->nama_tenaga_kerja !== (int) Auth::id()) {
-                abort(403, 'Jadwal pemeliharaan ini bukan tugas Anda.');
+                // Catat file yang baru berhasil diunggah.
+                $uploadedPaths[] = $data['gambar_bukti'];
             }
 
-            // Hanya jadwal Pending yang boleh mengirim checklist
-            if ($jadwalTerkunci->status !== 'pending') {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'error' => 'Checklist hanya dapat dikirim ketika status jadwal Pending.'
-                ]);
+            /* 2. UPLOAD BUKTI PEMAKAIAN SPAREPART */
+            if ($request->hasFile('bukti_pemakaian_onderdil')) {
+                $imageOnderdil = $request->file('bukti_pemakaian_onderdil');
+
+                // Nama unik agar tidak menimpa file lain.
+                $imageNameOnderdil = 'pemeliharaan_' . $jadwal->id .
+                                     '_pemakaian_' . \Illuminate\Support\Str::uuid() .
+                                     '.' . strtolower($imageOnderdil->getClientOriginalExtension());
+
+                $imageOnderdil->move(public_path('assets/img'), $imageNameOnderdil);
+                $data['bukti_pemakaian_onderdil'] = 'assets/img/' . $imageNameOnderdil;
+                // Catat file yang baru berhasil diunggah.
+                $uploadedPaths[] = $data['bukti_pemakaian_onderdil'];
             }
+        
+            // Pengajuan terbaru menggantikan catatan penolakan sebelumnya
+            $data['keterangan_tolak'] = null;
+            $data['alasan_penolakan'] = null;
 
-            // Hapus rincian pengajuan sebelumnya, jika ada
-            $jadwalTerkunci->pemakaianOnderdil()->delete();
+            $data['tanggal_kirim_hasil'] = now('Asia/Jakarta');
+            $data['tanggal_verifikasi'] = null;
 
-            // Simpan setiap jenis sparepart sebagai baris tersendiri
-            foreach ($pemakaian as $item) {
-                $stok = $stokDipilih->get((int) $item['stok_onderdil_id']);
+            // UBAH STATUS MENJADI MENUNGGU VERIFIKASI
+            $data['status'] = 'menunggu_verifikasi';
+            
+            /* ============================================
+            SIMPAN CHECKLIST DAN RINCIAN MULTI-SPAREPART
+            ============================================ */
+            DB::transaction(function () use ($jadwal, $data, $pemakaian) {
+                // 1. Kunci jadwal selama proses penyimpanan.
+                $jadwalTerkunci = JadwalPemeliharaan::whereKey($jadwal->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-                if (!$stok) {
+                // 2. Pastikan jadwal milik Tenaga Kerja yang login.
+                if ((int) $jadwalTerkunci->nama_tenaga_kerja !== (int) Auth::id()) {
+                    abort(403, 'Jadwal pemeliharaan ini bukan tugas Anda.');
+                }
+
+                // 3. Hanya jadwal Pending yang boleh mengirim checklist.
+                if ($jadwalTerkunci->status !== 'pending') {
                     throw \Illuminate\Validation\ValidationException::withMessages([
-                        'spareparts' => 'Sparepart yang dipilih sudah tidak tersedia.'
+                        'error' => 'Checklist hanya dapat dikirim ketika status jadwal Pending.'
                     ]);
                 }
 
-                $jadwalTerkunci->pemakaianOnderdil()->create([
-                    'stok_onderdil_id' => $stok->id,
-                    'nama_sparepart_snapshot' => $stok->nama_sparepart,
-                    'jumlah' => (int) $item['jumlah'],
-                ]);
+                /* 4. AMBIL ULANG DAN KUNCI STOK AKTIF
+                * Hanya stok yang belum diarsipkan yang boleh digunakan dalam checklist pemeliharaan.
+                * Penguncian dilakukan berdasarkan urutan ID agar konsisten ketika memilih banyak sparepart. */
+                $idSparepart = $pemakaian
+                    ->pluck('stok_onderdil_id')
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                $stokTerkunci = StokOnderdil::whereIn('id', $idSparepart)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
+
+                /* 5. VALIDASI ULANG SPAREPART
+                * Pemeriksaan dilakukan di dalam transaksi menggunakan data stok terbaru yang terkunci. */
+                foreach ($pemakaian as $item) {
+                    $stok = $stokTerkunci->get((int) $item['stok_onderdil_id']);
+
+                    // Stok sudah dihapus atau diarsipkan.
+                    if (!$stok) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'spareparts' => 'Sparepart yang dipilih sudah tidak tersedia ' .
+                                            'atau telah diarsipkan. Silakan perbarui ' .
+                                            'pilihan sparepart sebelum mengirim checklist.'
+                        ]);
+                    }
+
+                    // Jumlah yang diminta melebihi stok terbaru.
+                    if ((int) $item['jumlah'] > (int) $stok->stok_terbaru) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'spareparts' => 'Stok ' . $stok->nama_sparepart .
+                                            ' tidak mencukupi. Stok tersedia: ' .
+                                            $stok->stok_terbaru .
+                                            ' unit, sedangkan jumlah yang diminta: ' .
+                                            $item['jumlah'] . ' unit.'
+                        ]);
+                    }
+                }
+
+                /* 6. HAPUS RINCIAN PENGAJUAN SEBELUMNYA
+                * Dilakukan setelah semua stok dinyatakan valid. */
+                $jadwalTerkunci->pemakaianOnderdil()->delete();
+
+                /* 7. SIMPAN RINCIAN PEMAKAIAN SPAREPART */
+                foreach ($pemakaian as $item) {
+                    $stok = $stokTerkunci->get((int) $item['stok_onderdil_id']);
+
+                    $jadwalTerkunci->pemakaianOnderdil()->create([
+                        'stok_onderdil_id' => $stok->id,
+                        'nama_sparepart_snapshot' => $stok->nama_sparepart,
+                        'jumlah' => (int) $item['jumlah'],
+                    ]);
+                }
+
+                /* 8. HAPUS ARRAY YANG BUKAN KOLOM DATABASE */
+                unset($data['spareparts']);
+
+                /* 9. KOSONGKAN KOLOM PEMAKAIAN LAMA
+                * JIKA MENGGUNAKAN MULTI-SPAREPART */
+                if ($pemakaian->isNotEmpty()) {
+                    $data['nama_onderdil'] = null;
+                    $data['jumlah_pemakaian'] = null;
+                }
+
+                /* 10. SIMPAN CHECKLIST DAN UBAH STATUS MENJADI MENUNGGU VERIFIKASI */
+                $jadwalTerkunci->update($data);
+            });
+        
+        } catch (\Throwable $e) {
+            /* TRANSAKSI ATAU UPLOAD GAGAL
+            * Hapus hanya file yang baru diunggah melalui pengiriman checklist ini. */
+            foreach ($uploadedPaths as $path) {
+                $fullPath = public_path($path);
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
+                }
             }
-
-            // Array spareparts bukan kolom pada tabel jadwal_pemeliharaan
-            unset($data['spareparts']);
-
-            // Jika menggunakan format multi-sparepart,
-            // kosongkan kolom tunggal lama agar tidak terjadi duplikasi
-            if ($pemakaian->isNotEmpty()) {
-                $data['nama_onderdil'] = null;
-                $data['jumlah_pemakaian'] = null;
-            }
-
-            // Simpan detail penyelesaian, bukti gambar dan status
-            $jadwalTerkunci->update($data);
-        });
-
+            // Teruskan error agar Laravel menampilkan pesan kegagalan yang sesuai.
+            throw $e;
+        }
         return back()->with('sukses', 'Laporan pemeliharaan berhasil dikirim. Menunggu verifikasi Supervisor.');
     }
 

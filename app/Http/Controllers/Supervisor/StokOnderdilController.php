@@ -116,8 +116,10 @@ class StokOnderdilController extends Controller
         return back()->with('sukses', 'Stok onderdil berhasil ditambahkan.');
     }
 
+    
     public function update(Request $request, StokOnderdil $stokOnderdil)
     {
+        // 1. Validasi input edit dan data pembanding.
         $data = $request->validate([
             'nama_sparepart' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
@@ -126,26 +128,97 @@ class StokOnderdilController extends Controller
             'pemakaian' => 'required|integer|min:0',
             'stok_terbaru' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
+
+            // Nilai awal dari formulir Edit Stok.
+            'stok_periode_sebelum_awal' => 'required|integer|min:0',
+            'pemakaian_awal' => 'required|integer|min:0',
+            'stok_terbaru_awal' => 'required|integer|min:0',
         ], [
             'gambar.image' => 'File yang dipilih harus berupa gambar.',
             'gambar.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
             'gambar.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
-        if ($request->hasFile('gambar')) {
-            $image = $request->file('gambar');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('assets/img'), $imageName);
-            $data['gambar'] = 'assets/img/' . $imageName;
+        // Catat gambar baru agar bisa dibersihkan jika gagal.
+        $uploadedPath = null;
+
+        try {
+            DB::transaction(function () use ($request, $stokOnderdil, $data, &$uploadedPath) {
+                /* 2. AMBIL ULANG DAN KUNCI DATA STOK
+                * Mencegah perubahan bersamaan dengan proses ACC Supervisor. */
+                $stok = StokOnderdil::whereKey($stokOnderdil->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                /* 3. PERIKSA APAKAH DATA SUDAH BERUBAH
+                * Bandingkan nilai awal formulir dengan nilai terbaru yang ada di database. */
+                $dataSudahBerubah =
+                    (int) $stok->stok_periode_sebelum !== (int) $data['stok_periode_sebelum_awal'] ||
+                    (int) $stok->pemakaian !== (int) $data['pemakaian_awal'] ||
+                    (int) $stok->stok_terbaru !== (int) $data['stok_terbaru_awal'];
+
+                if ($dataSudahBerubah) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'error' =>
+                            'Data stok "' . $stok->nama_sparepart .
+                            '" telah berubah sejak formulir Edit dibuka. ' .
+                            'Perubahan mungkin berasal dari ACC pemeliharaan ' .
+                            'atau pembaruan stok lainnya. ' .
+                            'Silakan muat ulang halaman dan periksa ' .
+                            'data stok terbaru sebelum menyimpan.'
+                    ]);
+                }
+
+                /* 4. HAPUS INPUT PEMBANDING
+                * Ketiga input tersembunyi bukan merupakan kolom tabel stok_onderdil. */
+                unset(
+                    $data['stok_periode_sebelum_awal'],
+                    $data['pemakaian_awal'],
+                    $data['stok_terbaru_awal']
+                );
+
+                /* 5. PERIKSA PERUBAHAN DATA STOK
+                * Logika lama tetap dipertahankan. */
+                $stokBerubah =
+                    (int) $stok->stok_periode_sebelum !== (int) $data['stok_periode_sebelum'] ||
+                    (int) $stok->pemakaian !== (int) $data['pemakaian'] ||
+                    (int) $stok->stok_terbaru !== (int) $data['stok_terbaru'] || 
+                    $stok->kondisi_sekarang !== $data['kondisi_sekarang'];
+
+                // Perbarui periode jika data stok berubah.
+                if ($stokBerubah) {
+                    $data['periode'] = now()->toDateString();
+                }
+
+                /* 6. UPLOAD GAMBAR JIKA ADA
+                * Dilakukan setelah data dinyatakan belum berubah sejak formulir dibuka. */
+                if ($request->hasFile('gambar')) {
+                    $image = $request->file('gambar');
+                    $imageName = 'stok_' . $stok->id . '_' . \Illuminate\Support\Str::uuid() . '.' . strtolower($image->getClientOriginalExtension());
+                    $image->move(public_path('assets/img'), $imageName);
+                    $uploadedPath = 'assets/img/' . $imageName;
+                    $data['gambar'] = $uploadedPath;
+                } else {
+                    // Pertahankan gambar sebelumnya.
+                    unset($data['gambar']);
+                }
+
+                /* 7. SIMPAN PERUBAHAN STOK
+                * Data tetap terkunci sampai transaksi selesai. */
+                $stok->update($data);
+            });
+        } catch (\Throwable $e) {
+            /* 8. BERSIHKAN GAMBAR BARU JIKA GAGAL
+            * Jangan menghapus gambar lama. */
+            if ($uploadedPath !== null) {
+                $fullPath = public_path($uploadedPath);
+                if (is_file($fullPath)) {
+                    @unlink($fullPath);
+                }
+            }
+            throw $e;
         }
 
-        $stokBerubah = (int) $stokOnderdil->stok_periode_sebelum !== (int) $data['stok_periode_sebelum'] || (int) $stokOnderdil->pemakaian !== (int) $data['pemakaian'] || (int) $stokOnderdil->stok_terbaru !== (int) $data['stok_terbaru'] || $stokOnderdil->kondisi_sekarang !== $data['kondisi_sekarang'];
-
-        if ($stokBerubah) {
-            $data['periode'] = now()->toDateString();
-        }
-
-        $stokOnderdil->update($data);
         return back()->with('sukses', 'Stok onderdil berhasil diperbarui.');
     }
 
@@ -171,44 +244,100 @@ class StokOnderdilController extends Controller
                     $query->withTrashed()->where('status', '!=', 'selesai');
                 })->exists();
 
-            /* 3. Lindungi data pemeliharaan lama yang masih menggunakan nama_onderdil. */
+            /* 3. PERIKSA RIWAYAT PEMELIHARAAN LAMA
+            * Data lama mungkin masih memakai nama_onderdil.
+            * Hanya periksa jadwal yang belum mempunyai rincian pemakaian dengan stok_onderdil_id yang sudah terhubung.
+            * Riwayat yang sudah memiliki ID stok akan diperiksa melalui relasi pemakaianPemeliharaan(). */
             $pemeliharaanLama = JadwalPemeliharaan::withTrashed()
                 ->where('nama_onderdil', $stok->nama_sparepart)
-                ->where('jumlah_pemakaian', '>', 0);
+                ->where('jumlah_pemakaian', '>', 0)
+                ->whereDoesntHave('pemakaianOnderdil', function ($query) {
+                    $query->whereNotNull('stok_onderdil_id');
+                });
 
-            $pemeliharaanLamaAktif = (clone $pemeliharaanLama)
-                ->where('status', '!=', 'selesai')
-                ->exists();
+            /* PERIKSA NAMA SPAREPART GANDA
+            * Jika terdapat riwayat lama yang belum terhubung dan lebih dari satu stok memiliki nama sama, sistem tidak boleh menebak stok mana yang digunakan. */
+            $adaRiwayatBelumTerhubung = (clone $pemeliharaanLama)->exists();
+            if ($adaRiwayatBelumTerhubung) {
+                // Termasuk stok yang sudah diarsipkan.
+                $adaNamaSama = StokOnderdil::withTrashed()
+                    ->where('nama_sparepart', $stok->nama_sparepart)
+                    ->where('id', '!=', $stok->id)
+                    ->exists();
+
+                if ($adaNamaSama) {
+                    return ['error' =>
+                            'Sparepart "' . $stok->nama_sparepart .
+                            '" memiliki nama yang sama dengan data stok lain, ' .
+                            'sementara masih terdapat riwayat pemeliharaan lama ' .
+                            'yang belum terhubung ke ID stok. ' .
+                            'Penghapusan atau pengarsipan dibatalkan untuk ' .
+                            'mencegah kesalahan hubungan riwayat. ' .
+                            'Periksa dan cocokkan data riwayat terlebih dahulu.'
+                    ];
+                }
+            }
+
+            /* Jika nama tidak ambigu, pemeriksaan status jadwal lama tetap dilakukan. */
+            $pemeliharaanLamaAktif = (clone $pemeliharaanLama)->where('status', '!=', 'selesai')->exists();
 
             /* 4. Jika masih digunakan pekerjaan yang belum selesai, penghapusan ditolak. */
             if ($pemeliharaanAktif || $pengecekanAktif || $pemeliharaanLamaAktif) {
-                return [
-                    'error' => 'Sparepart "' . $stok->nama_sparepart .
-                                '" masih terkait dengan jadwal yang belum selesai. ' .
-                                'Selesaikan atau hapus penugasan terkait terlebih dahulu.'
+                return ['error' => 'Sparepart "' . $stok->nama_sparepart .
+                                    '" masih terkait dengan jadwal yang belum selesai. ' .
+                                    'Selesaikan atau hapus penugasan terkait terlebih dahulu.'
                 ];
             }
-
-            /* 5. Periksa apakah onderdil pernah terkait dengan pemeliharaan atau pengecekan. */
+   
+            /* 5. PERIKSA HUBUNGAN DAN RIWAYAT ONDERDIL
+            * Angka pemakaian pada Manajemen Stok tidak otomatis dianggap sebagai riwayat pekerjaan. */
             $punyaRiwayat = $stok->pemakaianPemeliharaan()->exists() || $stok->detailPengecekan()->exists() || (clone $pemeliharaanLama)->exists();
-
-            /* 6. Memiliki riwayat selesai:
-            * Soft Delete / Arsipkan. */
+            
+            /* 6. JIKA MEMILIKI RIWAYAT
+            * Jangan hapus permanen.
+            * Arsipkan hanya jika stok sudah 0 unit. */
             if ($punyaRiwayat) {
+                if ((int) $stok->stok_terbaru > 0) {
+                    return ['error' => 'Sparepart "' . $stok->nama_sparepart .
+                            '" memiliki riwayat pekerjaan dan masih ' .
+                            'tercatat memiliki stok sebanyak ' .
+                            $stok->stok_terbaru . ' unit. ' .
+                            'Selesaikan persediaan fisik terlebih dahulu ' .
+                            'sebelum mengarsipkan data.'
+                    ];
+                }
+
                 $stok->delete();
-                return [
-                    'sukses' => 'Onderdil "' . $stok->nama_sparepart .
-                                '" berhasil diarsipkan. Riwayat pemeliharaan ' .
-                                'dan pengecekan tetap dipertahankan.'
+
+                return ['sukses' => 'Sparepart "' . $stok->nama_sparepart .
+                        '" berhasil diarsipkan. ' .
+                        'Riwayat pemeliharaan dan pengecekan ' .
+                        'tetap dipertahankan.'
                 ];
             }
 
-            /* 7. Tidak pernah terkait dengan jadwal:
-            * Hapus permanen. */
+            /* 7. JIKA TIDAK MEMILIKI RIWAYAT
+            * Wajib ada konfirmasi khusus dari Supervisor
+            * sebelum melakukan penghapusan permanen. */
+            if (!request()->boolean('konfirmasi_hapus_salah_input')) {
+                return ['error' => 'Penghapusan permanen dibatalkan. ' .
+                        'Supervisor harus mengonfirmasi bahwa ' .
+                        'data ini merupakan kesalahan input dan ' .
+                        'bukan catatan persediaan fisik sebenarnya.'
+                ];
+            }
+
+            /* 8. HAPUS PERMANEN DATA SALAH INPUT
+            * Hanya dilakukan jika:
+            * - Tidak terkait jadwal aktif.
+            * - Tidak memiliki riwayat pekerjaan.
+            * - Supervisor memberikan konfirmasi khusus.
+            * Angka stok dan pemakaian tidak menjadi penghalang untuk koreksi data salah input. */
             $stok->forceDelete();
-            return [
-                'sukses' => 'Onderdil "' . $stok->nama_sparepart .
-                            '" berhasil dihapus permanen karena belum memiliki riwayat.'
+            return ['sukses' => 'Onderdil "' . $stok->nama_sparepart .
+                    '" berhasil dihapus permanen karena ' .
+                    'dikonfirmasi sebagai kesalahan input ' .
+                    'dan tidak memiliki riwayat pekerjaan.'
             ];
         });
 

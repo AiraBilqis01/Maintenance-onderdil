@@ -21,13 +21,12 @@ class PemakaianOnderdilPemeliharaan extends Model
     protected $casts = [
         'jumlah' => 'integer',
     ];
-
-    // Relasi ke jadwal pemeliharaan
+    
+    /* Relasi pemakaian sparepart ke Jadwal Pemeliharaan.
+    * withTrashed() memastikan riwayat pemakaian tetap dapat mengakses jadwal yang sudah diarsipkan menggunakan SoftDeletes. */
     public function jadwalPemeliharaan(): BelongsTo
     {
-        return $this->belongsTo(
-            JadwalPemeliharaan::class, 'jadwal_pemeliharaan_id'
-        );
+        return $this->belongsTo(JadwalPemeliharaan::class, 'jadwal_pemeliharaan_id', 'id')->withTrashed();
     }
         
     /* Relasi ke Manajemen Stok Onderdil.
