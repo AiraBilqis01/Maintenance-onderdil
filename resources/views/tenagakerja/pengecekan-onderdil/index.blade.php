@@ -1246,7 +1246,7 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-header modal-header-modern" style="background:linear-gradient(135deg,#38b2ac,#48bb78);">
-                    <h5><i class="bi bi-clipboard-check me-2"></i> Isi Hasil Pengecekan Sparepart</h5>
+                    <h5><i class="bi bi-clipboard-check me-2"></i> Isi Hasil Pengecekan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body modal-body-modern">

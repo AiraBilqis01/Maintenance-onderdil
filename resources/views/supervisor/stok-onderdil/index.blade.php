@@ -349,6 +349,10 @@
                     <a href="{{ route('supervisor.stok-onderdil.pdf', request()->query()) }}" class="btn-print-header pdf">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
+                    {{-- Tombol menuju halaman Arsip Manajemen Stok --}}
+                    <a href="{{ route('supervisor.stok-onderdil.arsip') }}" class="btn-print-header" title="Lihat Arsip Stok Onderdil">
+                        <i class="fas fa-archive"></i> Arsip
+                    </a>
                     <div class="ms-2" style="border-left: 1px solid rgba(255,255,255,0.3); padding-left: 1rem;">
                         @include('supervisor.stok-onderdil.create')
                     </div>
@@ -443,6 +447,14 @@
                 @if (session('sukses'))
                     <div class="alert alert-custom" style="border-radius: 12px; border: none; padding: 1rem 1.5rem; margin: 1.5rem 2rem; background: #f0fff4; color: #22543d; font-weight: 500; border-left: 4px solid #48bb78;">
                         <i class="fas fa-check-circle" style="margin-right: 10px; color: #48bb78;"></i> {{ session('sukses') }}
+                    </div>
+                @endif
+                
+                {{-- NOTIFIKASI KESALAHAN HAPUS / ARSIPKAN --}}
+                @if ($errors->has('error'))
+                    <div class="alert alert-danger" role="alert" style=" border-radius: 12px; padding: 1rem 1.5rem; margin: 1.5rem 2rem; background: #fff5f5; color: #9b2c2c; font-weight: 500; border: none; border-left: 4px solid #e53e3e;">
+                        <i class="fas fa-exclamation-circle" style="margin-right: 10px; color: #e53e3e;"></i>
+                        {{ $errors->first('error') }}
                     </div>
                 @endif
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Supervisor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StokOnderdil;
+use App\Models\JadwalPemeliharaan;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\StokOnderdilExport;
@@ -149,7 +151,107 @@ class StokOnderdilController extends Controller
 
     public function destroy(StokOnderdil $stokOnderdil)
     {
-        $stokOnderdil->delete();
-        return back()->with('sukses', 'Stok onderdil berhasil dihapus.');
+        $hasil = DB::transaction(function () use ($stokOnderdil) {
+            // Kunci data stok selama pemeriksaan dan penghapusan.
+            $stok = StokOnderdil::whereKey($stokOnderdil->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            /* 1. Periksa hubungan dengan Jadwal Pemeliharaan.
+            * Termasuk jadwal yang sudah masuk arsip. */
+            $pemeliharaanAktif = $stok->pemakaianPemeliharaan()
+                ->whereHas('jadwalPemeliharaan', function ($query) {
+                    $query->withTrashed()->where('status', '!=', 'selesai');
+                })->exists();
+
+            /* 2. Periksa hubungan dengan Jadwal Pengecekan.
+            * Termasuk jadwal yang sudah masuk arsip. */
+            $pengecekanAktif = $stok->detailPengecekan()
+                ->whereHas('jadwal', function ($query) {
+                    $query->withTrashed()->where('status', '!=', 'selesai');
+                })->exists();
+
+            /* 3. Lindungi data pemeliharaan lama yang masih menggunakan nama_onderdil. */
+            $pemeliharaanLama = JadwalPemeliharaan::withTrashed()
+                ->where('nama_onderdil', $stok->nama_sparepart)
+                ->where('jumlah_pemakaian', '>', 0);
+
+            $pemeliharaanLamaAktif = (clone $pemeliharaanLama)
+                ->where('status', '!=', 'selesai')
+                ->exists();
+
+            /* 4. Jika masih digunakan pekerjaan yang belum selesai, penghapusan ditolak. */
+            if ($pemeliharaanAktif || $pengecekanAktif || $pemeliharaanLamaAktif) {
+                return [
+                    'error' => 'Sparepart "' . $stok->nama_sparepart .
+                                '" masih terkait dengan jadwal yang belum selesai. ' .
+                                'Selesaikan atau hapus penugasan terkait terlebih dahulu.'
+                ];
+            }
+
+            /* 5. Periksa apakah onderdil pernah terkait dengan pemeliharaan atau pengecekan. */
+            $punyaRiwayat = $stok->pemakaianPemeliharaan()->exists() || $stok->detailPengecekan()->exists() || (clone $pemeliharaanLama)->exists();
+
+            /* 6. Memiliki riwayat selesai:
+            * Soft Delete / Arsipkan. */
+            if ($punyaRiwayat) {
+                $stok->delete();
+                return [
+                    'sukses' => 'Onderdil "' . $stok->nama_sparepart .
+                                '" berhasil diarsipkan. Riwayat pemeliharaan ' .
+                                'dan pengecekan tetap dipertahankan.'
+                ];
+            }
+
+            /* 7. Tidak pernah terkait dengan jadwal:
+            * Hapus permanen. */
+            $stok->forceDelete();
+            return [
+                'sukses' => 'Onderdil "' . $stok->nama_sparepart .
+                            '" berhasil dihapus permanen karena belum memiliki riwayat.'
+            ];
+        });
+
+        if (isset($hasil['error'])) {
+            return back()->withErrors(['error' => $hasil['error']]);
+        }
+        return back()->with('sukses', $hasil['sukses']);
+    }
+    
+    /* =====================================================
+     * ARSIP MANAJEMEN STOK
+     * =====================================================
+     * Menampilkan seluruh onderdil yang sudah diarsipkan menggunakan Soft Delete. */
+    public function arsip()
+    {
+        $arsip = StokOnderdil::onlyTrashed()
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view(
+            'supervisor.stok-onderdil.arsip', compact('arsip')
+        );
+    }
+
+    /* =====================================================
+     * PULIHKAN ONDERDIL DARI ARSIP
+     * =====================================================
+     * Mengembalikan onderdil ke Manajemen Stok tanpa mengubah jumlah stok atau riwayat. */
+    public function restore($id)
+    {
+        DB::transaction(function () use ($id) {
+            // Ambil hanya onderdil yang diarsipkan.
+            $stok = StokOnderdil::onlyTrashed()
+                ->whereKey($id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Pulihkan data onderdil.
+            $stok->restore();
+        });
+
+        return redirect()
+            ->route('supervisor.stok-onderdil.arsip')
+            ->with('sukses', 'Onderdil berhasil dipulihkan ke Manajemen Stok tanpa mengubah jumlah stok.');
     }
 }

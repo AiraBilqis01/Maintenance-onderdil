@@ -29,12 +29,12 @@ class PemakaianOnderdilPemeliharaan extends Model
             JadwalPemeliharaan::class, 'jadwal_pemeliharaan_id'
         );
     }
-
-    // Relasi ke manajemen stok
+        
+    /* Relasi ke Manajemen Stok Onderdil.
+    * withTrashed() memungkinkan riwayat pemakaian tetap mengakses data onderdil yang sudah diarsipkan.
+    * Pengarsipan stok tidak menghapus hubungan dengan riwayat pemeliharaan. */
     public function stokOnderdil(): BelongsTo
     {
-        return $this->belongsTo(
-            StokOnderdil::class, 'stok_onderdil_id'
-        );
+        return $this->belongsTo(StokOnderdil::class, 'stok_onderdil_id')->withTrashed();
     }
 }

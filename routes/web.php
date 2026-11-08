@@ -45,6 +45,11 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         Route::put('/stok-onderdil/{stokOnderdil}', [StokOnderdilController::class, 'update'])->name('supervisor.stok-onderdil.update');
         Route::delete('/stok-onderdil/{stokOnderdil}', [StokOnderdilController::class, 'destroy'])->name('supervisor.stok-onderdil.destroy');
 
+        // Menampilkan daftar onderdil yang sudah diarsipkan.
+        Route::get('/stok-onderdil/arsip', [StokOnderdilController::class, 'arsip'])->name('supervisor.stok-onderdil.arsip');
+        // Memulihkan onderdil dari arsip ke Manajemen Stok.
+        Route::patch('/stok-onderdil/{id}/restore', [StokOnderdilController::class, 'restore'])->whereNumber('id')->name('supervisor.stok-onderdil.restore');
+
         Route::get('/jadwal-pemeliharaan', [JadwalPemeliharaanController::class, 'index'])->name('supervisor.jadwal-pemeliharaan.index');
         Route::post('/jadwal-pemeliharaan', [JadwalPemeliharaanController::class, 'store'])->name('supervisor.jadwal-pemeliharaan.store');
         Route::put('/jadwal-pemeliharaan/{jadwalPemeliharaan}', [JadwalPemeliharaanController::class, 'update'])->name('supervisor.jadwal-pemeliharaan.update');
