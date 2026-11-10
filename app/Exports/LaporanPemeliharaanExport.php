@@ -21,7 +21,7 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
 
     public function collection()
     {
-        $query = JadwalPemeliharaan::with(['user', 'pemakaianOnderdil']);
+        $query = JadwalPemeliharaan::withTrashed()->with(['user', 'pemakaianOnderdil']);
 
         if ($this->request->filled('status')) {
             $query->where('status', $this->request->status);
