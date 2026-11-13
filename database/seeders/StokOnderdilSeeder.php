@@ -25,7 +25,7 @@ class StokOnderdilSeeder extends Seeder
             ],
             [
                 'nama_sparepart' => 'Filter Udara',
-                'gambar' => 'assets/img/filterudara.png',
+                'gambar' => 'assets/img/filterudara.jpeg',
                 'stok_periode_sebelum' => 10,
                 'periode' => '2026-01-01',
                 'kondisi_sekarang' => 'Rusak Ringan',
