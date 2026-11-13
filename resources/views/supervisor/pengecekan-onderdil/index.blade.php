@@ -381,6 +381,54 @@
             margin-top: 0.3rem;
         }
     }
+
+    /* =========================================================
+                     MODAL KONFIRMASI PENOLAKAN
+    ========================================================= */
+    .modal-tolak-header {
+        background: linear-gradient(135deg, #fc5c7d, #e53e3e);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+    }
+
+    .modal-tolak-header h5 {
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .modal-tolak-header .close {
+        color: white;
+        opacity: 0.9;
+        text-shadow: none;
+        font-size: 1.5rem;
+    }
+
+    .modal-tolak-header .close:hover {
+        color: white;
+        opacity: 1;
+    }
+
+    .modal-tolak-body {
+        padding: 2rem;
+        background: #fafbff;
+    }
+
+    .modal-tolak-footer {
+        background: #fafbff;
+        border-top: 1px solid #eef2f7;
+        padding: 1rem 2rem;
+    }
+
+    .alasan-box {
+        background: #fff5f5;
+        border-left: 4px solid #e53e3e;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: #822727;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
 </style>
 
 <section class="content">
@@ -695,12 +743,10 @@
                                                     {{-- B. TENAGA KERJA MENGAJUKAN PENOLAKAN TUGAS --}}
                                                     {{-- ================================================= --}}
                                                     @elseif(!empty($item->alasan_penolakan))
-                                                        {{-- ACC TOLAK: hanya menyetujui penolakan tugas, stok master tidak berubah --}}
-                                                        <form action="{{ route('supervisor.pengecekan-onderdil.verifikasi-tolak', $item->id) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <button type="submit" class="btn btn-action btn-tolak-action" onclick="return confirm('Apakah Anda yakin ingin menyetujui penolakan tugas dari Tenaga Kerja? Status akan menjadi Ditolak dan data stok tidak akan berubah.');"><i class="fas fa-check"></i> ACC Tolak</button>
-                                                        </form>
+                                                        {{-- ACC TOLAK: Menampilkan modal konfirmasi penolakan tugas --}}
+                                                        <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalKonfirmasiTolak{{ $item->id }}" title="Lihat Alasan & ACC Tolak">
+                                                            <i class="fas fa-check"></i> ACC Tolak
+                                                        </button>
                                                     @endif
                                                 @endif
 
@@ -761,6 +807,62 @@
                                                                     <button type="submit" class="btn btn-danger"><i class="fas fa-times mr-1"></i> Tolak Hasil</button>
                                                                 </div>
                                                             </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            {{-- ================================================= --}}
+                                            {{-- MODAL KONFIRMASI ACC TOLAK --}}
+                                            {{-- ================================================= --}}
+                                            @if($item->status === 'menunggu_verifikasi' && !$adaHasilPengecekan && !empty($item->alasan_penolakan))
+                                                <div class="modal fade" id="modalKonfirmasiTolak{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="modalKonfirmasiTolakLabel{{ $item->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
+                                                            {{-- HEADER --}}
+                                                            <div class="modal-header modal-tolak-header">
+                                                                <h5 class="modal-title" id="modalKonfirmasiTolakLabel{{ $item->id }}">
+                                                                    <i class="fas fa-exclamation-triangle mr-2"></i> Konfirmasi Penolakan
+                                                                </h5>
+                                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            {{-- BODY --}}
+                                                            <div class="modal-body modal-tolak-body text-left">
+                                                                <p class="mb-3">
+                                                                    Tenaga Kerja mengajukan penolakan untuk pengecekan
+                                                                    <strong>{{ $item->judul_pengecekan }}</strong>
+                                                                    dengan alasan sebagai berikut:
+                                                                </p>
+                                                                {{-- ALASAN PENOLAKAN --}}
+                                                                <div class="alasan-box">
+                                                                    <i class="fas fa-quote-left mr-2"></i>
+                                                                    {{ $item->alasan_penolakan }}
+                                                                    <i class="fas fa-quote-right ml-2"></i>
+                                                                </div>
+                                                                {{-- KETERANGAN TAMBAHAN --}}
+                                                                <p class="text-muted small mb-3">
+                                                                    <strong>Keterangan Tambahan:</strong>
+                                                                    {{ $item->keterangan_tolak ?: '-' }}
+                                                                </p>
+                                                                <p class="text-muted small mb-0">
+                                                                    <i class="fas fa-info-circle mr-1"></i>
+                                                                    Setelah disetujui, status menjadi
+                                                                    <strong>Ditolak</strong> dan stok onderdil
+                                                                    tidak berubah.
+                                                                </p>
+                                                            </div>
+                                                            {{-- FOOTER --}}
+                                                            <div class="modal-footer modal-tolak-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"> Batal</button>
+                                                                <form action="{{ route('supervisor.pengecekan-onderdil.verifikasi-tolak', $item->id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="btn btn-tolak-action">
+                                                                        <i class="fas fa-check mr-1"></i> Ya, Setujui Penolakan
+                                                                    </button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
