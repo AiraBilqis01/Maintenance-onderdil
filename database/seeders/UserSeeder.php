@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     {
         // Akun Supervisor
         $supervisor = User::withTrashed()->firstOrCreate(
-            ['email' => 'supervisor@gmail.com'],
+            ['email' => 'adminpemeliharaan.pltmsh@gmail.com'],
             [
                 'name' => 'Supervisor',
                 'no_telepon' => '081234567890',

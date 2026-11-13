@@ -1,5 +1,5 @@
 <button type="button" class="btn btn-tambah-header" data-toggle="modal" data-target="#modalTambahStokOnderdil">
-    <i class="fas fa-plus"></i> Tambah Stok sparepart.
+    <i class="fas fa-plus"></i> Tambah Stok Sparepart
 </button>
 
 <div class="modal fade" id="modalTambahStokOnderdil" tabindex="-1" role="dialog" aria-labelledby="modalTambahStokOnderdilLabel" aria-hidden="true">
