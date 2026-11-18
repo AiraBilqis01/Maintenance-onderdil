@@ -58,58 +58,24 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="nama_peralatan">Nama Peralatan</label>
                                 <input type="text" class="form-control" name="nama_peralatan" value="{{ $jadwalPemeliharaan->nama_peralatan }}" placeholder="Masukkan nama peralatan" />
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="lokasi">Lokasi</label>
                                 <input type="text" class="form-control" name="lokasi" value="{{ $jadwalPemeliharaan->lokasi }}" placeholder="Masukkan lokasi" />
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
                                 <input type="number" class="form-control" name="quantity" value="{{ $jadwalPemeliharaan->quantity  ?? '' }}" placeholder="Masukkan quantity (opsional)" min="1" step="1" />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="serial_number">Serial Number</label>
-                                <input type="text" class="form-control" name="serial_number" value="{{ $jadwalPemeliharaan->serial_number }}" placeholder="Masukkan serial number" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="kapasitas">Kapasitas</label>
-                                <input type="text" class="form-control" name="kapasitas" value="{{ $jadwalPemeliharaan->kapasitas }}" placeholder="Masukkan kapasitas" />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="merek">Merek</label>
-                                <input type="text" class="form-control" name="merek" value="{{ $jadwalPemeliharaan->merek }}" placeholder="Masukkan merek" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tipe">Tipe</label>
-                                <input type="text" class="form-control" name="tipe" value="{{ $jadwalPemeliharaan->tipe }}" placeholder="Masukkan tipe" />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tahun_pembuatan">Tahun Pembuatan</label>
-                                <input type="number" class="form-control" name="tahun_pembuatan" value="{{ $jadwalPemeliharaan->tahun_pembuatan }}" placeholder="2024" min="1900" max="{{ date('Y') }}" />
                             </div>
                         </div>
                     </div>

@@ -67,26 +67,6 @@
                             <td>{{ $jadwalPemeliharaan->quantity ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td class="text-muted">Serial Number</td>
-                            <td>{{ $jadwalPemeliharaan->serial_number ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Kapasitas</td>
-                            <td>{{ $jadwalPemeliharaan->kapasitas ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Merek</td>
-                            <td>{{ $jadwalPemeliharaan->merek ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Tipe</td>
-                            <td>{{ $jadwalPemeliharaan->tipe ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Tahun Pembuatan</td>
-                            <td>{{ $jadwalPemeliharaan->tahun_pembuatan ?? '-' }}</td>
-                        </tr>
-                        <tr>
                             <td class="text-muted">Keterangan</td>
                             <td>{{ $jadwalPemeliharaan->keterangan ?? '-' }}</td>
                         </tr>

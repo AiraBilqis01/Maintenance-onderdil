@@ -22,11 +22,6 @@ class JadwalPemeliharaan extends Model
         'nama_peralatan',
         'lokasi',
         'quantity',
-        'serial_number',
-        'kapasitas',
-        'merek',
-        'tipe',
-        'tahun_pembuatan',
         'gambar',
         'keterangan',
         'status',
@@ -41,7 +36,6 @@ class JadwalPemeliharaan extends Model
 
     protected $casts = [
         'tanggal_selesai' => 'date',
-        'tahun_pembuatan' => 'integer',
         'tanggal_target_awal' => 'date',
         'tanggal_kirim_hasil' => 'datetime',
         'tanggal_verifikasi' => 'datetime',

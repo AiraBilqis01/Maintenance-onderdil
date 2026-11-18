@@ -600,7 +600,7 @@
                             <th>Periode</th>
                             <th>Kondisi Sekarang</th>
                             <th>Pemakaian</th>
-                            <th>Stok Terbaru</th>
+                            <th>Stok Sekarang</th>
                             <th>Keterangan</th>
                         </tr>
                     </thead>

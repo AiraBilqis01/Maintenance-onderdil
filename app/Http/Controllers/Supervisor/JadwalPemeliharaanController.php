@@ -68,11 +68,6 @@ class JadwalPemeliharaanController extends Controller
             'nama_peralatan' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'quantity' => 'nullable|integer|min:1',
-            'serial_number' => 'nullable|string|max:255',
-            'kapasitas' => 'nullable|string|max:255',
-            'merek' => 'nullable|string|max:255',
-            'tipe' => 'nullable|string|max:255',
-            'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'keterangan' => 'nullable|string',
         ], [
@@ -136,11 +131,6 @@ class JadwalPemeliharaanController extends Controller
             'nama_peralatan' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'quantity' => 'nullable|integer|min:1',
-            'serial_number' => 'nullable|string|max:255',
-            'kapasitas' => 'nullable|string|max:255',
-            'merek' => 'nullable|string|max:255',
-            'tipe' => 'nullable|string|max:255',
-            'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'keterangan' => 'nullable|string',
         ], [

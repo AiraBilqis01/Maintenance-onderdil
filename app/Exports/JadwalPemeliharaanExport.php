@@ -56,11 +56,6 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
             'Nama Peralatan',
             'Lokasi',
             'Qty',
-            'Serial Number',
-            'Kapasitas',
-            'Merek',
-            'Tipe',
-            'Tahun',
             'Status',
             'Keterangan',
         ];
@@ -79,11 +74,6 @@ class JadwalPemeliharaanExport implements FromCollection, WithHeadings, WithMapp
             $item->nama_peralatan,
             $item->lokasi ?? '-',
             $item->quantity ?? '-',
-            $item->serial_number ?? '-',
-            $item->kapasitas ?? '-',
-            $item->merek ?? '-',
-            $item->tipe ?? '-',
-            $item->tahun_pembuatan ?? '-',
             ucfirst($item->status),
             $item->keterangan ?? '-',
         ];

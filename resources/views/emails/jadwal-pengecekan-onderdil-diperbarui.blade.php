@@ -77,7 +77,7 @@
                                     {{-- DAFTAR SPAREPART --}}
                                     <div style="margin-top:20px;">
                                         <p style="font-size:13px; color:#718096; margin:0 0 10px 0;">
-                                            Sparepart yang harus diperiksa:
+                                            Sparepart yang Harus Diperiksa:
                                         </p>
                                         @forelse($jadwal->details as $detail)
                                             <div style="background:#edf2f7; color:#2d3748; padding:8px 12px; border-radius:6px; margin-bottom:6px; font-size:13px;">

@@ -47,13 +47,9 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="padding:5px 0; color:#718096; vertical-align:top;">Sparepart yang Dicek</td>
-                                                <td style=" padding:5px 0; color:#2d3748;">:
-                                                    @foreach($jadwal->details as $detail)
-                                                        <div style="margin-bottom:5px; font-weight:bold;">
-                                                            • {{ $detail->nama_sparepart_snapshot }}
-                                                        </div>
-                                                    @endforeach
+                                                <td style="padding:5px 0; color:#718096;">Tenaga Kerja</td>
+                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
+                                                    : {{ $jadwal->tenagaKerja->name ?? '-' }}
                                                 </td>
                                             </tr>
                                             @if($jadwal->keterangan)
@@ -65,6 +61,21 @@
                                                 </tr>
                                             @endif
                                         </table>
+                                        {{-- DAFTAR SPAREPART --}}
+                                        <div style="margin-top:20px;">
+                                            <p style="font-size:13px; color:#718096; margin:0 0 10px 0;">
+                                                Sparepart yang Harus Diperiksa:
+                                            </p>
+                                            @forelse($jadwal->details as $detail)
+                                                <div style="background:#edf2f7; color:#2d3748; padding:8px 12px; border-radius:6px; margin-bottom:6px; font-size:13px;">
+                                                    • {{ $detail->nama_sparepart_snapshot }}
+                                                </div>
+                                            @empty
+                                                <p style="font-size:13px; color:#718096;">
+                                                    Tidak ada data sparepart.
+                                                </p>
+                                            @endforelse
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

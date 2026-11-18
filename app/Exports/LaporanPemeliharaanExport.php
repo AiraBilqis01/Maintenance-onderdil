@@ -54,10 +54,6 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
             'Nama Peralatan',
             'Lokasi',
             'Quantity',
-            'Serial Number',
-            'Merek',
-            'Tipe',
-            'Tahun Pembuatan',
             'Tanggal Selesai',
             'Hasil Dikirim (ACC)',
             'Status',
@@ -102,10 +98,6 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
             $item->nama_peralatan,
             $item->lokasi ?? '-',
             $item->quantity ?? '-',
-            $item->serial_number ?? '-',
-            $item->merek ?? '-',
-            $item->tipe ?? '-',
-            $item->tahun_pembuatan ?? '-',
             $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-',
             ($item->status === 'selesai' && !empty($item->tanggal_kirim_hasil)) 
                 ? \Carbon\Carbon::parse($item->tanggal_kirim_hasil)->format('d/m/Y') : '-',
@@ -119,15 +111,15 @@ class LaporanPemeliharaanExport implements FromCollection, WithHeadings, WithMap
 
     public function styles(Worksheet $sheet)
     {
-        // Kolom N berisi rincian sparepart yang digunakan
+        // Kolom J berisi rincian sparepart yang digunakan
         // Perlebar kolom agar nama sparepart mudah dibaca
-        $sheet->getColumnDimension('N')->setWidth(50);
+        $sheet->getColumnDimension('J')->setWidth(50);
 
         // Bungkus teks panjang ke beberapa baris dalam sel
         $barisTerakhir = $sheet->getHighestRow();
 
         if ($barisTerakhir >= 2) {
-            $sheet->getStyle('N2:N' . $barisTerakhir)->getAlignment()->setWrapText(true);
+            $sheet->getStyle('J2:J' . $barisTerakhir)->getAlignment()->setWrapText(true);
         }
 
         // Pertahankan format header Excel yang sudah ada

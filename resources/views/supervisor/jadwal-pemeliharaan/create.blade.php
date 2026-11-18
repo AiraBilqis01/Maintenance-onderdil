@@ -47,58 +47,24 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="nama_peralatan">Nama Peralatan</label>
                                 <input type="text" name="nama_peralatan" class="form-control" placeholder="Masukkan nama peralatan">
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="lokasi">Lokasi</label>
                                 <input type="text" name="lokasi" class="form-control" placeholder="Masukkan lokasi (contoh: Ruangan Turbin)">
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
                                 <input type="number" name="quantity" class="form-control" placeholder="Masukkan quantity (opsional)" min="1" step="1">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="serial_number">Serial Number</label>
-                                <input type="text" name="serial_number" class="form-control" placeholder="Masukkan serial number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="kapasitas">Kapasitas</label>
-                                <input type="text" name="kapasitas" class="form-control" placeholder="Masukkan kapasitas">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="merek">Merek</label>
-                                <input type="text" name="merek" class="form-control" placeholder="Masukkan merek">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tipe">Tipe</label>
-                                <input type="text" name="tipe" class="form-control" placeholder="Masukkan tipe">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="tahun_pembuatan">Tahun Pembuatan</label>
-                                <input type="number" name="tahun_pembuatan" class="form-control" placeholder="2024" min="1900" max="{{ date('Y') }}">
                             </div>
                         </div>
                     </div>

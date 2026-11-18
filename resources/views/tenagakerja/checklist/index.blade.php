@@ -992,11 +992,6 @@
                 html += '<div class="detail-row"><div class="detail-label">Nama Peralatan</div><div class="detail-value">' + (props.nama_peralatan || '-') + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Lokasi</div><div class="detail-value">' + (props.lokasi || '-') + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Quantity</div><div class="detail-value">' + (props.quantity || '-') + '</div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Serial Number</div><div class="detail-value">' + (props.serial_number || '-') + '</div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Kapasitas</div><div class="detail-value">' + (props.kapasitas || '-') + '</div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Merek</div><div class="detail-value">' + (props.merek || '-') + '</div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Tipe</div><div class="detail-value">' + (props.tipe || '-') + '</div></div>';
-                html += '<div class="detail-row"><div class="detail-label">Tahun Pembuatan</div><div class="detail-value">' + (props.tahun_pembuatan || '-') + '</div></div>';
                 html += '<div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-value">' + (props.keterangan || '-') + '</div></div>';
                 if (props.gambar) {
                     html += '<div class="detail-row"><div class="detail-label">Gambar</div><div class="detail-value"><img src="/' + props.gambar + '" alt="Gambar"></div></div>';

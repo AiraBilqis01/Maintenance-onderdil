@@ -89,61 +89,6 @@
                                                 : {{ $jadwal->quantity ?? '-' }}
                                             </td>
                                         </tr>
-                                        {{-- SERIAL NUMBER --}}
-                                        @if($jadwal->serial_number)
-                                            <tr>
-                                                <td style="padding:5px 0; color:#718096;">
-                                                    Serial Number
-                                                </td>
-                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
-                                                    : {{ $jadwal->serial_number }}
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        {{-- KAPASITAS --}}
-                                        @if($jadwal->kapasitas)
-                                            <tr>
-                                                <td style="padding:5px 0; color:#718096;">
-                                                    Kapasitas
-                                                </td>
-                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
-                                                    : {{ $jadwal->kapasitas }}
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        {{-- MEREK --}}
-                                        @if($jadwal->merek)
-                                            <tr>
-                                                <td style="padding:5px 0; color:#718096;">
-                                                    Merek
-                                                </td>
-                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
-                                                    : {{ $jadwal->merek }}
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        {{-- TIPE --}}
-                                        @if($jadwal->tipe)
-                                            <tr>
-                                                <td style="padding:5px 0; color:#718096;">
-                                                    Tipe
-                                                </td>
-                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
-                                                    : {{ $jadwal->tipe }}
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        {{-- TAHUN PEMBUATAN --}}
-                                        @if($jadwal->tahun_pembuatan)
-                                            <tr>
-                                                <td style="padding:5px 0; color:#718096;">
-                                                    Tahun Pembuatan
-                                                </td>
-                                                <td style="padding:5px 0; color:#2d3748; font-weight:bold;">
-                                                    : {{ $jadwal->tahun_pembuatan }}
-                                                </td>
-                                            </tr>
-                                        @endif
                                         {{-- TANGGAL SELESAI --}}
                                         <tr>
                                             <td style="padding:5px 0; color:#718096;">

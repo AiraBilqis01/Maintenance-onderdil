@@ -205,7 +205,7 @@
         -webkit-overflow-scrolling: touch;
     }
     .table-custom {
-        min-width: 1800px;
+        min-width: 1400px;
         margin-bottom: 0;
     }
     .table-custom thead th {
@@ -514,11 +514,6 @@
                                     <th width="10%">Nama Peralatan</th>
                                     <th width="7%">Lokasi</th>
                                     <th width="4%">Qty</th>
-                                    <th width="8%">Serial Number</th>
-                                    <th width="7%">Kapasitas</th>
-                                    <th width="7%">Merek</th>
-                                    <th width="7%">Tipe</th>
-                                    <th width="6%">Tahun</th>
                                     <th width="6%">Gambar</th>
                                     <th width="8%">Status</th>
                                     <th width="12%">Ketepatan Waktu</th>
@@ -535,11 +530,6 @@
                                     <td><strong>{{ $item->nama_peralatan ?: '-' }}</strong></td>
                                     <td><span class="badge-info">{{ $item->lokasi ?? '-' }}</span></td>
                                     <td class="text-center">{{ $item->quantity ?? '-' }}</td>
-                                    <td><span class="badge-custom">{{ $item->serial_number ?? '-' }}</span></td>
-                                    <td>{{ $item->kapasitas ?? '-' }}</td>
-                                    <td>{{ $item->merek ?? '-' }}</td>
-                                    <td>{{ $item->tipe ?? '-' }}</td>
-                                    <td>{{ $item->tahun_pembuatan ?? '-' }}</td>
                                     <td>
                                         @if($item->gambar)
                                             <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama_peralatan }}" class="img-thumbnail-custom">
@@ -762,7 +752,7 @@
 
                                 @empty
                                 <tr>
-                                    <td colspan="16" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted d-block mb-2"></i>
                                         <span class="text-muted">Belum ada data jadwal pemeliharaan</span>
                                     </td>

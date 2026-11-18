@@ -54,42 +54,12 @@
                                                 <td style="padding: 5px 0; color: #718096;">Quantity</td>
                                                 <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->quantity }}</td>
                                             </tr>
-                                            @if($jadwal->serial_number)
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Serial Number</td>
-                                                    <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->serial_number }}</td>
-                                                </tr>
-                                            @endif
-                                            @if($jadwal->kapasitas)
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Kapasitas</td>
-                                                    <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->kapasitas }}</td>
-                                                </tr>
-                                            @endif
-                                            @if($jadwal->merek)
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Merek</td>
-                                                    <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->merek }}</td>
-                                                </tr>
-                                            @endif
-                                            @if($jadwal->tipe)
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Tipe</td>
-                                                    <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->tipe }}</td>
-                                                </tr>
-                                            @endif
-                                            @if($jadwal->tahun_pembuatan)
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Tahun Pembuatan</td>
-                                                    <td style="padding: 5px 0; color: #2d3748; font-weight: bold;">: {{ $jadwal->tahun_pembuatan }}</td>
-                                                </tr>
-                                            @endif
-                                                <tr>
-                                                    <td style="padding: 5px 0; color: #718096;">Tanggal Selesai</td>
-                                                    <td style="padding: 5px 0; color: #c53030; font-weight: bold;">
-                                                        : {{ \Carbon\Carbon::parse($jadwal->tanggal_selesai)->format('d F Y') }}
-                                                    </td>
-                                                </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #718096;">Tanggal Selesai</td>
+                                                <td style="padding: 5px 0; color: #c53030; font-weight: bold;">
+                                                    : {{ \Carbon\Carbon::parse($jadwal->tanggal_selesai)->format('d F Y') }}
+                                                </td>
+                                            </tr>
                                             @if($jadwal->keterangan)
                                                 <tr>
                                                     <td style="padding: 5px 0; color: #718096; vertical-align: top;">Keterangan</td>

@@ -12,14 +12,14 @@ class StokOnderdilSeeder extends Seeder
     {
         $stokOnderdil = [
             [
-                'nama_sparepart' => 'Oli Mesin 10W-40',
+                'nama_sparepart' => 'Oil Transformer',
                 'gambar' => 'assets/img/oli.png',
                 'stok_periode_sebelum' => 15,
                 'periode' => '2026-01-01',
                 'kondisi_sekarang' => 'Baik',
                 'pemakaian' => 5,
                 'stok_terbaru' => 15,
-                'keterangan' => 'Oli mesin untuk kendaraan roda empat',
+                'keterangan' => 'Rencana penambahan Agustus',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -31,7 +31,7 @@ class StokOnderdilSeeder extends Seeder
                 'kondisi_sekarang' => 'Baik',
                 'pemakaian' => 2,
                 'stok_terbaru' => 10,
-                'keterangan' => 'Filter udara untuk mesin diesel',
+                'keterangan' => 'Tidak dipakai lagi untuk sparepart',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
