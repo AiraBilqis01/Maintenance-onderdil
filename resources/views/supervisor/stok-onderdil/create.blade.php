@@ -53,7 +53,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="stok_terbaru">Stok Terbaru <span class="text-danger">*</span></label>
+                                <label for="stok_terbaru">Stok Periode Sekarang <span class="text-danger">*</span></label>
                                 <input type="number" name="stok_terbaru" class="form-control" placeholder="0" required>
                             </div>
                         </div>

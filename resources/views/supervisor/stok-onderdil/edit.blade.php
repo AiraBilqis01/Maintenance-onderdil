@@ -61,7 +61,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="stok_terbaru">Stok Terbaru <span class="text-danger">*</span></label>
+                                <label for="stok_terbaru">Stok Periode Sekarang <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="stok_terbaru" value="{{ $stokOnderdil->stok_terbaru }}" required />
                             </div>
                         </div>

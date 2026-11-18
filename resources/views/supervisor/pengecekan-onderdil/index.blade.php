@@ -429,6 +429,68 @@
         font-weight: 500;
         margin-bottom: 1.5rem;
     }
+
+    /* =========================================================
+                    MODAL KONFIRMASI ACC HASIL
+   ========================================================= */
+    .modal-acc-header {
+        background: linear-gradient(135deg, #38b2ac, #48bb78);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+    }
+
+    .modal-acc-header h5 {
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .modal-acc-header .close {
+        color: white;
+        opacity: 0.9;
+        text-shadow: none;
+        font-size: 1.5rem;
+    }
+
+    .modal-acc-header .close:hover {
+        color: white;
+        opacity: 1;
+    }
+
+    .modal-acc-body {
+        padding: 2rem;
+        background: #fafbff;
+    }
+
+    .modal-acc-footer {
+        background: #fafbff;
+        border-top: 1px solid #eef2f7;
+        padding: 1rem 2rem;
+    }
+
+    .informasi-acc-box {
+        background: #f0fff4;
+        border-left: 4px solid #48bb78;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: #22543d;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-konfirmasi-acc {
+        background: #c6f6d5;
+        color: #22543d;
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 0.9rem;
+        font-weight: 500;
+    }
+
+    .btn-konfirmasi-acc:hover {
+        background: #9ae6b4;
+        color: #22543d;
+    }
 </style>
 
 <section class="content">
@@ -729,12 +791,10 @@
                                                     {{-- A. HASIL PENGECEKAN SUDAH DIKIRIM TENAGA KERJA --}}
                                                     {{-- ================================================= --}}
                                                     @if($adaHasilPengecekan)
-                                                        {{-- ACC HASIL: satu-satunya aksi yang menyinkronkan stok master --}}
-                                                        <form action="{{ route('supervisor.pengecekan-onderdil.verifikasi', $item->id) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <button type="submit" class="btn btn-action btn-verifikasi-action" onclick="return confirm('Apakah Anda yakin ingin memverifikasi hasil pengecekan? Stok master akan disesuaikan dengan stok fisik, sedangkan nilai pemakaian tidak akan diubah.');"><i class="fas fa-check"></i> ACC Hasil</button>
-                                                        </form>
+                                                        {{-- ACC HASIL: Menampilkan modal konfirmasi verifikasi --}}
+                                                        <button type="button" class="btn btn-action btn-verifikasi-action" data-toggle="modal" data-target="#modalKonfirmasiAccHasil{{ $item->id }}" title="Verifikasi Hasil Pengecekan">
+                                                            <i class="fas fa-check"></i> ACC Hasil
+                                                        </button>
 
                                                         {{-- TOLAK HASIL: stok master tidak berubah, hasil dikembalikan ke Tenaga Kerja --}}
                                                         <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalTolakHasil{{ $item->id }}"><i class="fas fa-times"></i> Tolak Hasil</button>
@@ -758,6 +818,65 @@
                                                     @include('supervisor.pengecekan-onderdil.delete', ['jadwal' => $item])
                                                 @endif
                                             </div>
+
+                                            {{-- ================================================= --}}
+                                            {{-- MODAL KONFIRMASI ACC HASIL --}}
+                                            {{-- ================================================= --}}
+                                            @if($item->status === 'menunggu_verifikasi' && $adaHasilPengecekan)
+                                                <div class="modal fade" id="modalKonfirmasiAccHasil{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="modalKonfirmasiAccHasilLabel{{ $item->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
+                                                            {{-- HEADER --}}
+                                                            <div class="modal-header modal-acc-header">
+                                                                <h5 class="modal-title" id="modalKonfirmasiAccHasilLabel{{ $item->id }}">
+                                                                    <i class="fas fa-check-circle mr-2"></i> Konfirmasi Verifikasi Hasil
+                                                                </h5>
+                                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            {{-- BODY --}}
+                                                            <div class="modal-body modal-acc-body text-left">
+                                                                <p class="mb-3">
+                                                                    Apakah Anda yakin ingin memverifikasi hasil pengecekan
+                                                                    <strong>{{ $item->judul_pengecekan }}</strong>
+                                                                    yang dikirim oleh
+                                                                    <strong>{{ $item->tenagaKerja->name ?? '-' }}</strong>?
+                                                                </p>
+                                                                {{-- INFORMASI VERIFIKASI --}}
+                                                                <div class="informasi-acc-box">
+                                                                    <p class="mb-2">
+                                                                        <i class="fas fa-info-circle mr-2"></i>
+                                                                        <strong>Informasi Verifikasi</strong>
+                                                                    </p>
+                                                                    <p class="mb-2">
+                                                                        Stok master akan disesuaikan dengan hasil stok fisik yang telah dilaporkan oleh Tenaga Kerja.
+                                                                    </p>
+                                                                    <p class="mb-0">
+                                                                        Nilai pemakaian onderdil tidak akan berubah.
+                                                                    </p>
+                                                                </div>
+                                                                <p class="text-muted small mb-0">
+                                                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                                                    Pastikan hasil pengecekan telah sesuai sebelum
+                                                                    menyetujui verifikasi.
+                                                                </p>
+                                                            </div>
+                                                            {{-- FOOTER --}}
+                                                            <div class="modal-footer modal-acc-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"> Batal</button>
+                                                                <form action="{{ route('supervisor.pengecekan-onderdil.verifikasi', $item->id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="btn btn-konfirmasi-acc">
+                                                                        <i class="fas fa-check mr-1"></i> Ya, Verifikasi Hasil
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
 
                                             {{-- ================================================= --}}
                                             {{-- MODAL TOLAK HASIL --}}

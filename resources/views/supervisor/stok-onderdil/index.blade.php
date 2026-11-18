@@ -470,7 +470,7 @@
                                     <th width="10%">Periode</th>
                                     <th width="12%">Kondisi Sekarang</th>
                                     <th width="8%">Pemakaian</th>
-                                    <th width="10%">Stok Terbaru</th>
+                                    <th width="10%">Stok Sekarang</th>
                                     <th width="15%">Keterangan</th>
                                     <th width="10%">Aksi</th>
                                 </tr>

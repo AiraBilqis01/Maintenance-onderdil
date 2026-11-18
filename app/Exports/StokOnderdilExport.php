@@ -47,7 +47,7 @@ class StokOnderdilExport implements FromCollection, WithHeadings, WithMapping, W
             'Periode',
             'Kondisi Sekarang',
             'Pemakaian',
-            'Stok Terbaru',
+            'Stok Sekarang',
             'Keterangan',
         ];
     }

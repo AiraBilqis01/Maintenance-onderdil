@@ -331,6 +331,68 @@
         font-weight: 500;
         margin-bottom: 1.5rem;
     }
+
+    /* =========================================================
+                MODAL KONFIRMASI ACC PEMELIHARAAN
+    ========================================================= */
+    .modal-acc-header {
+        background: linear-gradient(135deg, #38b2ac, #48bb78);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+    }
+
+    .modal-acc-header h5 {
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .modal-acc-header .close {
+        color: white;
+        opacity: 0.9;
+        text-shadow: none;
+        font-size: 1.5rem;
+    }
+
+    .modal-acc-header .close:hover {
+        color: white;
+        opacity: 1;
+    }
+
+    .modal-acc-body {
+        padding: 2rem;
+        background: #fafbff;
+    }
+
+    .modal-acc-footer {
+        background: #fafbff;
+        border-top: 1px solid #eef2f7;
+        padding: 1rem 2rem;
+    }
+
+    .informasi-acc-box {
+        background: #f0fff4;
+        border-left: 4px solid #48bb78;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: #22543d;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-konfirmasi-acc {
+        background: #c6f6d5;
+        color: #22543d;
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 0.9rem;
+        font-weight: 500;
+    }
+
+    .btn-konfirmasi-acc:hover {
+        background: #9ae6b4;
+        color: #22543d;
+    }
 </style>
 
 <section class="content">
@@ -470,7 +532,7 @@
                                     <td><strong>{{ $item->judul_pemeliharaan }}</strong></td>
                                     <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}</td>
                                     <td><strong>{{ $item->user ? $item->user->name : '-' }}</strong></td>
-                                    <td><strong>{{ $item->nama_peralatan }}</strong></td>
+                                    <td><strong>{{ $item->nama_peralatan ?: '-' }}</strong></td>
                                     <td><span class="badge-info">{{ $item->lokasi ?? '-' }}</span></td>
                                     <td class="text-center">{{ $item->quantity ?? '-' }}</td>
                                     <td><span class="badge-custom">{{ $item->serial_number ?? '-' }}</span></td>
@@ -541,15 +603,10 @@
                                             @if($item->status == 'menunggu_verifikasi')
                                                 {{-- KASUS 1:TENAGA KERJA MENYELESAIKAN PEKERJAAN --}}
                                                 @if(!empty($item->detail_penyelesaian))
-                                                    <form action="{{ route('supervisor.jadwal-pemeliharaan.verifikasi-selesai', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin hasil pemeliharaan sudah sesuai? Stok onderdil yang digunakan akan otomatis dipotong.');">
-                                                        @csrf
-                                                        @method('PUT')
-
-                                                        <button type="submit" class="btn btn-action btn-verifikasi-action" title="Verifikasi & Potong Stok">
-                                                            <i class="fas fa-check-double"></i>ACC
-                                                        </button>
-                                                    </form>
-
+                                                    {{-- ACC PEMELIHARAAN: Membuka modal konfirmasi verifikasi --}}
+                                                    <button type="button" class="btn btn-action btn-verifikasi-action" data-toggle="modal" data-target="#modalKonfirmasiAcc{{ $item->id }}" title="Verifikasi & Potong Stok">
+                                                        <i class="fas fa-check-double"></i> ACC
+                                                    </button>
                                                     <button type="button" class="btn btn-action btn-tolak-action" data-toggle="modal" data-target="#modalTolakSPV{{ $item->id }}" title="Tolak Laporan">
                                                         <i class="fas fa-times-circle"></i> Tolak
                                                     </button>
@@ -567,42 +624,104 @@
                                                 @include('supervisor.jadwal-pemeliharaan.delete', ['jadwalPemeliharaan' => $item])
                                             @endif
                                         </div>
+                                        {{-- ================================================= --}}
+                                        {{-- MODAL KONFIRMASI ACC PEMELIHARAAN --}}
+                                        {{-- ================================================= --}}
+                                        @if($item->status === 'menunggu_verifikasi' && !empty($item->detail_penyelesaian))
+                                            <div class="modal fade" id="modalKonfirmasiAcc{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="modalKonfirmasiAccLabel{{ $item->id }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
+                                                        {{-- HEADER --}}
+                                                        <div class="modal-header modal-acc-header">
+                                                            <h5 class="modal-title"
+                                                                id="modalKonfirmasiAccLabel{{ $item->id }}"> Konfirmasi Verifikasi Hasil
+                                                            </h5>
+                                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        {{-- BODY --}}
+                                                        <div class="modal-body modal-acc-body text-left">
+                                                            <p class="mb-3">
+                                                                Apakah Anda yakin ingin memverifikasi hasil pemeliharaan
+                                                                <strong>{{ $item->judul_pemeliharaan }}</strong>
+                                                                yang dikirim oleh
+                                                                <strong>{{ $item->user->name ?? '-' }}</strong>?
+                                                            </p>
+                                                            {{-- INFORMASI VERIFIKASI --}}
+                                                            <div class="informasi-acc-box">
+                                                                <p class="mb-2">
+                                                                    <i class="fas fa-info-circle mr-2"></i>
+                                                                    <strong>Informasi Verifikasi</strong>
+                                                                </p>
+                                                                <p class="mb-2">
+                                                                    Stok onderdil yang digunakan dalam pemeliharaan
+                                                                    akan otomatis dikurangi sesuai jumlah pemakaian
+                                                                    yang dilaporkan oleh Tenaga Kerja.
+                                                                </p>
+                                                                <p class="mb-0">
+                                                                    Setelah berhasil diverifikasi, status jadwal
+                                                                    pemeliharaan akan berubah menjadi
+                                                                    <strong>Selesai</strong>.
+                                                                </p>
+                                                            </div>
+                                                            <p class="text-muted small mb-0">
+                                                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                                                Pastikan hasil pemeliharaan dan jumlah pemakaian
+                                                                onderdil telah sesuai sebelum menyetujui verifikasi.
+                                                            </p>
+                                                        </div>
+                                                        {{-- FOOTER --}}
+                                                        <div class="modal-footer modal-acc-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"> Batal</button>
+                                                            <form action="{{ route('supervisor.jadwal-pemeliharaan.verifikasi-selesai', $item->id) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <button type="submit" class="btn btn-konfirmasi-acc">
+                                                                    <i class="fas fa-check mr-1"></i> Ya, Verifikasi Hasil
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
 
                                 @if($item->status == 'menunggu_verifikasi' && !empty($item->detail_penyelesaian))
-                                <div class="modal fade" id="modalTolakSPV{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
-                                            <form action="{{ route('supervisor.jadwal-pemeliharaan.tolak-jadwal', $item->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-header modal-tolak-header">
-                                                    <h5><i class="fas fa-times-circle me-2"></i> Tolak Hasil Pemeliharaan</h5>
-                                                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body modal-tolak-body">
-                                                    <p class="mb-3">Hasil pemeliharaan <strong>{{ $item->judul_pemeliharaan }}</strong> yang dikirim oleh <strong>{{ $item->user ? $item->user->name : '-' }}</strong> belum sesuai. Silakan masukkan keterangan dan alasan penolakan.</p>
-                                                    
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-semibold">Keterangan <span class="text-danger">*</span></label>
-                                                        <textarea class="form-control" name="keterangan_tolak" rows="3" placeholder="Contoh: Alat sudah rusak parah" required></textarea>
+                                    <div class="modal fade" id="modalTolakSPV{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
+                                                <form action="{{ route('supervisor.jadwal-pemeliharaan.tolak-jadwal', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-header modal-tolak-header">
+                                                        <h5><i class="fas fa-times-circle me-2"></i> Tolak Hasil Pemeliharaan</h5>
+                                                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-semibold">Alasan Penolakan <span class="text-danger">*</span></label>
-                                                        <textarea class="form-control" name="alasan_penolakan" rows="3" placeholder="Jelaskan alasan pembatalan..." required></textarea>
+                                                    <div class="modal-body modal-tolak-body">
+                                                        <p class="mb-3">Hasil pemeliharaan <strong>{{ $item->judul_pemeliharaan }}</strong> yang dikirim oleh <strong>{{ $item->user ? $item->user->name : '-' }}</strong> belum sesuai. Silakan masukkan keterangan dan alasan penolakan.</p>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Keterangan <span class="text-danger">*</span></label>
+                                                            <textarea class="form-control" name="keterangan_tolak" rows="3" placeholder="Contoh: Alat sudah rusak parah" required></textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Alasan Penolakan <span class="text-danger">*</span></label>
+                                                            <textarea class="form-control" name="alasan_penolakan" rows="3" placeholder="Jelaskan alasan pembatalan..." required></textarea>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer modal-tolak-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-tolak-action">
-                                                        <i class="fas fa-times-circle"></i> Tolak Hasil Pemeliharaan
-                                                    </button>
-                                                </div>
-                                            </form>
+                                                    <div class="modal-footer modal-tolak-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-tolak-action">
+                                                            <i class="fas fa-times-circle"></i> Tolak Hasil Pemeliharaan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 @endif
 
                                 @if($item->alasan_penolakan)

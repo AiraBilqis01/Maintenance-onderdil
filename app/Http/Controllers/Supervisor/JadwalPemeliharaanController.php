@@ -51,7 +51,7 @@ class JadwalPemeliharaanController extends Controller
         $jadwalPemeliharaan = $this->buildQuery($request)->with(['riwayatRevisi', 'pemakaianOnderdil'])->orderBy('tanggal_selesai', 'desc')->get();
         $tenagaKerja = User::where('role', 'tenagakerja')->whereIn('jenis_tugas', [ 'pemeliharaan_peralatan', 'keduanya'])->orderBy('name', 'asc')->get();
         /* ============================================
-        FILTER RIWAYAT TENAGA KERJA
+                FILTER RIWAYAT TENAGA KERJA
         ============================================
         Mengambil akun aktif maupun yang di-Soft Delete.
         Hanya digunakan untuk filter riwayat jadwal. */

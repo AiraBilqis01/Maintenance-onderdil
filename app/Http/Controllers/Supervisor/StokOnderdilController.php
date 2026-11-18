@@ -165,7 +165,7 @@ class StokOnderdilController extends Controller
                             'Perubahan mungkin berasal dari ACC pemeliharaan ' .
                             'atau pembaruan stok lainnya. ' .
                             'Silakan muat ulang halaman dan periksa ' .
-                            'data stok terbaru sebelum menyimpan.'
+                            'data stok sekarang sebelum menyimpan.'
                     ]);
                 }
 
