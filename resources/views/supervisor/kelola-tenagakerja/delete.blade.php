@@ -21,7 +21,10 @@
                     Apakah Anda yakin ingin menghapus tenaga kerja<br>
                     <strong>{{ $tenagaKerja->name }}</strong>?
                 </p>
-                <p class="text-muted mt-2" style="font-size: 0.9rem;">Data yang dihapus tidak dapat dikembalikan!</p>
+                <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                    Akun akan dipindahkan ke daftar akun terhapus dan dapat dipulihkan kembali.
+                    Riwayat pekerjaan tetap tersimpan.
+                </p>
             </div>
             <div class="modal-footer">
                 <form action="{{ route('supervisor.kelola-tenagakerja.destroy', $tenagaKerja->id) }}" method="POST">
