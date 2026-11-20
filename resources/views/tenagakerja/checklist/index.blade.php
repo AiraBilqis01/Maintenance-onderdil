@@ -1139,10 +1139,10 @@
                     html += '<div class="detail-row">' + '<div class="detail-label">Total Pemakaian</div>' + '<div class="detail-value">' + (totalPemakaian > 0 ? totalPemakaian + ' unit' : '-') + '</div></div>';
                     html += '<div class="detail-row"><div class="detail-label">Detail Penyelesaian</div><div class="detail-value">' + (props.detail_penyelesaian || '-') + '</div></div>';
                     if (props.gambar_bukti) {
-                        html += '<div class="detail-row"><div class="detail-label">Bukti Alat</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Bukti Penyelesaian</div><div class="detail-value"><img src="/' + props.gambar_bukti + '" alt="Bukti"></div></div>';
                     }
                     if (props.bukti_pemakaian_onderdil) {
-                        html += '<div class="detail-row"><div class="detail-label">Bukti Pemakaian Sparepart</div><div class="detail-value"><img src="/' + props.bukti_pemakaian_onderdil + '" alt="Bukti Sparepart"></div></div>';
+                        html += '<div class="detail-row"><div class="detail-label">Bukti Pemakaian</div><div class="detail-value"><img src="/' + props.bukti_pemakaian_onderdil + '" alt="Bukti Sparepart"></div></div>';
                     }
                     html += '</div>';
                 }
