@@ -33,19 +33,27 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="email">Email Supervisor <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" name="email" value="{{ $supervisor->email }}" required />
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password">Ubah Password</label>
                                 <input type="password" class="form-control" name="password" placeholder="Kosongkan jika tidak ingin mengubah" />
-                                <small class="text-muted" style="color: #ccc !important;">Kosongkan jika tidak ingin mengubah password</small>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password_confirmation">Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control" name="password_confirmation" placeholder="Ulangi password baru" />
+                            </div>
+                        </div>
+                        <small class="text-muted d-block" style="color: #ccc !important;">*Kosongkan kedua field password jika tidak ingin mengubah password</small>
                     </div>
                 </div>
                 <div class="modal-footer">

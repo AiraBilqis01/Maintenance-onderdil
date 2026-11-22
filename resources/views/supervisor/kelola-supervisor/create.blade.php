@@ -31,21 +31,21 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="email">Email <span class="text-danger">*</span></label>
                                 <input type="email" name="email" class="form-control" placeholder="Masukkan email" required>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password">Password <span class="text-danger">*</span></label>
                                 <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password_confirmation">Konfirmasi Password <span class="text-danger">*</span></label>
                                 <input type="password" name="password_confirmation" class="form-control" placeholder="Konfirmasi password" required>

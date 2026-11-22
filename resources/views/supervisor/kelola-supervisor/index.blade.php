@@ -244,6 +244,24 @@
                         <i class="fas fa-check-circle"></i> {{ session('sukses') }}
                     </div>
                 @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show mx-3 mt-3" role="alert">
+                        <strong>
+                            <i class="fas fa-exclamation-circle mr-1"></i>Data gagal disimpan!
+                        </strong>
+
+                        <ul class="mb-0 mt-2">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 
                 <div class="card-body p-4">
                     <div class="table-responsive-custom">

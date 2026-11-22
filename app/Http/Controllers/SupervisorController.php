@@ -59,7 +59,7 @@ class SupervisorController extends Controller
             'name' => 'required|string|max:255',
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon,' . $supervisor->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $supervisor->id,
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|required_with:password_confirmation|string|min:6|confirmed',
         ]);
 
         if (!empty($data['password'])) {
@@ -115,7 +115,7 @@ class SupervisorController extends Controller
             'name' => 'required|string|max:255',
             'no_telepon' => 'required|string|max:15|unique:users,no_telepon,' . $tenagaKerja->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $tenagaKerja->id,
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|required_with:password_confirmation|string|min:6|confirmed',
             'jenis_pelaksana' => 'required|in:Internal,Subkontraktor',
             'jenis_tugas' => 'required|in:pemeliharaan_peralatan,pengecekan_onderdil,keduanya',
             'keahlian' => 'required|string|max:255',
