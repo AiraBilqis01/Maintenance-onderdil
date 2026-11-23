@@ -10,7 +10,7 @@
            <li class="nav-item">
             <a href="{{route('supervisor.kelola-supervisor.index')}}" class="nav-link text-white {{(Request::routeIs('supervisor.kelola-supervisor.index') ? 'active':'')}}">
                 <i class="nav-icon fas fa-users-cog"></i>
-                <p>Kelola Supervisior</p>
+                <p>Kelola Supervisor</p>
             </a>
         </li>
 
