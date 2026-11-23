@@ -238,6 +238,129 @@
             margin-bottom: 0;
         }
 
+        /* =========================================
+                    SECTION GALERI KAMI
+        ========================================= */
+        .gallery-section {
+            background: rgba(255, 255, 255, 0.88);
+            position: relative;
+            z-index: 2;
+        }
+
+        .gallery-title {
+            font-size: clamp(2rem, 3vw, 2.7rem);
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .gallery-underline {
+            width: 85px;
+            height: 4px;
+            margin: 0 auto 16px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .gallery-description {
+            color: #718096;
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .gallery-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 5 / 4;
+            margin: 0;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #edf0f8;
+            box-shadow: 0 8px 22px rgba(45, 55, 72, 0.09);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.18);
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.07);
+        }
+
+        /* Keterangan foto muncul saat hover */
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 45px 16px 16px;
+            color: #ffffff;
+            background: linear-gradient(
+                to top,
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(15, 23, 42, 0.8) 55%,
+                transparent 100%
+            );
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .gallery-card:hover .gallery-caption,
+        .gallery-card:focus-within .gallery-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-caption strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .gallery-caption span {
+            display: block;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        /* Tampilan perangkat layar sentuh */
+        @media (hover: none) {
+            .gallery-caption {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .gallery-title {
+                font-size: 1.9rem;
+            }
+
+            .gallery-description {
+                font-size: 0.9rem;
+            }
+
+            .gallery-card {
+                aspect-ratio: 5 / 3;
+            }
+        }
+
         .cta-gradient {
             background: linear-gradient(125deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%),
                         radial-gradient(circle at 20% 40%, rgba(102, 126, 234, 0.05) 0%, transparent 40%);
@@ -565,6 +688,78 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+              SECTION GALERI KAMI
+========================================= -->
+<section class="gallery-section py-5" id="galeri">
+    <div class="container py-4">
+        <!-- Judul Galeri -->
+        <div class="text-center mb-5">
+            <h2 class="gallery-title">Galeri Kami</h2>
+            <div class="gallery-underline"></div>
+            <p class="gallery-description">
+                Mengenal lebih dekat fasilitas pembangkit,
+                peralatan, dan aktivitas pemeliharaan yang
+                mendukung operasional PLTMH Sangir Hulu.
+            </p>
+        </div>
+
+        <!-- Data Galeri -->
+        @php
+            $galeri = [
+                [
+                    'gambar' => 'bendung.png',
+                    'judul' => 'Bendungan PLTM Sangir Hulu',
+                    'deskripsi' => 'Bangunan bendung yang mengatur aliran air sebagai bagian dari sistem pembangkit listrik tenaga mikrohidro.'
+                ], [
+                    'gambar' => 'powerhouse.jpg',
+                    'judul' => 'Gedung Pembangkit (Powerhouse)',
+                    'deskripsi' => 'Bangunan utama yang menjadi lokasi penempatan peralatan pembangkit listrik PLTMH Sangir Hulu.'
+                ], [
+                    'gambar' => 'penstock.jpg',
+                    'judul' => 'Pipa Pesat (Penstock)',
+                    'deskripsi' => 'Saluran pipa bertekanan yang mengalirkan air menuju turbin untuk proses pembangkitan listrik.'
+                ], [
+                    'gambar' => 'kegiatan.jpg',
+                    'judul' => 'Kegiatan Pemantauan Operasional',
+                    'deskripsi' => 'Aktivitas pemantauan dan koordinasi operasional menggunakan perangkat komputer.'
+                ], [
+                    'gambar' => 'panel.jpg',
+                    'judul' => 'Panel',
+                    'deskripsi' => 'Peralatan kelistrikan yang digunakan untuk pengendalian, perlindungan, dan distribusi tenaga listrik.'
+                ], [
+                    'gambar' => 'turbin_generator.jpg',
+                    'judul' => 'Area Turbin dan Generator',
+                    'deskripsi' => 'Area peralatan utama yang mendukung proses perubahan energi air menjadi energi listrik.'
+                ], [
+                    'gambar' => 'overhead_crane.jpg',
+                    'judul' => 'Overhead Crane',
+                    'deskripsi' => 'Peralatan pengangkat yang membantu penanganan komponen berat di dalam gedung pembangkit.'
+                ], [
+                    'gambar' => 'waterway.jpg',
+                    'judul' => 'Saluran Pembawa Air (Waterway)',
+                    'deskripsi' => 'Saluran yang mengalirkan air sebagai bagian dari sistem penyaluran air pada pembangkit.'
+                ]
+            ];
+        @endphp
+
+        <!-- Grid Galeri -->
+        <div class="row g-4">
+            @foreach ($galeri as $item)
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <figure class="gallery-card">
+                        <img src="{{ asset('assets/img/' . $item['gambar']) }}" alt="{{ $item['judul'] }}" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <strong>{{ $item['judul'] }}</strong>
+                            <span>{{ $item['deskripsi'] }}</span>
+                        </figcaption>
+                    </figure>
+                </div>
+            @endforeach
         </div>
     </div>
 </section>
