@@ -21,7 +21,7 @@
                     Apakah Anda yakin ingin menghapus supervisor<br>
                     <strong>{{ $supervisor->name }}</strong>?
                 </p>
-                <p class="text-muted mt-2" style="font-size: 0.9rem;">Data yang dihapus tidak dapat dikembalikan!</p>
+                <p class="text-muted mt-2" style="font-size: 0.9rem;">Akun akan dihapus dari daftar supervisor aktif dan tidak dapat digunakan untuk login.</p>
             </div>
             <div class="modal-footer">
                 <form action="{{ route('supervisor.kelola-supervisor.destroy', $supervisor->id) }}" method="POST">
