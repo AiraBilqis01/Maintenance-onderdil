@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use App\Models\JadwalPemeliharaan;
 use App\Models\RiwayatRevisiJadwal;
+use App\Models\RiwayatPengingatJadwal;
 use App\Models\User;
 use App\Models\StokOnderdil;
 use App\Mail\JadwalPemeliharaanMail;
@@ -289,7 +290,12 @@ class JadwalPemeliharaanController extends Controller
             // 5. Hapus riwayat revisi jadwal terkait
             $jadwal->riwayatRevisi()->delete();
 
-            // 6. Hapus permanen
+            // 6. Hapus riwayat email pengingat pemeliharaan terkait
+            RiwayatPengingatJadwal::where('jenis_jadwal', 'pemeliharaan')
+                ->where('jadwal_id', $jadwal->id)
+                ->delete();
+
+            // 7. Hapus permanen
             $jadwal->forceDelete();
             return 'Jadwal berhasil dihapus permanen.';
         });

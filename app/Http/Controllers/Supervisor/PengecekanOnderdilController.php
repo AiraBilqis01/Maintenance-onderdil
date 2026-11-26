@@ -15,6 +15,7 @@ use App\Models\StokOnderdil;
 use App\Models\JadwalPengecekanOnderdil;
 use App\Models\DetailPengecekanOnderdil;
 use App\Models\RiwayatRevisiJadwal;
+use App\Models\RiwayatPengingatJadwal;
 
 use App\Mail\JadwalPengecekanOnderdilMail;
 use App\Mail\HasilPengecekanOnderdilDitolakMail;
@@ -888,7 +889,12 @@ class PengecekanOnderdilController extends Controller
             // 4. Hapus riwayat revisi jadwal terkait
             $jadwalTerkunci->riwayatRevisi()->delete();
 
-            // 5. Hapus jadwal dan detail pengecekan secara permanen
+            // 5. Hapus riwayat email pengingat pengecekan terkait
+            RiwayatPengingatJadwal::where('jenis_jadwal', 'pengecekan')
+                ->where('jadwal_id', $jadwalTerkunci->id)
+                ->delete();
+
+            // 6. Hapus jadwal dan detail pengecekan secara permanen
             $jadwalTerkunci->forceDelete();
             return 'Jadwal pengecekan sparepart berhasil dihapus permanen.';
         });
